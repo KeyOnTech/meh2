@@ -140,6 +140,12 @@
 
 
 
+    <!--Nav bar menu items-->
+    <string name="nav_bar_specifications">Specifications</string>
+    <string name="nav_bar_poll">Poll</string>
+    <string name="nav_bar_video">Video</string>
+    <string name="nav_bar_about">About</string>
+
 
     <!--layout text-->
     <string name="card_view_1_header">TITLE</string>
