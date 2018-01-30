@@ -20,6 +20,7 @@ import com.keyontech.meh3.ActivityMain
 
 
     var KEY_PHOTO_URI = "KEY_PHOTO_URI"
+    var KEY_MEH_VIDEO_LINK = "KEY_MEH_VIDEO_LINK"
 
     val JSONHeaderContentType = "Content-Type: application/json"
     val JSONHeaderAccept= "Accept: application/json"

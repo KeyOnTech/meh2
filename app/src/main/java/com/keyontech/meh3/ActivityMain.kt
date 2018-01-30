@@ -51,6 +51,8 @@ import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import com.example.jonesq.meh3.Models.*
+import com.example.jonesq.meh3.utils.KEY_MEH_VIDEO_LINK
+import com.keyontech.meh3.Activities.ActivityMehVideo
 
 //import android.support.v7.app.AppCompatActivity
 //import android.view.Menu
@@ -89,6 +91,8 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     var jsonURL = ""
 
     var abcgogo = ""
+    var mehVideoLink = ""
+
 //    val modelMeh = object
 //    val pBitmap_Map = BitmapFactory.decodeResource(resources, R.drawable.logo_512_x_512_2)
 
@@ -212,7 +216,9 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             }
             R.id.nav_bar_video-> {
-
+                val intent = Intent( baseContext , ActivityMehVideo::class.java)
+                intent.putExtra( KEY_MEH_VIDEO_LINK , mehVideoLink )
+                startActivity( intent )
             }
             R.id.nav_bar_about-> {
 
@@ -281,6 +287,8 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     textView_content_activity_main_card_view_2.text = modelMeh.deal.features
                     textView_content_activity_main_card_view_3.text = modelMeh.deal.specifications
 
+                    mehVideoLink = modelMeh.video.topic.url
+
                     adapterActivityMain = AdapterViewPagerActivityMain(supportFragmentManager, modelMeh.deal.photos )
                     viewPager_NavDrawer.adapter = adapterActivityMain
 //                    viewPager_ActivityMain.adapter = adapterActivityMain
@@ -340,6 +348,9 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             textView_content_activity_main_card_view_4.text = priceLowtoHigh(modelMeh.deal)
             textView_content_activity_main_card_view_2.text = modelMeh.deal.features
             textView_content_activity_main_card_view_3.text = modelMeh.deal.specifications
+
+            mehVideoLink = modelMeh.video.topic.url
+
 
             adapterActivityMain = AdapterViewPagerActivityMain(supportFragmentManager, modelMeh.deal.photos )
 //            viewPager_ActivityMain.adapter = adapterActivityMain
