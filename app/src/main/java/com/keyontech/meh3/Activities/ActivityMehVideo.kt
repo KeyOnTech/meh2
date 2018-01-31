@@ -3,15 +3,13 @@ package com.keyontech.meh3.Activities
 import android.graphics.Color
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-
-import com.example.jonesq.meh3.utils.KEY_MEH_VIDEO_LINK
+import com.example.jonesq.meh3.utils.*
 import com.keyontech.meh3.R
 import kotlinx.android.synthetic.main.activity_meh_video.*
 
 /**
  * Created by kot on 1/29/18.
  */
-
 
 class ActivityMehVideo: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,7 +27,5 @@ class ActivityMehVideo: AppCompatActivity() {
 
 //        to make the webview allow java from pages add the following - end
         webView_activity_meh_video.loadUrl( courseLink )
-        // test
-//        webView_CourseLesson.loadUrl( "https://www.google.com")
     }
 }

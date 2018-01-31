@@ -15,21 +15,21 @@ class ModelMeh(
 )
 
 class ModelMehDeal(
-    val features: String
-    , val id: String
-    , val items: ArrayList<ModelMehItem>
+    val features: String = ""
+    , val id: String = ""
+    , val items: ArrayList<ModelMehItem> = arrayListOf<ModelMehItem>()
 //    , val items: List<ModelMehItem>
-    , val photos: ArrayList<String>
+    , val photos: ArrayList<String> = arrayListOf<String>()
 //    , val photos: List<String>
-    , val title: String
-    , val specifications: String
+    , val title: String = ""
+    , val specifications: String = ""
 //        , val soldOutAt: String
 //        , val story: ArrayList<ModelMehStory>
     , val story: ModelMehStory
     , val theme: ModelMehTheme
-    , val url: String
-//    , val launches: ArrayList<ModelMehLaunches>
-    , val launches: List<ModelMehLaunches>
+    , val url: String = ""
+    , val launches: ArrayList<ModelMehLaunches> = arrayListOf<ModelMehLaunches>()
+//    , val launches: List<ModelMehLaunches>
     , val topic: ModelMehTopic
 )
 
@@ -39,12 +39,21 @@ class ModelMehDeal(
 
 
 class ModelMehPoll (
-    val id: String
-    , val startDate: String
-    , val title: String
+//    companion object Factory {
+//        fun create(): ModelMehPoll = ModelMehPoll()
+//    }
+//
+//    fun create() = ModelMehPoll
+//    {
+//        return@ModelMehPoll
+//    }
+
+    val id: String = ""
+    , val startDate: String = ""
+    , val title: String = ""
     , val topic: ModelMehTopic
-//    , val answers: ArrayList<ModelMehPollAnswer>
-    , val answers: List<ModelMehPollAnswer>
+    , val answers: ArrayList<ModelMehPollAnswer> = arrayListOf<ModelMehPollAnswer>()
+//    , val answers: List<ModelMehPollAnswer>
 )
 
 class ModelMehPollAnswer(

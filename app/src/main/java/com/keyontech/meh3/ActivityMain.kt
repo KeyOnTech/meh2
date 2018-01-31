@@ -51,7 +51,10 @@ import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import com.example.jonesq.meh3.Models.*
+import com.example.jonesq.meh3.utils.KEY_MEH_RESPONSE_STRING
 import com.example.jonesq.meh3.utils.KEY_MEH_VIDEO_LINK
+import com.keyontech.meh3.Activities.ActivityAbout
+import com.keyontech.meh3.Activities.ActivityMehPoll
 import com.keyontech.meh3.Activities.ActivityMehVideo
 
 //import android.support.v7.app.AppCompatActivity
@@ -87,11 +90,19 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
 
-
+    /*** api request url */
     var jsonURL = ""
+    /*** api response string */
+    var jsonResponse = ""
 
-    var abcgogo = ""
     var mehVideoLink = ""
+
+
+//    var mehPoll = ModelMehPoll.Companion
+//    var mehPoll = {}
+//    var mehPoll: ModelMehPoll
+//    var mehPoll = ModelMehPoll()
+
 
 //    val modelMeh = object
 //    val pBitmap_Map = BitmapFactory.decodeResource(resources, R.drawable.logo_512_x_512_2)
@@ -209,19 +220,22 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // Handle navigation view item clicks here.
         when (item.itemId) {
 
-            R.id.nav_bar_specifications -> {
-                // Handle the camera action
-            }
+//            R.id.nav_bar_specifications -> {
+//                // Handle the camera action
+//            }
             R.id.nav_bar_poll -> {
-
+                val intent = Intent(baseContext, ActivityMehPoll::class.java)
+                intent.putExtra(KEY_MEH_RESPONSE_STRING, jsonResponse)
+                startActivity(intent)
             }
             R.id.nav_bar_video-> {
-                val intent = Intent( baseContext , ActivityMehVideo::class.java)
-                intent.putExtra( KEY_MEH_VIDEO_LINK , mehVideoLink )
-                startActivity( intent )
+                val intent = Intent(baseContext, ActivityMehVideo::class.java)
+                intent.putExtra(KEY_MEH_VIDEO_LINK, mehVideoLink)
+                startActivity(intent)
             }
             R.id.nav_bar_about-> {
-
+                val intent = Intent(baseContext, ActivityAbout::class.java)
+                startActivity(intent)
             }
         }
 
@@ -252,6 +266,7 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             override fun onResponse(call: Call?, response: Response?) {
                 val responseBody = response?.body()?.string()
                 println( "111  fetchJSON - onResponse - body - " + responseBody )
+                jsonResponse = responseBody.toString()
 
                 val gson = GsonBuilder().create()
 
@@ -279,7 +294,7 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     println("LOAD : live data")
 
                     // setup interface
-//                    setTitle(priceLowtoHigh(modelMeh.deal))
+//                  setTitle(priceLowtoHigh(modelMeh.deal))
 
                     // set body text
                     textView_content_activity_main_card_view_1.text = modelMeh.deal.title
@@ -287,14 +302,12 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     textView_content_activity_main_card_view_2.text = modelMeh.deal.features
                     textView_content_activity_main_card_view_3.text = modelMeh.deal.specifications
 
+                    // set video
                     mehVideoLink = modelMeh.video.topic.url
 
                     adapterActivityMain = AdapterViewPagerActivityMain(supportFragmentManager, modelMeh.deal.photos )
                     viewPager_NavDrawer.adapter = adapterActivityMain
 //                    viewPager_ActivityMain.adapter = adapterActivityMain
-
-
-                    abcgogo = modelMeh.deal.photos[0]
                 }
 
 
@@ -339,6 +352,7 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             println("LOAD :  MOCK data")
             val mockData = loadJsonFromFile("sample1.json", this)
             val modelMeh = gson.fromJson( mockData , ModelMeh::class.java )
+            jsonResponse = mockData
 
             // setup interface
 //            setTitle(priceLowtoHigh(modelMeh.deal))
@@ -349,7 +363,11 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             textView_content_activity_main_card_view_2.text = modelMeh.deal.features
             textView_content_activity_main_card_view_3.text = modelMeh.deal.specifications
 
+            // set video
             mehVideoLink = modelMeh.video.topic.url
+//            println( "444bbb  modelMeh.video title = " + modelMeh.video.title )
+//            println( "444bbb  modelMeh.video startDate = " + modelMeh.video.startDate )
+//            println( "444bbb  modelMeh.video topic = " + modelMeh.video.topic )
 
 
             adapterActivityMain = AdapterViewPagerActivityMain(supportFragmentManager, modelMeh.deal.photos )
@@ -390,7 +408,7 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         for (i in modelMehDeal.items) {
             if (vMin > i.price) vMin = i.price.toInt()
             if (vMax < i.price) vMax = i.price.toInt()
-            print(" \r\n 44401: price " + i.price.toInt() )
+//            print(" \r\n 44401: price " + i.price.toInt() )
         }
 
         if (vMin != vMax) {

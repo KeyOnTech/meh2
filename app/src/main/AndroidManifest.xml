@@ -13,6 +13,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
+
+
         <!--Main Activity-->
         <activity
             android:name=".ActivityMain"
@@ -45,10 +47,40 @@
 
 
 
+        <!--Meh Poll screen-->
+        <activity
+            android:name=".Activities.ActivityMehPoll"
+            android:label="Meh Poll"
+            android:launchMode="singleTop"
+            >
+            <!--use this to auto add the back button on top left-->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ActivityMain"
+                />
+        </activity>
+
+
+
+
+        <!--About screen-->
+        <activity
+            android:name=".Activities.ActivityAbout"
+            android:label="About"
+            android:launchMode="singleTop"
+            >
+            <!--use this to auto add the back button on top left-->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ActivityMain"
+                />
+        </activity>
+
+
+
 
         <!-- Broadcast receiver for notification -->
         <receiver android:name=".notification.AlertReceiver" />
-
 
 
 

@@ -18,9 +18,12 @@ import com.keyontech.meh3.ActivityMain
  * Created by kot on 1/21/18.
  */
 
-
+    /*** Activity constants */
     var KEY_PHOTO_URI = "KEY_PHOTO_URI"
+    var KEY_MEH_RESPONSE_STRING = "KEY_MEH_RESPONSE_STRING"
     var KEY_MEH_VIDEO_LINK = "KEY_MEH_VIDEO_LINK"
+
+
 
     val JSONHeaderContentType = "Content-Type: application/json"
     val JSONHeaderAccept= "Accept: application/json"
