@@ -28,7 +28,9 @@ class FragmentViewPager1 : Fragment() {
         // Download the image and display it using Picasso
         Picasso.with(activity)
 //            .downloader(new OkHttpDownloader( context , Integer.MAX_VALUE)
-            .load( args.getString(KEY_PHOTO_URI) )
+
+                .load( args.getString(KEY_PHOTO_URI) )
+//                .centerCrop()
             .into(imageviewDealPhoto)
         return view
     }

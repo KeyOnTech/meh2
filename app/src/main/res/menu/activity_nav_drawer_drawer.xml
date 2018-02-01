@@ -3,7 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
-    <group android:checkableBehavior="single">
+
+
+    <item android:title="Meh Extras">
+    <menu >
         <!--<item-->
             <!--android:id="@+id/nav_bar_specifications"-->
             <!--android:icon="@drawable/ic_menu_camera"-->
@@ -16,9 +19,9 @@
             android:id="@+id/nav_bar_video"
             android:icon="@drawable/ic_menu_slideshow"
             android:title="@string/nav_bar_video" />
-    </group>
-
-    <item android:title="Communicate">
+    </menu>
+    </item>
+    <item android:title="@string/nav_bar_about">
         <menu>
             <item
                 android:id="@+id/nav_bar_about"

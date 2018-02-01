@@ -8,31 +8,17 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
-import android.view.Menu
 import android.view.MenuItem
 import com.example.jonesq.meh3.Models.ModelMeh
-//import com.example.jonesq.meh3.utils.JSONurl
 import com.google.gson.GsonBuilder
 import com.keyontech.meh3.adaptersViewPager.AdapterViewPagerActivityMain
-//import com.keyontech.meh3.Models.ModelMeh
-//import com.keyontech.meh3.utils.JSONurl
-//import kotlinx.android.synthetic.main.activity_main.*
-//import kotlinx.android.synthetic.main.activity_nav_drawer.*
-
-//import kotlinx.android.synthetic.main.app_bar_activity_nav_drawer.*
-//import kotlinx.android.synthetic.main.activity_main_v2_nav_drawer.*
-
 
 import kotlinx.android.synthetic.main.content_activity_main.*
 import kotlinx.android.synthetic.main.activity_main_v2_nav_drawer.*
 import kotlinx.android.synthetic.main.activity_main_v2_nav_drawer_include_content.*
-import kotlinx.android.synthetic.main.content_activity_main.*
-import kotlinx.android.synthetic.main.nav_drawer_layout.*
 
 import okhttp3.*
 import org.json.JSONException
-import org.json.JSONObject
 import java.io.IOException
 import com.squareup.picasso.Picasso
 import android.graphics.Bitmap
@@ -56,6 +42,16 @@ import com.example.jonesq.meh3.utils.KEY_MEH_VIDEO_LINK
 import com.keyontech.meh3.Activities.ActivityAbout
 import com.keyontech.meh3.Activities.ActivityMehPoll
 import com.keyontech.meh3.Activities.ActivityMehVideo
+import android.support.design.widget.TabLayout
+import android.support.v4.view.PagerAdapter
+import android.support.v4.view.ViewPager
+import com.example.jonesq.meh3.utils.KEY_PHOTO_URI
+import android.R.attr.smallIcon
+import android.graphics.drawable.Drawable
+import android.os.Handler
+import android.os.Looper
+import android.support.v4.app.NotificationCompat
+
 
 //import android.support.v7.app.AppCompatActivity
 //import android.view.Menu
@@ -97,6 +93,9 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     var mehVideoLink = ""
 
+    /*** this is used for the notification large image */
+    var mehNotificationLargePhoto = ""
+
 
 //    var mehPoll = ModelMehPoll.Companion
 //    var mehPoll = {}
@@ -110,6 +109,14 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     // define View Pager
     private lateinit var adapterActivityMain: AdapterViewPagerActivityMain
+
+
+
+
+
+
+
+
 
 
 
@@ -160,19 +167,139 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
 
+            ///////
+//            val pShow_Large_Icon_Bitmap
+
+            Picasso.with(this)
+                    .load(mehNotificationLargePhoto)
+
+                    .resize(32, 32)
+                    .placeholder(R.drawable.logo_32_x_32_2)
+//                    .error(R.drawable.logo_32_x_32_2)
+
+//                    .get()
+                    .into(new Target() {
+                        @Override
+                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+//                            mRemoteViews.setImageViewBitmap(R.id.myImage,bitmap);
+
+
+
+                            // create notification - start
+                            val intent = Intent()
+                            val pendingIntent = PendingIntent.getActivity(this@ActivityMain,0,intent,0)
+                            val notification = Notification.Builder(this@ActivityMain)
+                                    .setTicker("")
+                                    .setContentTitle("")
+                                    .setContentText("")
+                                    .setSmallIcon(R.drawable.notification_bg)
+                                .setLargeIcon(Bitmap)
+
+                                    .setContentIntent(pendingIntent).notification
+
+                            notification.flags = Notification.FLAG_AUTO_CANCEL
+                            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                            notificationManager.notify(0, notification)
+
+
+                            // crate notification - end
+
+                        }
+
+                        @Override
+                        public void onBitmapFailed(Drawable errorDrawable) {
+                            //do something when loading failed
+                        }
+
+                        @Override
+                        public void onPrepareLoad(Drawable placeHolderDrawable) {
+                            //do something while loading
+                         }
+                    })
+
+
+
+
+
+
+
+
+/*
+            Handler uiHandler = new Handler(Looper.getMainLooper())
+            uiHandler.post(() -> {
+                val pShow_Large_Icon_Bitmap = Picasso
+                        .with(this)
+                        .load(mehNotificationLargePhoto)
+        //                                                .load( R.drawable.logo_32_x_32_2 )
+        ////                    .load(pMeh_API_v1.getDeal_Details().getmPhotos().get(0))
+        ////                    .load(R.drawable.logo_32_x_32_2)
+                        .resize(32, 32)
+                        .placeholder(R.drawable.logo_32_x_32_2)
+                        .error(R.drawable.logo_32_x_32_2)
+                        .get()
+
+//            Picasso.with(this)
+//                        .load(mehNotificationLargePhoto)
+//                        .into(remoteViews, viewId, new int[]{widgetId});
+
+            });
+
+            Thread {
+
+                println("Thread start ")
+                    val manager = this.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+                    val builder = NotificationCompat.Builder(this)
+                            .setContentTitle(title)
+                            .setContentText("abc")
+                            .setSmallIcon(smallIcon)
+                            .setContentIntent(
+                                    PendingIntent.getActivity(
+                                            this,
+                                            0,
+                                            Intent(this, ActivityMain::class.java),
+                                            PendingIntent.FLAG_UPDATE_CURRENT)
+                            )
+                            //here comes to load image by Picasso
+                            //it should be inside try block
+                            .setLargeIcon(Picasso.with(this).load("URL_TO_LOAD_LARGE_ICON").get())
+                            //BigPicture Style
+                            .setStyle(NotificationCompat.BigPictureStyle()
+                                    //This one is same as large icon but it wont show when its expanded that's why we again setting
+                                    .bigLargeIcon(Picasso.with(this).load(mehNotificationLargePhoto).get())
+                                    //This is Big Banner image
+                                    .bigPicture(Picasso.with(this).load(mehNotificationLargePhoto).get())
+                                    //When Notification expanded title and content text
+                                    .setBigContentTitle(title)
+                                    .setSummaryText("abcDEF")
+                            )
+
+                return@Thread
+
+            }.run()
+*/
+            //////////
+
+
+
+
+
+
             // notification large icon
-//            val pBitmap_Map = BitmapFactory.decodeResource(resources, R.drawable.logo_512_x_512_2)
-//            val pBitmap_MapScaled = Bitmap.createScaledBitmap(pBitmap_Map, 96, 96, true)
-//            val pShow_Large_Icon_Bitmap = Picasso
-//                    .with(this)
-//                    //                            .load( R.drawable.logo_32_x_32_2 )
+            val pBitmap_Map = BitmapFactory.decodeResource(resources, R.drawable.logo_512_x_512_2)
+            val pBitmap_MapScaled = Bitmap.createScaledBitmap(pBitmap_Map, 96, 96, true)
+            val pShow_Large_Icon_Bitmap = Picasso
+                    .with(this)
+                    .load(mehNotificationLargePhoto)
+//                                                .load( R.drawable.logo_32_x_32_2 )
 ////                    .load(pMeh_API_v1.getDeal_Details().getmPhotos().get(0))
 ////                    .load(R.drawable.logo_32_x_32_2)
-//                    //                            .resize(32, 32)
-//
-////                    .placeholder(R.drawable.logo_32_x_32_2)
-//                    .error(R.drawable.logo_32_x_32_2)
-//                    .get()
+                    .resize(32, 32)
+                    .placeholder(R.drawable.logo_32_x_32_2)
+                    .error(R.drawable.logo_32_x_32_2)
+                    .get()
+
+
 
 
 
@@ -207,7 +334,6 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
     // nav drawer
-
     override fun onBackPressed() {
         if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
             drawer_layout.closeDrawer(GravityCompat.START)
@@ -219,10 +345,6 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
         when (item.itemId) {
-
-//            R.id.nav_bar_specifications -> {
-//                // Handle the camera action
-//            }
             R.id.nav_bar_poll -> {
                 val intent = Intent(baseContext, ActivityMehPoll::class.java)
                 intent.putExtra(KEY_MEH_RESPONSE_STRING, jsonResponse)
@@ -254,70 +376,24 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
     fun fetchJSON() {
-        println("ACctiviyMain - onCreate - attempting to fetch JSON")
+        println("ActiviyMain - onCreate - attempting to fetch JSON")
         println("url " + jsonURL)
 
         val request = Request.Builder().url( jsonURL ).build()
         val client = OkHttpClient()
 
-        // had to enqueue because you cannot execute in the main method needs a thread to do so
+        /*** had to enqueue because you cannot execute in the main method needs a thread to do so */
 //        client.newCall( request ).execute()
         client.newCall( request ).enqueue(object: Callback {
             override fun onResponse(call: Call?, response: Response?) {
+                println("LOAD : live data")
+
                 val responseBody = response?.body()?.string()
                 println( "111  fetchJSON - onResponse - body - " + responseBody )
                 jsonResponse = responseBody.toString()
 
-                val gson = GsonBuilder().create()
-
-                val modelMeh = gson.fromJson( responseBody , ModelMeh::class.java )
-                println( "222bbb  modelMeh.deal = " + modelMeh.deal )
-                println( "222bbb  modelMeh.deal title = " + modelMeh.deal.title )
-
-                println( "333aaa  modelMeh.poll = " + modelMeh.poll)
-                println( "333bbb  modelMeh.poll title = " + modelMeh.poll.title )
-                println( "333ccc  modelMeh.poll id = " + modelMeh.poll.id )
-                println( "333ddd  modelMeh.poll startDate = " + modelMeh.poll.startDate )
-                println( "333eee  modelMeh.poll answers[0].text = " + modelMeh.poll.answers[0].text )
-                println( "333fff  modelMeh.poll answers[0].voteCount = " + modelMeh.poll.answers[0].voteCount )
-                println( "333ggg  modelMeh.poll topic.url = " + modelMeh.poll.topic.url)
-
-
-
-                println( " 77777777     modelMeh.video  " + modelMeh.video )
-//                if (modelMeh.video == null )
-                println( "444aaa  modelMeh.vieo = " + modelMeh.video)
-                println( "444bbb  modelMeh.video title = " + modelMeh.video.title )
-                println( "444ccc  modelMeh.video topic.url = " + modelMeh.video.topic.url)
-
-                runOnUiThread{
-                    println("LOAD : live data")
-
-                    // setup interface
-//                  setTitle(priceLowtoHigh(modelMeh.deal))
-
-                    // set body text
-                    textView_content_activity_main_card_view_1.text = modelMeh.deal.title
-                    textView_content_activity_main_card_view_4.text = priceLowtoHigh(modelMeh.deal)
-                    textView_content_activity_main_card_view_2.text = modelMeh.deal.features
-                    textView_content_activity_main_card_view_3.text = modelMeh.deal.specifications
-
-                    // set video
-                    mehVideoLink = modelMeh.video.topic.url
-
-                    adapterActivityMain = AdapterViewPagerActivityMain(supportFragmentManager, modelMeh.deal.photos )
-                    viewPager_NavDrawer.adapter = adapterActivityMain
-//                    viewPager_ActivityMain.adapter = adapterActivityMain
-                }
-
-
-//                val myResponse = response.body().string()
-
-//                this@ScrollingActivity.runOnUiThread(java.lang.Runnable { abcGo = responseBody?.toString() })
-//                this@ScrollingActivity.runOnUiThread(java.lang.Runnable { abcGo = responseBody?; })
-
+                processReturn(jsonResponse)
             }
-
 
             override fun onFailure(call: Call?, e: IOException?) {
                 println("fetchJSON - failed to execute request - error: " + e.toString() )
@@ -346,34 +422,12 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     fun mockInterface() {
         println("Mock Data initiated ")
 
-        val gson = GsonBuilder().create()
-
         try {
             println("LOAD :  MOCK data")
             val mockData = loadJsonFromFile("sample1.json", this)
-            val modelMeh = gson.fromJson( mockData , ModelMeh::class.java )
             jsonResponse = mockData
 
-            // setup interface
-//            setTitle(priceLowtoHigh(modelMeh.deal))
-
-            // set body text
-            textView_content_activity_main_card_view_1.text = modelMeh.deal.title
-            textView_content_activity_main_card_view_4.text = priceLowtoHigh(modelMeh.deal)
-            textView_content_activity_main_card_view_2.text = modelMeh.deal.features
-            textView_content_activity_main_card_view_3.text = modelMeh.deal.specifications
-
-            // set video
-            mehVideoLink = modelMeh.video.topic.url
-//            println( "444bbb  modelMeh.video title = " + modelMeh.video.title )
-//            println( "444bbb  modelMeh.video startDate = " + modelMeh.video.startDate )
-//            println( "444bbb  modelMeh.video topic = " + modelMeh.video.topic )
-
-
-            adapterActivityMain = AdapterViewPagerActivityMain(supportFragmentManager, modelMeh.deal.photos )
-//            viewPager_ActivityMain.adapter = adapterActivityMain
-            viewPager_NavDrawer.adapter = adapterActivityMain
-
+            processReturn(jsonResponse)
         } catch (e: JSONException) {
             println("mockInterface Error: " + e)
         } // try
@@ -396,10 +450,7 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
 
         return json
-    } //
-
-
-
+    }
 
     fun priceLowtoHigh(modelMehDeal: ModelMehDeal): String {
         var vMin = modelMehDeal.items[0].price.toInt()
@@ -417,6 +468,61 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             return "$ $vMax"
         }
     }
+
+    fun processReturn(response: String){
+        val gson = GsonBuilder().create()
+        val modelMeh = gson.fromJson( response , ModelMeh::class.java )
+
+
+        println( "222bbb  modelMeh.deal = " + modelMeh.deal )
+        println( "222bbb  modelMeh.deal title = " + modelMeh.deal.title )
+
+
+        println( "333aaa  modelMeh.poll = " + modelMeh.poll)
+        println( "333bbb  modelMeh.poll title = " + modelMeh.poll.title )
+        println( "333ccc  modelMeh.poll id = " + modelMeh.poll.id )
+        println( "333ddd  modelMeh.poll startDate = " + modelMeh.poll.startDate )
+        println( "333eee  modelMeh.poll answers[0].text = " + modelMeh.poll.answers[0].text )
+        println( "333fff  modelMeh.poll answers[0].voteCount = " + modelMeh.poll.answers[0].voteCount )
+        println( "333ggg  modelMeh.poll topic.url = " + modelMeh.poll.topic.url)
+
+
+        println( " 77777777     modelMeh.video  " + modelMeh.video )
+//                if (modelMeh.video == null )
+        println( "444aaa  modelMeh.vieo = " + modelMeh.video)
+        println( "444bbb  modelMeh.video title = " + modelMeh.video.title )
+        println( "444ccc  modelMeh.video topic.url = " + modelMeh.video.topic.url)
+
+
+        runOnUiThread{
+            // setup interface
+//          setTitle(priceLowtoHigh(modelMeh.deal))
+
+            // set body text
+            textView_content_activity_main_card_view_1.text = modelMeh.deal.title
+            textView_content_activity_main_card_view_4.text = priceLowtoHigh(modelMeh.deal)
+            textView_content_activity_main_card_view_2.text = modelMeh.deal.features
+            textView_content_activity_main_card_view_3.text = modelMeh.deal.specifications
+
+            // set video
+            mehVideoLink = modelMeh.video.topic.url
+//            println( "444bbb  modelMeh.video title = " + modelMeh.video.title )
+//            println( "444bbb  modelMeh.video startDate = " + modelMeh.video.startDate )
+//            println( "444bbb  modelMeh.video topic = " + modelMeh.video.topic )
+
+            // set notification large image
+            mehNotificationLargePhoto = modelMeh.deal.photos[0]
+
+            // set photos viewPager
+            adapterActivityMain = AdapterViewPagerActivityMain(supportFragmentManager, modelMeh.deal.photos )
+            viewPager_NavDrawer.adapter = adapterActivityMain
+
+            // setup viewPager indicator buttons
+            tab_layout_viewpager_indicator_dots_NavDrawer.setupWithViewPager(viewPager_NavDrawer,true)
+        }
+    }
+
+
 
 
 

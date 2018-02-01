@@ -7,7 +7,8 @@
 
     android:fitsSystemWindows="true"
 
-    tools:context="com.keyontech.meh3.ActivityMain">
+    tools:context="com.keyontech.meh3.ActivityMain"
+    >
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/nav_app_bar"
@@ -35,10 +36,28 @@
                 android:background="?attr/colorPrimary"
                 app:popupTheme="@style/AppTheme.PopupOverlay" />
 
+
+            <!--Photo viewPager Margin made 60 so nav bar hamburger would work-->
             <android.support.v4.view.ViewPager
                 android:id="@+id/viewPager_NavDrawer"
+                android:layout_marginTop="60dp"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                >
+
+                <!--viewPager indicator buttons had to put him here rather than below because the nav button wont work unless this is inside the viewPager-->
+                <android.support.design.widget.TabLayout
+                    android:id="@+id/tab_layout_viewpager_indicator_dots_NavDrawer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    app:tabBackground="@drawable/tab_selector"
+                    app:tabGravity="center"
+                    app:tabIndicatorHeight="0dp"
+                    />
+
+            </android.support.v4.view.ViewPager>
+
 
 
         </android.support.design.widget.CollapsingToolbarLayout>
