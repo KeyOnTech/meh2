@@ -170,181 +170,11 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
 
-
-
 // fab buton Right
         fabbuttonNavDrawer.setOnClickListener { view ->
-//            val intentA = Intent(view.context, ActivityNavDrawer::class.java)
-////            intent.putExtra( KEY_COURSELESSONLINK , courseLesson?.link )
-//            startActivity(intentA)
-
-
             setTitle("")
             fetchJSON()
 //            mockInterface()
-
-
-
-            ///////
-/*
-
-
-//            val pShow_Large_Icon_Bitmap
-
-            Picasso.with(this)
-                    .load(mehNotificationLargePhoto)
-
-                    .resize(32, 32)
-                    .placeholder(R.drawable.logo_32_x_32_2)
-//                    .error(R.drawable.logo_32_x_32_2)
-
-//                    .get()
-                    .into(new Target() {
-                        @Override
-                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-//                            mRemoteViews.setImageViewBitmap(R.id.myImage,bitmap);
-
-
-
-                            // create notification - start
-                            val intent = Intent()
-                            val pendingIntent = PendingIntent.getActivity(this@ActivityMain,0,intent,0)
-                            val notification = Notification.Builder(this@ActivityMain)
-                                    .setTicker("")
-                                    .setContentTitle("")
-                                    .setContentText("")
-                                    .setSmallIcon(R.drawable.notification_bg)
-                                .setLargeIcon(Bitmap)
-
-                                    .setContentIntent(pendingIntent).notification
-
-                            notification.flags = Notification.FLAG_AUTO_CANCEL
-                            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-                            notificationManager.notify(0, notification)
-
-
-                            // crate notification - end
-
-                        }
-
-                        @Override
-                        public void onBitmapFailed(Drawable errorDrawable) {
-                            //do something when loading failed
-                        }
-
-                        @Override
-                        public void onPrepareLoad(Drawable placeHolderDrawable) {
-                            //do something while loading
-                         }
-                    })
-
-
-
-
-
-
-
-
-//
-//            Handler uiHandler = new Handler(Looper.getMainLooper())
-//            uiHandler.post(() -> {
-//                val pShow_Large_Icon_Bitmap = Picasso
-//                        .with(this)
-//                        .load(mehNotificationLargePhoto)
-//        //                                                .load( R.drawable.logo_32_x_32_2 )
-//        ////                    .load(pMeh_API_v1.getDeal_Details().getmPhotos().get(0))
-//        ////                    .load(R.drawable.logo_32_x_32_2)
-//                        .resize(32, 32)
-//                        .placeholder(R.drawable.logo_32_x_32_2)
-//                        .error(R.drawable.logo_32_x_32_2)
-//                        .get()
-//
-////            Picasso.with(this)
-////                        .load(mehNotificationLargePhoto)
-////                        .into(remoteViews, viewId, new int[]{widgetId});
-//
-//            });
-//
-//            Thread {
-//
-//                println("Thread start ")
-//                    val manager = this.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-//
-//                    val builder = NotificationCompat.Builder(this)
-//                            .setContentTitle(title)
-//                            .setContentText("abc")
-//                            .setSmallIcon(smallIcon)
-//                            .setContentIntent(
-//                                    PendingIntent.getActivity(
-//                                            this,
-//                                            0,
-//                                            Intent(this, ActivityMain::class.java),
-//                                            PendingIntent.FLAG_UPDATE_CURRENT)
-//                            )
-//                            //here comes to load image by Picasso
-//                            //it should be inside try block
-//                            .setLargeIcon(Picasso.with(this).load("URL_TO_LOAD_LARGE_ICON").get())
-//                            //BigPicture Style
-//                            .setStyle(NotificationCompat.BigPictureStyle()
-//                                    //This one is same as large icon but it wont show when its expanded that's why we again setting
-//                                    .bigLargeIcon(Picasso.with(this).load(mehNotificationLargePhoto).get())
-//                                    //This is Big Banner image
-//                                    .bigPicture(Picasso.with(this).load(mehNotificationLargePhoto).get())
-//                                    //When Notification expanded title and content text
-//                                    .setBigContentTitle(title)
-//                                    .setSummaryText("abcDEF")
-//                            )
-//
-//                return@Thread
-//
-//            }.run()
-
-            //////////
-
-
-
-
-
-
-            // notification large icon
-            val pBitmap_Map = BitmapFactory.decodeResource(resources, R.drawable.logo_512_x_512_2)
-            val pBitmap_MapScaled = Bitmap.createScaledBitmap(pBitmap_Map, 96, 96, true)
-            val pShow_Large_Icon_Bitmap = Picasso
-                    .with(this)
-                    .load(mehNotificationLargePhoto)
-//                                                .load( R.drawable.logo_32_x_32_2 )
-////                    .load(pMeh_API_v1.getDeal_Details().getmPhotos().get(0))
-////                    .load(R.drawable.logo_32_x_32_2)
-                    .resize(32, 32)
-                    .placeholder(R.drawable.logo_32_x_32_2)
-                    .error(R.drawable.logo_32_x_32_2)
-                    .get()
-
-
-
-
-
-
-
-
-            // create notification - start
-            val intent = Intent()
-            val pendingIntent = PendingIntent.getActivity(this@ActivityMain,0,intent,0)
-            val notification = Notification.Builder(this@ActivityMain)
-                    .setTicker("")
-                    .setContentTitle("")
-                    .setContentText("")
-                    .setSmallIcon(R.drawable.notification_bg)
-//                    .setLargeIcon(pShow_Large_Icon_Bitmap)
-
-                    .setContentIntent(pendingIntent).notification
-
-            notification.flags = Notification.FLAG_AUTO_CANCEL
-            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.notify(0, notification)
-
-*/
-            // crate notification - end
 
             Snackbar.make(view, "Live data", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show()
@@ -567,43 +397,12 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 notificationLargeBitmap  = Picasso
                         .with(this)
                         .load(mehNotificationLargePhoto)
-                        .resize(96,96)
+                        .resize(512,512)
                         .placeholder(R.mipmap.ic_launcher)
                         .error(R.mipmap.ic_launcher)
                         .get()
 
-
-
-
                 showNotification(this,"ticker text", "title title", "text text", R.mipmap.ic_launcher,R.mipmap.ic_launcher, notificationLargeBitmap,R.mipmap.ic_launcher)
-
-
-/* works start
-                // setup the values for the notification  --- start
-                val pTickerBarText = "Meh.com Update - pTickerBarText "
-                val pContentTitle = "pContentTitle "
-                val pContentText = "pMeh_API_v1.getDeal_Details().getmItems().get(0).getmCondition()" +
-                        " - " + "NumberFormat.getCurrencyInstance().format(pMeh_API_v1.getDeal_Details().getmItems().get(0).getmPrice()))"
-
-
-                val intent = Intent()
-                val pendingIntent = PendingIntent.getActivity(this@MainActivity, 0, intent, 0)
-                val notification1 = Notification.Builder(this@MainActivity)
-                        .setTicker(pTickerBarText)
-                        .setContentTitle(pContentTitle)
-                        .setContentText(pContentText)
-
-                        .setSmallIcon(R.mipmap.ic_launcher)
-                .setLargeIcon(notificationLargeBitmap )
-                        .setContentIntent(pendingIntent).notification
-
-                notification1.flags = Notification.FLAG_AUTO_CANCEL
-                val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-                notificationManager.notify(0, notification1)
- works end  */
-
-
-
             } catch (e: IOException) {
                 e.printStackTrace()
             } finally {
@@ -625,7 +424,6 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
 
-    //    public static void showNotification( Context vContext , int vCount , String vNotification_TickerTitle , String vNotification_Title , String vNotification_Message , int vShow_Small_Icon_INT , int vShow_Small_Action_Icon_INT   )
     fun showNotification(vContext: Context, vNotification_TickerText: String, vNotification_Title: String, vNotification_Text: String, vShow_Action_Right_Button_Icon_INT: Int, vShow_Action_Left_Button_Icon_INT: Int, vShow_Large_Icon_Bitmap: Bitmap, vShow_Small_Icon_Int: Int) {
         // new --- start
         try {
