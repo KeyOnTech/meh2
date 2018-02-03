@@ -48,7 +48,9 @@ import android.support.v4.view.ViewPager
 import com.example.jonesq.meh3.utils.KEY_PHOTO_URI
 import android.R.attr.smallIcon
 import android.graphics.drawable.Drawable
+import android.media.RingtoneManager
 import android.os.Handler
+import android.os.HandlerThread
 import android.os.Looper
 import android.support.v4.app.NotificationCompat
 
@@ -77,6 +79,21 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
      * Move constants to Strings Resource file
      *
      *
+     * viewPager tab icons
+     * https://stackoverflow.com/questions/38459309/how-do-you-create-an-android-view-pager-with-a-dots-indicator
+     *
+     * picasso notifications
+     * https://futurestud.io/tutorials/picasso-callbacks-remoteviews-and-notifications
+     *
+     * store last call to meh.com in app preferences then when the app opens use that as the mockdata
+     *
+     * when the notification call is made store that in app preferencse as responseJSON for the mockdata
+     *
+     * this way without internet it still works
+     *
+     * add a refresh button to the nav drawer
+     *
+     *
      */
 
 
@@ -95,6 +112,7 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     /*** this is used for the notification large image */
     var mehNotificationLargePhoto = ""
+    var NOTIFICATION_ID = 333
 
 
 //    var mehPoll = ModelMehPoll.Companion
@@ -168,6 +186,9 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
             ///////
+/*
+
+
 //            val pShow_Large_Icon_Bitmap
 
             Picasso.with(this)
@@ -224,60 +245,60 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
 
-/*
-            Handler uiHandler = new Handler(Looper.getMainLooper())
-            uiHandler.post(() -> {
-                val pShow_Large_Icon_Bitmap = Picasso
-                        .with(this)
-                        .load(mehNotificationLargePhoto)
-        //                                                .load( R.drawable.logo_32_x_32_2 )
-        ////                    .load(pMeh_API_v1.getDeal_Details().getmPhotos().get(0))
-        ////                    .load(R.drawable.logo_32_x_32_2)
-                        .resize(32, 32)
-                        .placeholder(R.drawable.logo_32_x_32_2)
-                        .error(R.drawable.logo_32_x_32_2)
-                        .get()
-
-//            Picasso.with(this)
+//
+//            Handler uiHandler = new Handler(Looper.getMainLooper())
+//            uiHandler.post(() -> {
+//                val pShow_Large_Icon_Bitmap = Picasso
+//                        .with(this)
 //                        .load(mehNotificationLargePhoto)
-//                        .into(remoteViews, viewId, new int[]{widgetId});
+//        //                                                .load( R.drawable.logo_32_x_32_2 )
+//        ////                    .load(pMeh_API_v1.getDeal_Details().getmPhotos().get(0))
+//        ////                    .load(R.drawable.logo_32_x_32_2)
+//                        .resize(32, 32)
+//                        .placeholder(R.drawable.logo_32_x_32_2)
+//                        .error(R.drawable.logo_32_x_32_2)
+//                        .get()
+//
+////            Picasso.with(this)
+////                        .load(mehNotificationLargePhoto)
+////                        .into(remoteViews, viewId, new int[]{widgetId});
+//
+//            });
+//
+//            Thread {
+//
+//                println("Thread start ")
+//                    val manager = this.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+//
+//                    val builder = NotificationCompat.Builder(this)
+//                            .setContentTitle(title)
+//                            .setContentText("abc")
+//                            .setSmallIcon(smallIcon)
+//                            .setContentIntent(
+//                                    PendingIntent.getActivity(
+//                                            this,
+//                                            0,
+//                                            Intent(this, ActivityMain::class.java),
+//                                            PendingIntent.FLAG_UPDATE_CURRENT)
+//                            )
+//                            //here comes to load image by Picasso
+//                            //it should be inside try block
+//                            .setLargeIcon(Picasso.with(this).load("URL_TO_LOAD_LARGE_ICON").get())
+//                            //BigPicture Style
+//                            .setStyle(NotificationCompat.BigPictureStyle()
+//                                    //This one is same as large icon but it wont show when its expanded that's why we again setting
+//                                    .bigLargeIcon(Picasso.with(this).load(mehNotificationLargePhoto).get())
+//                                    //This is Big Banner image
+//                                    .bigPicture(Picasso.with(this).load(mehNotificationLargePhoto).get())
+//                                    //When Notification expanded title and content text
+//                                    .setBigContentTitle(title)
+//                                    .setSummaryText("abcDEF")
+//                            )
+//
+//                return@Thread
+//
+//            }.run()
 
-            });
-
-            Thread {
-
-                println("Thread start ")
-                    val manager = this.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
-                    val builder = NotificationCompat.Builder(this)
-                            .setContentTitle(title)
-                            .setContentText("abc")
-                            .setSmallIcon(smallIcon)
-                            .setContentIntent(
-                                    PendingIntent.getActivity(
-                                            this,
-                                            0,
-                                            Intent(this, ActivityMain::class.java),
-                                            PendingIntent.FLAG_UPDATE_CURRENT)
-                            )
-                            //here comes to load image by Picasso
-                            //it should be inside try block
-                            .setLargeIcon(Picasso.with(this).load("URL_TO_LOAD_LARGE_ICON").get())
-                            //BigPicture Style
-                            .setStyle(NotificationCompat.BigPictureStyle()
-                                    //This one is same as large icon but it wont show when its expanded that's why we again setting
-                                    .bigLargeIcon(Picasso.with(this).load(mehNotificationLargePhoto).get())
-                                    //This is Big Banner image
-                                    .bigPicture(Picasso.with(this).load(mehNotificationLargePhoto).get())
-                                    //When Notification expanded title and content text
-                                    .setBigContentTitle(title)
-                                    .setSummaryText("abcDEF")
-                            )
-
-                return@Thread
-
-            }.run()
-*/
             //////////
 
 
@@ -322,7 +343,7 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.notify(0, notification)
 
-
+*/
             // crate notification - end
 
             Snackbar.make(view, "Live data", Snackbar.LENGTH_LONG)
@@ -359,6 +380,10 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 val intent = Intent(baseContext, ActivityAbout::class.java)
                 startActivity(intent)
             }
+            R.id.nav_bar_refresh-> {
+                fetchJSON()
+            }
+
         }
 
         drawer_layout.closeDrawer(GravityCompat.START)
@@ -519,8 +544,210 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             // setup viewPager indicator buttons
             tab_layout_viewpager_indicator_dots_NavDrawer.setupWithViewPager(viewPager_NavDrawer,true)
+
+
+            // display notification
+            createNotification6()
         }
     }
+
+
+
+
+
+
+    private fun createNotification6() {
+        val handlerThread = HandlerThread("aaa")
+        handlerThread.start()
+
+        val handler = Handler(handlerThread.getLooper())
+        handler.post(Runnable {
+            var notificationLargeBitmap  : Bitmap? = null
+            try {
+                notificationLargeBitmap  = Picasso
+                        .with(this)
+                        .load(mehNotificationLargePhoto)
+                        .resize(96,96)
+                        .placeholder(R.mipmap.ic_launcher)
+                        .error(R.mipmap.ic_launcher)
+                        .get()
+
+
+
+
+                showNotification(this,"ticker text", "title title", "text text", R.mipmap.ic_launcher,R.mipmap.ic_launcher, notificationLargeBitmap,R.mipmap.ic_launcher)
+
+
+/* works start
+                // setup the values for the notification  --- start
+                val pTickerBarText = "Meh.com Update - pTickerBarText "
+                val pContentTitle = "pContentTitle "
+                val pContentText = "pMeh_API_v1.getDeal_Details().getmItems().get(0).getmCondition()" +
+                        " - " + "NumberFormat.getCurrencyInstance().format(pMeh_API_v1.getDeal_Details().getmItems().get(0).getmPrice()))"
+
+
+                val intent = Intent()
+                val pendingIntent = PendingIntent.getActivity(this@MainActivity, 0, intent, 0)
+                val notification1 = Notification.Builder(this@MainActivity)
+                        .setTicker(pTickerBarText)
+                        .setContentTitle(pContentTitle)
+                        .setContentText(pContentText)
+
+                        .setSmallIcon(R.mipmap.ic_launcher)
+                .setLargeIcon(notificationLargeBitmap )
+                        .setContentIntent(pendingIntent).notification
+
+                notification1.flags = Notification.FLAG_AUTO_CANCEL
+                val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                notificationManager.notify(0, notification1)
+ works end  */
+
+
+
+            } catch (e: IOException) {
+                e.printStackTrace()
+            } finally {
+                if (notificationLargeBitmap != null) {
+                    //do whatever you wanna do with the picture.
+                    //for me it was using my own cache
+//                    imageCaching.cacheImage(imageId, bitmap)
+                }
+            }
+        })
+    }
+
+
+
+
+
+
+
+
+
+
+    //    public static void showNotification( Context vContext , int vCount , String vNotification_TickerTitle , String vNotification_Title , String vNotification_Message , int vShow_Small_Icon_INT , int vShow_Small_Action_Icon_INT   )
+    fun showNotification(vContext: Context, vNotification_TickerText: String, vNotification_Title: String, vNotification_Text: String, vShow_Action_Right_Button_Icon_INT: Int, vShow_Action_Left_Button_Icon_INT: Int, vShow_Large_Icon_Bitmap: Bitmap, vShow_Small_Icon_Int: Int) {
+        // new --- start
+        try {
+            // Gets a PendingIntent containing the entire back stack
+            // define what activity should appear when the user clicks the notification
+            //        Intent vIntentShowActivity = new Intent( vContext , Controller_Activity_MainActivity.class);
+            val vIntentShowActivity = Intent()
+            // buy --- start
+//            val vIntentShowActivity2 = Meh_API_v1.buyThisItem(vContext)
+//            val vIntentShowActivity2 = Intent(vContext, this@MainActivity)
+            val vIntentShowActivity2 = Intent()
+            // buy --- end
+            // Android Wear --- start
+//            val pIntent_AndroidWear = Intent(vContext, this@MainActivity)
+            val pIntent_AndroidWear = Intent()
+            // android wear --- end
+
+
+            // Because clicking the notification opens a new ("special") activity, there's
+            // no need to create an artificial back stack.
+            val vPendingIntent = PendingIntent.getActivity(
+                    vContext,
+                    0,
+                    vIntentShowActivity,
+                    PendingIntent.FLAG_UPDATE_CURRENT
+            )
+
+            // buy --- start
+            val vPendingIntent2 = PendingIntent.getActivity(
+                    vContext,
+                    0,
+                    vIntentShowActivity2,
+                    PendingIntent.FLAG_UPDATE_CURRENT
+            )
+            // buy --- end
+
+            // android wear --- start
+            val pPendingIntent_AndroidWear = PendingIntent.getActivity(
+                    vContext, 0, pIntent_AndroidWear, PendingIntent.FLAG_UPDATE_CURRENT
+            )
+            // android wear --- end
+
+            // android wear -- start
+            val vNotification_Action = NotificationCompat.Action.Builder(
+                    vShow_Small_Icon_Int, vNotification_Title, pPendingIntent_AndroidWear
+            ).build()
+            // android wear --- end
+
+            // Play sound --- start
+            val pNotification_Sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+            // Play sound --- end
+
+
+            //  BigPictureStyle --- start
+            val pNotification_Big_Picture_Style = NotificationCompat.BigPictureStyle()
+            //                    if (expandedIconUrl != null) {
+            //                        pNotification_Big_Picture_Style.bigLargeIcon(Picasso.with(context).load(expandedIconUrl).get());
+            //                    } else if (expandedIconResId > 0) {
+            //                        pNotification_Big_Picture_Style.bigLargeIcon(BitmapFactory.decodeResource(context.getResources(), expandedIconResId));
+            //                    } // if
+            pNotification_Big_Picture_Style.bigLargeIcon(vShow_Large_Icon_Bitmap)
+            pNotification_Big_Picture_Style.bigPicture(vShow_Large_Icon_Bitmap)
+            //  BigPictureStyle --- end
+
+
+            val pNotification_Build = NotificationCompat.Builder(vContext)
+                    .setTicker(vNotification_TickerText)  //  vResources.getString( R.string.polling_new_item_title ) )
+                    .setContentTitle(vNotification_Title) // vResources.getString( R.string.polling_new_item_title ) )
+                    .setContentText(vNotification_Text)
+                    .setLargeIcon(vShow_Large_Icon_Bitmap) // pPicasso_Image )
+                    .setSmallIcon(vShow_Small_Icon_Int) //   R.drawable.logo_32_x_32_2)
+                    .setContentIntent(vPendingIntent)
+
+                    // VIBRATE ETC --- start
+                    // ADD PERMISSION TO MANIFEST
+                    //      <!-- Used for START Polling Service on StartUp USE -->
+                    //      < uses - permission android:name="android.permission.VIBRATE" />
+                    .setDefaults(Notification.DEFAULT_ALL)
+                    //                    .setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE)
+                    // VIBRATE ETC --- END
+
+                    // Play sound --- start
+                    //            https://www.youtube.com/watch?v=WZX4ovWDzpI
+                    .setSound(pNotification_Sound)
+                    // Play sound --- end
+
+                    //  BigPictureStyle --- start
+                    .setStyle(pNotification_Big_Picture_Style)
+                    //  BigPictureStyle --- end
+
+                    // Android Wear --- start
+                    .extend(
+                            NotificationCompat.WearableExtender()
+                                    .addAction(vNotification_Action)
+                    )
+                    // Android Wear --- end
+
+                    .setAutoCancel(true)
+
+                    .setStyle(pNotification_Big_Picture_Style)
+                    .setDefaults(Notification.DEFAULT_ALL)
+                    .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+
+                    .addAction(
+                            vShow_Action_Left_Button_Icon_INT, "Details", vPendingIntent)
+
+                    .addAction(
+                            vShow_Action_Right_Button_Icon_INT, "Buy", vPendingIntent2) // buy
+
+            val vNotification_Show = pNotification_Build.build()
+
+            val vNotificationManager = vContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+            vNotificationManager.notify(NOTIFICATION_ID, vNotification_Show)
+
+        } catch (e: Exception) {
+            println("showNotification - error")
+        }
+
+    } // showNotification
+
+
 
 
 
