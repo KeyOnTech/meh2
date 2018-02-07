@@ -37,8 +37,6 @@ import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import com.example.jonesq.meh3.Models.*
-import com.example.jonesq.meh3.utils.KEY_MEH_RESPONSE_STRING
-import com.example.jonesq.meh3.utils.KEY_MEH_VIDEO_LINK
 import com.keyontech.meh3.Activities.ActivityAbout
 import com.keyontech.meh3.Activities.ActivityMehPoll
 import com.keyontech.meh3.Activities.ActivityMehVideo
@@ -56,6 +54,7 @@ import android.os.HandlerThread
 //import android.os.Looper
 import android.support.v4.app.NotificationCompat
 import android.widget.Toast
+import com.example.jonesq.meh3.utils.*
 import com.keyontech.meh3.services.BroadcastReceiver_Notifications_Service_Startup
 import com.keyontech.meh3.services.IntentService_Notifications_Poll_Service
 
@@ -121,7 +120,7 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
     /*** Broadcast Receiver  */
-    lateinit var receiver : BroadcastReceiver
+//    lateinit var receiver : BroadcastReceiver
     // make broadcastreceiver work on api 26
     lateinit var broadcastReceiverContext : Context
 
@@ -134,8 +133,8 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 //    var mehPoll = ModelMehPoll()
 
 
-//    val modelMeh = object
-//    val pBitmap_Map = BitmapFactory.decodeResource(resources, R.drawable.logo_512_x_512_2)
+//    var modelMeh = object
+//    var pBitmap_Map = BitmapFactory.decodeResource(resources, R.drawable.logo_512_x_512_2)
 
 
     // define View Pager
@@ -160,7 +159,7 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
 // setup Nav Drawer
-        val toggle = ActionBarDrawerToggle(
+        var toggle = ActionBarDrawerToggle(
                 this, drawer_layout, toolbarNavDrawer, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
@@ -182,11 +181,12 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
 
+// get url from file
 // fetch data
-        val gson = GsonBuilder().create()
-        val urlFile = loadJsonFromFile("url.json", this)
-        val jsonOutput = gson.fromJson( urlFile , JSONUrL::class.java )
-        jsonURL = jsonOutput .url
+        var gson = GsonBuilder().create()
+        var urlFile = loadJsonFromFile("url.json", this)
+        var jsonOutput = gson.fromJson( urlFile , JSONUrL::class.java )
+        jsonURL = jsonOutput.url
 
         setTitle("")
 //        fetchJSON()
@@ -221,17 +221,17 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // Handle navigation view item clicks here.
         when (item.itemId) {
             R.id.nav_bar_poll -> {
-                val intent = Intent(baseContext, ActivityMehPoll::class.java)
+                var intent = Intent(baseContext, ActivityMehPoll::class.java)
                 intent.putExtra(KEY_MEH_RESPONSE_STRING, jsonResponse)
                 startActivity(intent)
             }
             R.id.nav_bar_video-> {
-                val intent = Intent(baseContext, ActivityMehVideo::class.java)
+                var intent = Intent(baseContext, ActivityMehVideo::class.java)
                 intent.putExtra(KEY_MEH_VIDEO_LINK, mehVideoLink)
                 startActivity(intent)
             }
             R.id.nav_bar_about-> {
-                val intent = Intent(baseContext, ActivityAbout::class.java)
+                var intent = Intent(baseContext, ActivityAbout::class.java)
                 startActivity(intent)
             }
             R.id.nav_bar_refresh-> {
@@ -258,8 +258,8 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         println("ActiviyMain - onCreate - attempting to fetch JSON")
         println("url " + jsonURL)
 
-        val request = Request.Builder().url( jsonURL ).build()
-        val client = OkHttpClient()
+        var request = Request.Builder().url( jsonURL ).build()
+        var client = OkHttpClient()
 
         /*** had to enqueue because you cannot execute in the main method needs a thread to do so */
 //        client.newCall( request ).execute()
@@ -267,7 +267,7 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             override fun onResponse(call: Call?, response: Response?) {
                 println("111aaa LOAD : live data")
 
-                val responseBody = response?.body()?.string()
+                var responseBody = response?.body()?.string()
                 println( "111bbb  fetchJSON - onResponse - body - " + responseBody )
                 jsonResponse = responseBody.toString()
 
@@ -303,7 +303,7 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         try {
             println("LOAD :  MOCK data")
-            val mockData = loadJsonFromFile("sample1.json", this)
+            var mockData = loadJsonFromFile("sample1.json", this)
             jsonResponse = mockData
 
             processReturn(jsonResponse)
@@ -314,43 +314,11 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     } //
 
 
-    private fun loadJsonFromFile(filename: String, context: Context): String {
-        var json = ""
 
-        try {
-            val input = context.assets.open(filename)
-            val size = input.available()
-            val buffer = ByteArray(size)
-            input.read(buffer)
-            input.close()
-            json = buffer.toString(Charsets.UTF_8)
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-
-        return json
-    }
-
-    fun priceLowtoHigh(modelMehDeal: ModelMehDeal): String {
-        var vMin = modelMehDeal.items[0].price.toInt()
-        var vMax = modelMehDeal.items[0].price.toInt()
-
-        for (i in modelMehDeal.items) {
-            if (vMin > i.price) vMin = i.price.toInt()
-            if (vMax < i.price) vMax = i.price.toInt()
-//            print(" \r\n 44401: price " + i.price.toInt() )
-        }
-
-        if (vMin != vMax) {
-            return "$$vMin - $$vMax"
-        }else{
-            return "$$vMax"
-        }
-    }
 
     fun processReturn(response: String){
-        val gson = GsonBuilder().create()
-        val modelMeh = gson.fromJson( response , ModelMeh::class.java )
+        var gson = GsonBuilder().create()
+        var modelMeh = gson.fromJson( response , ModelMeh::class.java )
 
 
         println( "222bbb  modelMeh.deal = " + modelMeh.deal )
@@ -375,9 +343,15 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         println( "444ccc  modelMeh.video topic.url = " + modelMeh.video.topic.url)
 
 
+
+
+
+
+
+
+        // setup interface
         runOnUiThread{
-            // setup interface
-//          setTitle(priceLowtoHigh(modelMeh.deal))
+//          setTitle(priceLowtoHigh(modelMeh.deal.title))
 
             // set body text
             textView_content_activity_main_card_view_1.text = modelMeh.deal.title
@@ -387,9 +361,6 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             // set video
             mehVideoLink = modelMeh.video.topic.url
-//            println( "444bbb  modelMeh.video title = " + modelMeh.video.title )
-//            println( "444bbb  modelMeh.video startDate = " + modelMeh.video.startDate )
-//            println( "444bbb  modelMeh.video topic = " + modelMeh.video.topic )
 
             // set notification large image
             mehNotificationLargePhoto = modelMeh.deal.photos[0]
@@ -400,13 +371,6 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             // setup viewPager indicator buttons
             tab_layout_viewpager_indicator_dots_NavDrawer.setupWithViewPager(viewPager_NavDrawer,true)
-
-
-//            textView_content_activity_main_card_view_1.text = modelMeh.deal.title
-//            textView_content_activity_main_card_view_4.text = priceLowtoHigh(modelMeh.deal)
-//            textView_content_activity_main_card_view_2.text = modelMeh.deal.features
-//            textView_content_activity_main_card_view_3.text = modelMeh.deal.specifications
-
 
             // display notification
             createNotification(
@@ -429,10 +393,10 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
     private fun createNotification( pContext: Context, tickerText: String = "", notificationTitle: String = "", notificationText: String, showactionRightButtonIcon: Int, showactionLeftButtonIcon: Int, largebitmapImageURL : String, smallIcon : Int) {
-        val handlerThread = HandlerThread("aaa")
+        var handlerThread = HandlerThread("aaa")
         handlerThread.start()
 
-        val handler = Handler(handlerThread.getLooper())
+        var handler = Handler(handlerThread.getLooper())
         handler.post(Runnable {
             var notificationLargeBitmap: Bitmap? = null
             try {
@@ -475,130 +439,6 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
 
-    fun showNotification(vContext: Context, vNotification_TickerText: String, vNotification_Title: String, vNotification_Text: String, vShow_Action_Right_Button_Icon_INT: Int, vShow_Action_Left_Button_Icon_INT: Int, vShow_Large_Icon_Bitmap: Bitmap, vShow_Small_Icon_Int: Int) {
-        // new --- start
-        try {
-            // Gets a PendingIntent containing the entire back stack
-            // define what activity should appear when the user clicks the notification
-            //        Intent vIntentShowActivity = new Intent( vContext , Controller_Activity_MainActivity.class);
-            val vIntentShowActivity = Intent()
-            // buy --- start
-//            val vIntentShowActivity2 = Meh_API_v1.buyThisItem(vContext)
-//            val vIntentShowActivity2 = Intent(vContext, this@MainActivity)
-            val vIntentShowActivity2 = Intent()
-            // buy --- end
-            // Android Wear --- start
-//            val pIntent_AndroidWear = Intent(vContext, this@MainActivity)
-            val pIntent_AndroidWear = Intent()
-            // android wear --- end
-
-
-            // Because clicking the notification opens a new ("special") activity, there's
-            // no need to create an artificial back stack.
-            val vPendingIntent = PendingIntent.getActivity(
-                    vContext,
-                    0,
-                    vIntentShowActivity,
-                    PendingIntent.FLAG_UPDATE_CURRENT
-            )
-
-            // buy --- start
-            val vPendingIntent2 = PendingIntent.getActivity(
-                    vContext,
-                    0,
-                    vIntentShowActivity2,
-                    PendingIntent.FLAG_UPDATE_CURRENT
-            )
-            // buy --- end
-
-            // android wear --- start
-            val pPendingIntent_AndroidWear = PendingIntent.getActivity(
-                    vContext, 0, pIntent_AndroidWear, PendingIntent.FLAG_UPDATE_CURRENT
-            )
-            // android wear --- end
-
-            // android wear -- start
-            val vNotification_Action = NotificationCompat.Action.Builder(
-                    vShow_Small_Icon_Int, vNotification_Title, pPendingIntent_AndroidWear
-            ).build()
-            // android wear --- end
-
-            // Play sound --- start
-            val pNotification_Sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-            // Play sound --- end
-
-
-            //  BigPictureStyle --- start
-            val pNotification_Big_Picture_Style = NotificationCompat.BigPictureStyle()
-            //                    if (expandedIconUrl != null) {
-            //                        pNotification_Big_Picture_Style.bigLargeIcon(Picasso.with(context).load(expandedIconUrl).get());
-            //                    } else if (expandedIconResId > 0) {
-            //                        pNotification_Big_Picture_Style.bigLargeIcon(BitmapFactory.decodeResource(context.getResources(), expandedIconResId));
-            //                    } // if
-            pNotification_Big_Picture_Style.bigLargeIcon(vShow_Large_Icon_Bitmap)
-            pNotification_Big_Picture_Style.bigPicture(vShow_Large_Icon_Bitmap)
-            //  BigPictureStyle --- end
-
-
-            val pNotification_Build = NotificationCompat.Builder(vContext)
-                    .setTicker(vNotification_TickerText)  //  vResources.getString( R.string.polling_new_item_title ) )
-                    .setContentTitle(vNotification_Title) // vResources.getString( R.string.polling_new_item_title ) )
-                    .setContentText(vNotification_Text)
-                    .setLargeIcon(vShow_Large_Icon_Bitmap) // pPicasso_Image )
-                    .setSmallIcon(vShow_Small_Icon_Int) //   R.drawable.logo_32_x_32_2)
-                    .setContentIntent(vPendingIntent)
-
-                    // VIBRATE ETC --- start
-                    // ADD PERMISSION TO MANIFEST
-                    //      <!-- Used for START Polling Service on StartUp USE -->
-                    //      < uses - permission android:name="android.permission.VIBRATE" />
-                    .setDefaults(Notification.DEFAULT_ALL)
-                    //                    .setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE)
-                    // VIBRATE ETC --- END
-
-                    // Play sound --- start
-                    //            https://www.youtube.com/watch?v=WZX4ovWDzpI
-                    .setSound(pNotification_Sound)
-                    // Play sound --- end
-
-                    //  BigPictureStyle --- start
-                    .setStyle(pNotification_Big_Picture_Style)
-                    //  BigPictureStyle --- end
-
-                    // Android Wear --- start
-                    .extend(
-                            NotificationCompat.WearableExtender()
-                                    .addAction(vNotification_Action)
-                    )
-                    // Android Wear --- end
-
-                    .setAutoCancel(true)
-
-                    .setStyle(pNotification_Big_Picture_Style)
-                    .setDefaults(Notification.DEFAULT_ALL)
-                    .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-
-                    .addAction(
-                            vShow_Action_Left_Button_Icon_INT, "Details", vPendingIntent)
-
-                    .addAction(
-                            vShow_Action_Right_Button_Icon_INT, "Buy", vPendingIntent2) // buy
-
-            val vNotification_Show = pNotification_Build.build()
-
-            val vNotificationManager = vContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
-            vNotificationManager.notify(NOTIFICATION_ID, vNotification_Show)
-
-        } catch (e: Exception) {
-            println("showNotification - error")
-        }
-
-    } // showNotification
-
-
-
-
 
 
 
@@ -619,27 +459,27 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
 
-    // https://www.youtube.com/watch?v=nDzwiacP4aQ
-    fun broadcastReceiver() {
-        val filter = IntentFilter()
-        filter.addAction(Intent.ACTION_BOOT_COMPLETED)
-//        filter.addAction(Intent.Actph)
-//        filter.addAction(Intent.ACTION_POWER_CONNECTED)
-//        filter.addAction(Intent.ACTION_POWER_DISCONNECTED)
-
-        receiver = object : BroadcastReceiver() {
-            override fun onReceive(p0: Context?, p1: Intent?) {
-                Toast.makeText(p0, "fun broadcastReceiver " + p1?.action, Toast.LENGTH_SHORT).show()
-            }
-        }
-
-        registerReceiver(receiver,filter)
-    }
-
-    override fun onDestroy() {
-        unregisterReceiver(receiver)
-        super.onDestroy()
-    }
+//    // https://www.youtube.com/watch?v=nDzwiacP4aQ
+//    fun broadcastReceiver() {
+//        var filter = IntentFilter()
+//        filter.addAction(Intent.ACTION_BOOT_COMPLETED)
+////        filter.addAction(Intent.Actph)
+////        filter.addAction(Intent.ACTION_POWER_CONNECTED)
+////        filter.addAction(Intent.ACTION_POWER_DISCONNECTED)
+//
+//        receiver = object : BroadcastReceiver() {
+//            override fun onReceive(p0: Context?, p1: Intent?) {
+//                Toast.makeText(p0, "fun broadcastReceiver " + p1?.action, Toast.LENGTH_SHORT).show()
+//            }
+//        }
+//
+//        registerReceiver(receiver,filter)
+//    }
+//
+//    override fun onDestroy() {
+//        unregisterReceiver(receiver)
+//        super.onDestroy()
+//    }
 
 
 
@@ -652,7 +492,7 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     fun setupAlarm_To_Auto_Check_EveryNight() {
         println("333  set alarm to check every night stared ")
 
-        val shouldStartAlarm = true
+        var shouldStartAlarm = true
 
         //            printToToast( this , TAG , "Should I start the polling notification True or False??? " + shouldStartAlarm ); ;
         IntentService_Notifications_Poll_Service.setServiceAlarm(this , shouldStartAlarm)  // .set.setServiceAlarm(this, shouldStartAlarm)
