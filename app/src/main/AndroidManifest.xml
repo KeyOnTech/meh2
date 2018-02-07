@@ -13,16 +13,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-
-
-        <!--Main Activity-->
+        <!-- Main Activity -->
         <activity
             android:name=".ActivityMain"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar"
-
             android:launchMode="singleTop"
-            >
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -30,58 +26,90 @@
             </intent-filter>
         </activity>
 
-
-
-        <!--Meh video screen-->
+        <!-- Meh video screen -->
         <activity
             android:name=".Activities.ActivityMehVideo"
             android:label="Meh Video"
-            android:launchMode="singleTop"
-            >
-            <!--use this to auto add the back button on top left-->
+            android:launchMode="singleTop">
+
+            <!-- use this to auto add the back button on top left -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ActivityMain"
-                />
+                android:value=".ActivityMain" />
         </activity>
 
-
-
-        <!--Meh Poll screen-->
+        <!-- Meh Poll screen -->
         <activity
             android:name=".Activities.ActivityMehPoll"
             android:label="Meh Poll"
-            android:launchMode="singleTop"
-            >
-            <!--use this to auto add the back button on top left-->
+            android:launchMode="singleTop">
+
+            <!-- use this to auto add the back button on top left -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ActivityMain"
-                />
+                android:value=".ActivityMain" />
         </activity>
 
-
-
-
-        <!--About screen-->
+        <!-- About screen -->
         <activity
             android:name=".Activities.ActivityAbout"
             android:label="About"
-            android:launchMode="singleTop"
-            >
-            <!--use this to auto add the back button on top left-->
+            android:launchMode="singleTop">
+
+            <!-- use this to auto add the back button on top left -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ActivityMain"
-                />
+                android:value=".ActivityMain" />
         </activity>
 
 
 
+
+
+
+
+
+
+
+
+
+
+        <!--&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;-->
 
         <!-- Broadcast receiver for notification -->
         <receiver android:name=".notification.AlertReceiver" />
 
+
+        <!--&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;-->
+
+
+        <!-- Used by Polling Service - start -->
+        <!-- Used for Polling Service Alarm Service Auto Check API at 11pm -->
+        <!--<service android:name=".IntentService1" />-->
+        <receiver
+            android:name=".services.BroadcastReceiver_Notifications_Service_Startup"
+            android:enabled="true"
+            android:exported="true"
+            >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+
+        <!-- Used for Polling Service StartUp on Boot automatically USE -->
+        <!--<receiver android:name=".BroadcastReceiver_Notifications_Service_Startup" >-->
+        <!--<intent-filter>-->
+        <!--<action android:name="android.intent.action.BOOT_COMPLETED" />-->
+        <!--</intent-filter>-->
+        <!--</receiver>-->
+        <service
+            android:name=".services.IntentService_Notifications_Poll_Service"
+            android:exported="false"
+            />
+        <!-- Used by Polling Service - end -->
+
+        <!--&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;-->
 
 
     </application>

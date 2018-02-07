@@ -22,7 +22,7 @@ import org.json.JSONException
 import java.io.IOException
 import com.squareup.picasso.Picasso
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
+//import android.graphics.BitmapFactory
 import com.example.jonesq.meh3.Models.ModelMehDeal
 
 
@@ -42,17 +42,22 @@ import com.example.jonesq.meh3.utils.KEY_MEH_VIDEO_LINK
 import com.keyontech.meh3.Activities.ActivityAbout
 import com.keyontech.meh3.Activities.ActivityMehPoll
 import com.keyontech.meh3.Activities.ActivityMehVideo
-import android.support.design.widget.TabLayout
-import android.support.v4.view.PagerAdapter
-import android.support.v4.view.ViewPager
-import com.example.jonesq.meh3.utils.KEY_PHOTO_URI
-import android.R.attr.smallIcon
-import android.graphics.drawable.Drawable
+//import android.support.design.widget.TabLayout
+//import android.support.v4.view.PagerAdapter
+//import android.support.v4.view.ViewPager
+//import com.example.jonesq.meh3.utils.KEY_PHOTO_URI
+//import android.R.attr.smallIcon
+import android.content.BroadcastReceiver
+import android.content.IntentFilter
+//import android.graphics.drawable.Drawable
 import android.media.RingtoneManager
 import android.os.Handler
 import android.os.HandlerThread
-import android.os.Looper
+//import android.os.Looper
 import android.support.v4.app.NotificationCompat
+import android.widget.Toast
+import com.keyontech.meh3.services.BroadcastReceiver_Notifications_Service_Startup
+import com.keyontech.meh3.services.IntentService_Notifications_Poll_Service
 
 
 //import android.support.v7.app.AppCompatActivity
@@ -115,7 +120,15 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     var NOTIFICATION_ID = 333
 
 
-//    var mehPoll = ModelMehPoll.Companion
+    /*** Broadcast Receiver  */
+    lateinit var receiver : BroadcastReceiver
+    // make broadcastreceiver work on api 26
+    lateinit var broadcastReceiverContext : Context
+
+
+
+//    lateinit var mehPoll = ModelMehPoll
+
 //    var mehPoll = {}
 //    var mehPoll: ModelMehPoll
 //    var mehPoll = ModelMehPoll()
@@ -155,6 +168,17 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         nav_view.setNavigationItemSelectedListener(this)
 
 
+
+
+
+
+// turn on auto check every night --- start
+        if (!IntentService_Notifications_Poll_Service.isServiceAlarmOn(this)) {
+            println("222  setupAlarm_To_Auto_Check_EveryNight")
+            setupAlarm_To_Auto_Check_EveryNight()
+        } // if
+// turn on auto check every night --- end
+//        setupAlarm_To_Auto_Check_EveryNight()
 
 
 
@@ -241,10 +265,10 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 //        client.newCall( request ).execute()
         client.newCall( request ).enqueue(object: Callback {
             override fun onResponse(call: Call?, response: Response?) {
-                println("LOAD : live data")
+                println("111aaa LOAD : live data")
 
                 val responseBody = response?.body()?.string()
-                println( "111  fetchJSON - onResponse - body - " + responseBody )
+                println( "111bbb  fetchJSON - onResponse - body - " + responseBody )
                 jsonResponse = responseBody.toString()
 
                 processReturn(jsonResponse)
@@ -318,9 +342,9 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
 
         if (vMin != vMax) {
-            return "$ $vMin - $ $vMax"
+            return "$$vMin - $$vMax"
         }else{
-            return "$ $vMax"
+            return "$$vMax"
         }
     }
 
@@ -332,6 +356,8 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         println( "222bbb  modelMeh.deal = " + modelMeh.deal )
         println( "222bbb  modelMeh.deal title = " + modelMeh.deal.title )
 
+
+//        mehPoll = modelMeh.poll
 
         println( "333aaa  modelMeh.poll = " + modelMeh.poll)
         println( "333bbb  modelMeh.poll title = " + modelMeh.poll.title )
@@ -376,8 +402,23 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             tab_layout_viewpager_indicator_dots_NavDrawer.setupWithViewPager(viewPager_NavDrawer,true)
 
 
+//            textView_content_activity_main_card_view_1.text = modelMeh.deal.title
+//            textView_content_activity_main_card_view_4.text = priceLowtoHigh(modelMeh.deal)
+//            textView_content_activity_main_card_view_2.text = modelMeh.deal.features
+//            textView_content_activity_main_card_view_3.text = modelMeh.deal.specifications
+
+
             // display notification
-            createNotification6()
+            createNotification(
+                this
+                ,"Meh"
+                ,modelMeh.deal.title
+                ,priceLowtoHigh(modelMeh.deal)
+                ,R.drawable.logo_32_x_32_2
+                ,R.drawable.logo_32_x_32_2
+                ,mehNotificationLargePhoto
+                ,R.drawable.logo_32_x_32_2
+            )
         }
     }
 
@@ -386,23 +427,33 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
 
-    private fun createNotification6() {
+
+    private fun createNotification( pContext: Context, tickerText: String = "", notificationTitle: String = "", notificationText: String, showactionRightButtonIcon: Int, showactionLeftButtonIcon: Int, largebitmapImageURL : String, smallIcon : Int) {
         val handlerThread = HandlerThread("aaa")
         handlerThread.start()
 
         val handler = Handler(handlerThread.getLooper())
         handler.post(Runnable {
-            var notificationLargeBitmap  : Bitmap? = null
+            var notificationLargeBitmap: Bitmap? = null
             try {
                 notificationLargeBitmap  = Picasso
-                        .with(this)
-                        .load(mehNotificationLargePhoto)
+                        .with(pContext)
+                        .load(largebitmapImageURL)
                         .resize(512,512)
                         .placeholder(R.mipmap.ic_launcher)
                         .error(R.mipmap.ic_launcher)
                         .get()
 
-                showNotification(this,"ticker text", "title title", "text text", R.mipmap.ic_launcher,R.mipmap.ic_launcher, notificationLargeBitmap,R.mipmap.ic_launcher)
+                showNotification(
+                        pContext
+                        ,tickerText
+                        ,notificationTitle
+                        ,notificationText
+                        ,showactionRightButtonIcon
+                        ,showactionLeftButtonIcon
+                        ,notificationLargeBitmap
+                        ,smallIcon
+                )
             } catch (e: IOException) {
                 e.printStackTrace()
             } finally {
@@ -544,6 +595,72 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
 
     } // showNotification
+
+
+
+
+
+
+
+
+
+
+    ///////// test -- start
+
+    fun broadcastReceiver2() {
+        // make broadcastreceiver work on api 26
+        broadcastReceiverContext = this
+        sendBroadcast(Intent( broadcastReceiverContext , BroadcastReceiver_Notifications_Service_Startup::class.java) )
+//        sendBroadcast(Intent("ManifestMyReceiver") )
+    }
+
+
+
+
+
+
+    // https://www.youtube.com/watch?v=nDzwiacP4aQ
+    fun broadcastReceiver() {
+        val filter = IntentFilter()
+        filter.addAction(Intent.ACTION_BOOT_COMPLETED)
+//        filter.addAction(Intent.Actph)
+//        filter.addAction(Intent.ACTION_POWER_CONNECTED)
+//        filter.addAction(Intent.ACTION_POWER_DISCONNECTED)
+
+        receiver = object : BroadcastReceiver() {
+            override fun onReceive(p0: Context?, p1: Intent?) {
+                Toast.makeText(p0, "fun broadcastReceiver " + p1?.action, Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        registerReceiver(receiver,filter)
+    }
+
+    override fun onDestroy() {
+        unregisterReceiver(receiver)
+        super.onDestroy()
+    }
+
+
+
+
+
+
+
+
+
+    fun setupAlarm_To_Auto_Check_EveryNight() {
+        println("333  set alarm to check every night stared ")
+
+        val shouldStartAlarm = true
+
+        //            printToToast( this , TAG , "Should I start the polling notification True or False??? " + shouldStartAlarm ); ;
+        IntentService_Notifications_Poll_Service.setServiceAlarm(this , shouldStartAlarm)  // .set.setServiceAlarm(this, shouldStartAlarm)
+    } // setPollingNotifications
+
+
+    ///////////// test -- end
+
 
 
 

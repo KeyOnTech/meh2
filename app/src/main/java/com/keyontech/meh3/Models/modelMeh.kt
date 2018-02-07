@@ -54,6 +54,19 @@ class ModelMehPoll (
     , val topic: ModelMehTopic
     , val answers: ArrayList<ModelMehPollAnswer> = arrayListOf<ModelMehPollAnswer>()
 //    , val answers: List<ModelMehPollAnswer>
+
+
+//        companion object {
+//            val id: String
+//            ,
+//            val startDate: String
+//            ,
+//            val title: String
+//            ,
+//            val topic: ModelMehTopic
+//            ,
+//            val answers: ArrayList<ModelMehPollAnswer>
+//        }
 )
 
 class ModelMehPollAnswer(
