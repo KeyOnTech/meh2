@@ -62,16 +62,17 @@
                 android:value=".ActivityMain" />
         </activity>
 
+        <!-- GO TO URL screen -->
+        <activity
+            android:name=".Activities.ActivityGoToSite"
+            android:label="Web Site View"
+            android:launchMode="singleTop">
 
-
-
-
-
-
-
-
-
-
+            <!-- use this to auto add the back button on top left -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ActivityMain" />
+        </activity>
 
 
         <!--&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;-->

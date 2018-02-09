@@ -1,8 +1,5 @@
 package com.keyontech.meh3
 
-import android.app.Notification
-import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -22,16 +19,6 @@ import org.json.JSONException
 import java.io.IOException
 import com.squareup.picasso.Picasso
 import android.graphics.Bitmap
-//import android.graphics.BitmapFactory
-import com.example.jonesq.meh3.Models.ModelMehDeal
-
-
-
-
-
-
-
-
 
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
@@ -40,30 +27,14 @@ import com.example.jonesq.meh3.Models.*
 import com.keyontech.meh3.Activities.ActivityAbout
 import com.keyontech.meh3.Activities.ActivityMehPoll
 import com.keyontech.meh3.Activities.ActivityMehVideo
-//import android.support.design.widget.TabLayout
-//import android.support.v4.view.PagerAdapter
-//import android.support.v4.view.ViewPager
-//import com.example.jonesq.meh3.utils.KEY_PHOTO_URI
-//import android.R.attr.smallIcon
-import android.content.BroadcastReceiver
-import android.content.IntentFilter
-//import android.graphics.drawable.Drawable
-import android.media.RingtoneManager
 import android.os.Handler
 import android.os.HandlerThread
-//import android.os.Looper
-import android.support.v4.app.NotificationCompat
-import android.widget.Toast
+import android.preference.PreferenceManager
 import com.example.jonesq.meh3.utils.*
+import com.keyontech.meh3.Activities.ActivityGoToSite
 import com.keyontech.meh3.services.BroadcastReceiver_Notifications_Service_Startup
 import com.keyontech.meh3.services.IntentService_Notifications_Poll_Service
-
-
-//import android.support.v7.app.AppCompatActivity
-//import android.view.Menu
-//import android.view.MenuItem
-
-
+import kotlinx.android.synthetic.main.activity_meh_video.*
 
 
 //class ActivityMain : AppCompatActivity() {
@@ -116,26 +87,11 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     /*** this is used for the notification large image */
     var mehNotificationLargePhoto = ""
-    var NOTIFICATION_ID = 333
-
 
     /*** Broadcast Receiver  */
 //    lateinit var receiver : BroadcastReceiver
     // make broadcastreceiver work on api 26
     lateinit var broadcastReceiverContext : Context
-
-
-
-//    lateinit var mehPoll = ModelMehPoll
-
-//    var mehPoll = {}
-//    var mehPoll: ModelMehPoll
-//    var mehPoll = ModelMehPoll()
-
-
-//    var modelMeh = object
-//    var pBitmap_Map = BitmapFactory.decodeResource(resources, R.drawable.logo_512_x_512_2)
-
 
     // define View Pager
     private lateinit var adapterActivityMain: AdapterViewPagerActivityMain
@@ -147,14 +103,14 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
 
-
+    companion object {
+        var siteURL: String = ""
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_v2_nav_drawer)
-//        setContentView(R.layout.activity_main)
-//        setSupportActionBar(NavDrawer)
         setSupportActionBar(toolbarNavDrawer)
 
 
@@ -167,18 +123,11 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         nav_view.setNavigationItemSelectedListener(this)
 
 
-
-
-
-
 // turn on auto check every night --- start
         if (!IntentService_Notifications_Poll_Service.isServiceAlarmOn(this)) {
             println("222  setupAlarm_To_Auto_Check_EveryNight")
             setupAlarm_To_Auto_Check_EveryNight()
         } // if
-// turn on auto check every night --- end
-//        setupAlarm_To_Auto_Check_EveryNight()
-
 
 
 // get url from file
@@ -189,26 +138,35 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         jsonURL = jsonOutput.url
 
         setTitle("")
-//        fetchJSON()
-        mockInterface()
-
+        fetchJSON()
+//        mockInterface()
 
 
 // fab buton Right
         fabbuttonNavDrawer.setOnClickListener { view ->
-            setTitle("")
-            fetchJSON()
+//            setTitle("")
+//            fetchJSON()
 //            mockInterface()
 
-            Snackbar.make(view, "Live data", Snackbar.LENGTH_LONG)
+            val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+            var jsonResponse = sharedPreferences.getString(KEY_MEH_RESPONSE_STRING, "")
+            println("sharedPreferences  :  jsonResponse = " + jsonResponse)
+
+            goToURL(siteURL)
+            Snackbar.make(view, "GoTo site", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show()
         }
     }
 
 
+    fun goToURL(pURL: String) {
+        println("pUrl = " + pURL)
+        var intent = Intent(baseContext, ActivityGoToSite::class.java)
+        intent.putExtra(EXTRA_GO_TO_SITE_URL, pURL)
+        startActivity(intent)
+    }
 
-
-    // nav drawer
+// nav drawer
     override fun onBackPressed() {
         if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
             drawer_layout.closeDrawer(GravityCompat.START)
@@ -255,9 +213,6 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
     fun fetchJSON() {
-        println("ActiviyMain - onCreate - attempting to fetch JSON")
-        println("url " + jsonURL)
-
         var request = Request.Builder().url( jsonURL ).build()
         var client = OkHttpClient()
 
@@ -265,17 +220,35 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 //        client.newCall( request ).execute()
         client.newCall( request ).enqueue(object: Callback {
             override fun onResponse(call: Call?, response: Response?) {
-                println("111aaa LOAD : live data")
+//                println("111aaa LOAD : live data")
 
                 var responseBody = response?.body()?.string()
-                println( "111bbb  fetchJSON - onResponse - body - " + responseBody )
+//                println( "111bbb  fetchJSON - onResponse - body - " + responseBody )
                 jsonResponse = responseBody.toString()
-
                 processReturn(jsonResponse)
             }
 
             override fun onFailure(call: Call?, e: IOException?) {
                 println("fetchJSON - failed to execute request - error: " + e.toString() )
+
+                try {
+                    println("LOAD :  shared prefs data")
+                    // get JSON response from prefs
+                    val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+                    var jsonResponse = sharedPreferences.getString(KEY_MEH_RESPONSE_STRING, "")
+                    println("sharedPreferences  :  jsonResponse " + jsonResponse)
+
+                    if (jsonResponse.isEmpty() ) {
+                        println("LOAD :  MOCK data")
+                        // get JSON response from assets file
+                        var mockData = loadJsonFromFile("sample1.json", applicationContext)
+                        jsonResponse = mockData
+                    }
+
+                    processReturn(jsonResponse)
+                } catch (e: JSONException) {
+                    println("onFailure Catch")
+                } // try
             }
         })
     } //
@@ -362,6 +335,15 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             // set video
             mehVideoLink = modelMeh.video.topic.url
 
+            // set site URL
+            siteURL = "https://www.meh.com/"
+
+            // save string to preferences
+            PreferenceManager.getDefaultSharedPreferences(this)
+                .edit()
+                .putString(KEY_MEH_RESPONSE_STRING, response)
+                .apply()
+
             // set notification large image
             mehNotificationLargePhoto = modelMeh.deal.photos[0]
 
@@ -372,6 +354,7 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             // setup viewPager indicator buttons
             tab_layout_viewpager_indicator_dots_NavDrawer.setupWithViewPager(viewPager_NavDrawer,true)
 
+/***
             // display notification
             createNotification(
                 this
@@ -383,6 +366,7 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 ,mehNotificationLargePhoto
                 ,R.drawable.logo_32_x_32_2
             )
+*/
         }
     }
 
@@ -391,7 +375,7 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
 
-
+/***
     private fun createNotification( pContext: Context, tickerText: String = "", notificationTitle: String = "", notificationText: String, showactionRightButtonIcon: Int, showactionLeftButtonIcon: Int, largebitmapImageURL : String, smallIcon : Int) {
         var handlerThread = HandlerThread("aaa")
         handlerThread.start()
@@ -429,6 +413,7 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         })
     }
+*/
 
 
 
@@ -443,17 +428,14 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
 
-
-
-    ///////// test -- start
-
+/***
     fun broadcastReceiver2() {
         // make broadcastreceiver work on api 26
         broadcastReceiverContext = this
         sendBroadcast(Intent( broadcastReceiverContext , BroadcastReceiver_Notifications_Service_Startup::class.java) )
 //        sendBroadcast(Intent("ManifestMyReceiver") )
     }
-
+*/
 
 
 
@@ -491,21 +473,9 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     fun setupAlarm_To_Auto_Check_EveryNight() {
         println("333  set alarm to check every night stared ")
-
         var shouldStartAlarm = true
-
         //            printToToast( this , TAG , "Should I start the polling notification True or False??? " + shouldStartAlarm ); ;
         IntentService_Notifications_Poll_Service.setServiceAlarm(this , shouldStartAlarm)  // .set.setServiceAlarm(this, shouldStartAlarm)
     } // setPollingNotifications
 
-
-    ///////////// test -- end
-
-
-
-
-
-
-
-
-} // activity
+}

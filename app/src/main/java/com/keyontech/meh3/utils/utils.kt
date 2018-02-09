@@ -24,6 +24,7 @@ import java.io.IOException
     val KEY_PHOTO_URI = "KEY_PHOTO_URI"
     val KEY_MEH_RESPONSE_STRING = "KEY_MEH_RESPONSE_STRING"
     val KEY_MEH_VIDEO_LINK = "KEY_MEH_VIDEO_LINK"
+    val EXTRA_GO_TO_SITE_URL = "EXTRA_GO_TO_SITE_URL"
     val EXTRA_ACTION_SHOW_NOTIFICATION = "com.keyontech.meh3.SHOW_NOTIFICATION"
 
 
@@ -41,6 +42,7 @@ import java.io.IOException
     /*** used by intent service */
     val EXTRA_NOTIFICATION_IS_ALARM_ON = "isAlarmOn"
     val EXTRA_NOTIFICATION_POLL_INTERVAL = 1000 * 15 // 15 seconds
+//    var EXTRA_JSON_RESPONSE = ""
 
 
 

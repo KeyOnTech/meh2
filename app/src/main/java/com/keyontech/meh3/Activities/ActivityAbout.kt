@@ -11,7 +11,6 @@ import com.keyontech.meh3.R
 class ActivityAbout: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        setContentView( R.layout.activity_about)
+        setContentView(R.layout.activity_about)
     }
 }
