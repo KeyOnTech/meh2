@@ -19,6 +19,8 @@ import org.json.JSONException
 import java.io.IOException
 import com.squareup.picasso.Picasso
 import android.graphics.Bitmap
+import android.graphics.Color
+import android.os.Build
 
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
@@ -35,6 +37,7 @@ import com.keyontech.meh3.Activities.ActivityGoToSite
 import com.keyontech.meh3.services.BroadcastReceiver_Notifications_Service_Startup
 import com.keyontech.meh3.services.IntentService_Notifications_Poll_Service
 import kotlinx.android.synthetic.main.activity_meh_video.*
+import kotlinx.android.synthetic.main.nav_drawer_layout.*
 
 
 //class ActivityMain : AppCompatActivity() {
@@ -297,6 +300,9 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         println( "222bbb  modelMeh.deal = " + modelMeh.deal )
         println( "222bbb  modelMeh.deal title = " + modelMeh.deal.title )
 
+        println( "222ccc  modelMeh.deal.theme.accentColor = " + modelMeh.deal.theme.accentColor )
+        println( "222ccc  modelMeh.deal.theme.backgroundColor = " + modelMeh.deal.theme.backgroundColor )
+
 
 //        mehPoll = modelMeh.poll
 
@@ -325,6 +331,32 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // setup interface
         runOnUiThread{
 //          setTitle(priceLowtoHigh(modelMeh.deal.title))
+
+            // set the color scheme  --- START
+            try {
+                if (!(modelMeh.deal.theme.accentColor === "" || modelMeh.deal.theme.accentColor == null) || !(modelMeh.deal.theme.backgroundColor === "" || modelMeh.deal.theme.backgroundColor == null)) {
+                    if (Build.VERSION.SDK_INT >= 21) {
+                        // Lollipop and above colors
+                        window.statusBarColor = Color.parseColor(modelMeh.deal.theme.accentColor)
+                        window.navigationBarColor = Color.parseColor(modelMeh.deal.theme.accentColor)
+                    }
+
+                    try {
+                        toolbarNavDrawer.setBackgroundColor(Color.parseColor(modelMeh.deal.theme.backgroundColor))
+
+                        // set the custom color for the tabs
+                        viewPager_NavDrawer.setBackgroundColor(Color.parseColor(modelMeh.deal.theme.backgroundColor))
+                        //                    mViewPager_Tabs.setSelectedIndicatorColors(Color.parseColor(modelMeh.deal.theme.accentColor ) );
+                    } catch (e: Exception) {
+                        printToErrorLog_10("ActivityMain", "runOnUiThread")
+                    }
+
+                    nav_drawer_header_linear_layout.setBackgroundColor(Color.parseColor(modelMeh.deal.theme.accentColor))
+//                    nav_drawer_header_linear_layout.setBackgroundColor(Color.parseColor(modelMeh.deal.theme.backgroundColor))
+                }
+            } catch (e: JSONException) {
+                printToErrorLog_10("ActivityMain", "runOnUiThread try")
+            }
 
             // set body text
             textView_content_activity_main_card_view_1.text = modelMeh.deal.title
