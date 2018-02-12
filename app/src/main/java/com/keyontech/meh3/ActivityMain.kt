@@ -88,13 +88,15 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     var mehVideoLink = ""
 
+//    var navBackgroundColor = 0
+
     /*** this is used for the notification large image */
     var mehNotificationLargePhoto = ""
 
     /*** Broadcast Receiver  */
 //    lateinit var receiver : BroadcastReceiver
     // make broadcastreceiver work on api 26
-    lateinit var broadcastReceiverContext : Context
+//    lateinit var broadcastReceiverContext : Context
 
     // define View Pager
     private lateinit var adapterActivityMain: AdapterViewPagerActivityMain
@@ -107,7 +109,7 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
     companion object {
-        var siteURL: String = ""
+        var mehDealUrl: String = ""
     }
 
 
@@ -155,7 +157,7 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             var jsonResponse = sharedPreferences.getString(KEY_MEH_RESPONSE_STRING, "")
             println("sharedPreferences  :  jsonResponse = " + jsonResponse)
 
-            goToURL(siteURL)
+            goToURL(mehDealUrl)
             Snackbar.make(view, "GoTo site", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show()
         }
@@ -282,13 +284,12 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             var mockData = loadJsonFromFile("sample1.json", this)
             jsonResponse = mockData
 
-            processReturn(jsonResponse)
+            processMOCKReturn(jsonResponse)
         } catch (e: JSONException) {
             println("mockInterface Error: " + e)
         } // try
 
     } //
-
 
 
 
@@ -351,7 +352,7 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         printToErrorLog_10("ActivityMain", "runOnUiThread")
                     }
 
-                    nav_drawer_header_linear_layout.setBackgroundColor(Color.parseColor(modelMeh.deal.theme.accentColor))
+                    nav_drawer_header_linear_layout.setBackgroundColor( Color.parseColor(modelMeh.deal.theme.accentColor))
 //                    nav_drawer_header_linear_layout.setBackgroundColor(Color.parseColor(modelMeh.deal.theme.backgroundColor))
                 }
             } catch (e: JSONException) {
@@ -368,7 +369,8 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             mehVideoLink = modelMeh.video.topic.url
 
             // set site URL
-            siteURL = "https://www.meh.com/"
+//            mehDealUrl = "https://meh.com/"
+            mehDealUrl = modelMeh.deal.url
 
             // save string to preferences
             PreferenceManager.getDefaultSharedPreferences(this)
@@ -404,6 +406,127 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
 
+
+
+
+
+
+    fun processMOCKReturn(response: String){
+        var gson = GsonBuilder().create()
+        var modelMeh = gson.fromJson( response , ModelMeh::class.java )
+
+
+        println( "222bbb  modelMeh.deal = " + modelMeh.deal )
+        println( "222bbb  modelMeh.deal title = " + modelMeh.deal.title )
+
+        println( "222ccc  modelMeh.deal.theme.accentColor = " + modelMeh.deal.theme.accentColor )
+        println( "222ccc  modelMeh.deal.theme.backgroundColor = " + modelMeh.deal.theme.backgroundColor )
+
+
+//        mehPoll = modelMeh.poll
+
+        println( "333aaa  modelMeh.poll = " + modelMeh.poll)
+        println( "333bbb  modelMeh.poll title = " + modelMeh.poll.title )
+        println( "333ccc  modelMeh.poll id = " + modelMeh.poll.id )
+        println( "333ddd  modelMeh.poll startDate = " + modelMeh.poll.startDate )
+        println( "333eee  modelMeh.poll answers[0].text = " + modelMeh.poll.answers[0].text )
+        println( "333fff  modelMeh.poll answers[0].voteCount = " + modelMeh.poll.answers[0].voteCount )
+        println( "333ggg  modelMeh.poll topic.url = " + modelMeh.poll.topic.url)
+
+
+        println( " 77777777     modelMeh.video  " + modelMeh.video )
+//                if (modelMeh.video == null )
+        println( "444aaa  modelMeh.vieo = " + modelMeh.video)
+        println( "444bbb  modelMeh.video title = " + modelMeh.video.title )
+        println( "444ccc  modelMeh.video topic.url = " + modelMeh.video.topic.url)
+
+
+
+
+
+
+
+
+        // setup interface
+//        runOnUiThread{
+            //          setTitle(priceLowtoHigh(modelMeh.deal.title))
+
+            // set the color scheme  --- START
+            try {
+                if (!(modelMeh.deal.theme.accentColor === "" || modelMeh.deal.theme.accentColor == null) || !(modelMeh.deal.theme.backgroundColor === "" || modelMeh.deal.theme.backgroundColor == null)) {
+                    if (Build.VERSION.SDK_INT >= 21) {
+                        // Lollipop and above colors
+                        window.statusBarColor = Color.parseColor(modelMeh.deal.theme.accentColor)
+                        window.navigationBarColor = Color.parseColor(modelMeh.deal.theme.accentColor)
+                    }
+
+                    try {
+                        toolbarNavDrawer.setBackgroundColor(Color.parseColor(modelMeh.deal.theme.backgroundColor))
+
+                        // set the custom color for the tabs
+                        viewPager_NavDrawer.setBackgroundColor(Color.parseColor(modelMeh.deal.theme.backgroundColor))
+                        //                    mViewPager_Tabs.setSelectedIndicatorColors(Color.parseColor(modelMeh.deal.theme.accentColor ) );
+                    } catch (e: Exception) {
+                        printToErrorLog_10("ActivityMain", "runOnUiThread")
+                    }
+
+//                    navBackgroundColor = Color.parseColor(modelMeh.deal.theme.accentColor)
+//                    nav_drawer_header_linear_layout.setBackgroundColor( Color.parseColor(modelMeh.deal.theme.accentColor))
+////                    nav_drawer_header_linear_layout.setBackgroundColor(Color.parseColor(modelMeh.deal.theme.backgroundColor))
+                }
+            } catch (e: JSONException) {
+                printToErrorLog_10("ActivityMain", "runOnUiThread try")
+            }
+
+
+//            navBackgroundColor = Color.parseColor(modelMeh.deal.theme.accentColor)
+//            nav_drawer_header_linear_layout.setBackgroundColor(navBackgroundColor)
+
+
+            // set body text
+            textView_content_activity_main_card_view_1.text = modelMeh.deal.title
+            textView_content_activity_main_card_view_4.text = priceLowtoHigh(modelMeh.deal)
+            textView_content_activity_main_card_view_2.text = modelMeh.deal.features
+            textView_content_activity_main_card_view_3.text = modelMeh.deal.specifications
+
+            // set video
+            mehVideoLink = modelMeh.video.topic.url
+
+            // set site URL
+//            mehDealUrl = "https://meh.com/"
+            mehDealUrl = modelMeh.deal.url
+
+            // save string to preferences
+            PreferenceManager.getDefaultSharedPreferences(this)
+                    .edit()
+                    .putString(KEY_MEH_RESPONSE_STRING, response)
+                    .apply()
+
+            // set notification large image
+            mehNotificationLargePhoto = modelMeh.deal.photos[0]
+
+            // set photos viewPager
+            adapterActivityMain = AdapterViewPagerActivityMain(supportFragmentManager, modelMeh.deal.photos )
+            viewPager_NavDrawer.adapter = adapterActivityMain
+
+            // setup viewPager indicator buttons
+            tab_layout_viewpager_indicator_dots_NavDrawer.setupWithViewPager(viewPager_NavDrawer,true)
+
+            /***
+            // display notification
+            createNotification(
+            this
+            ,"Meh"
+            ,modelMeh.deal.title
+            ,priceLowtoHigh(modelMeh.deal)
+            ,R.drawable.logo_32_x_32_2
+            ,R.drawable.logo_32_x_32_2
+            ,mehNotificationLargePhoto
+            ,R.drawable.logo_32_x_32_2
+            )
+             */
+//        }
+    }
 
 
 

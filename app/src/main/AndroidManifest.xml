@@ -65,7 +65,7 @@
         <!-- GO TO URL screen -->
         <activity
             android:name=".Activities.ActivityGoToSite"
-            android:label="Web Site View"
+            android:label="Deal"
             android:launchMode="singleTop">
 
             <!-- use this to auto add the back button on top left -->

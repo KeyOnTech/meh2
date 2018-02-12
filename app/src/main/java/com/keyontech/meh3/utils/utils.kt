@@ -12,6 +12,7 @@ import android.support.v4.app.NotificationCompat
 import android.util.Log
 import android.widget.Toast
 import com.example.jonesq.meh3.Models.ModelMehDeal
+import com.example.jonesq.meh3.Models.ModelMehPoll
 import com.keyontech.meh3.ActivityMain
 import java.io.IOException
 
@@ -89,7 +90,6 @@ import java.io.IOException
         for (i in modelMehDeal.items) {
             if (vMin > i.price) vMin = i.price.toInt()
             if (vMax < i.price) vMax = i.price.toInt()
-    //            print(" \r\n 44401: price " + i.price.toInt() )
         }
 
         if (vMin != vMax) {
@@ -99,7 +99,15 @@ import java.io.IOException
         }
     }
 
+    fun getMaxVotes(poll: ModelMehPoll): Int {
+        var vMax = poll.answers[0].voteCount
 
+        for (a in poll.answers) {
+            if (vMax < a.voteCount) vMax = a.voteCount
+        }
+
+        return vMax
+    }
 
     fun showNotification(pContext: Context, vNotification_TickerText: String, vNotification_Title: String, vNotification_Text: String, vShow_Action_Right_Button_Icon_INT: Int, vShow_Action_Left_Button_Icon_INT: Int, vShow_Large_Icon_Bitmap: Bitmap, vShow_Small_Icon_Int: Int) {
         // new --- start
