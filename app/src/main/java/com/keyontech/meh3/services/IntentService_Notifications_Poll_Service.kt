@@ -42,40 +42,46 @@ class IntentService_Notifications_Poll_Service : IntentService("IntentService_No
 
 
         companion object {
-                // pg 473
+            var mehDealUrl: String = ""
+
+            // pg 473
                 fun setServiceAlarm(pContext: Context, pAlarmIsOn: Boolean) {
-                    println( "444  IntentService_Notifications_Poll_Service - setServiceAlarm - pAlarmIsOn =  " + pAlarmIsOn )
-                    // how to...
-                    // https://developer.android.com/training/scheduling/alarms.html
-                    // Set the alarm to start at approximately 11:05 p.m.
-                    var pCalendar = Calendar.getInstance()
-                    pCalendar.timeInMillis = System.currentTimeMillis()
-
-                    // reset hour, minutes, seconds and millis
-                    pCalendar.set(Calendar.HOUR_OF_DAY, 23)  // 11pm
-                    //        pCalendar.set( Calendar.HOUR_OF_DAY, 0 );  // 0  -  midnight
-                    pCalendar.set(Calendar.MINUTE, 4) // 04   -  :04
-                    pCalendar.set(Calendar.SECOND, 0)
-                    pCalendar.set(Calendar.MILLISECOND, 0)
-
                     var vIntent = Intent(pContext, IntentService_Notifications_Poll_Service::class.java)
                     var vPendingIntent = PendingIntent.getService(pContext, 0, vIntent, 0)
 
-        //        var vAlarmManager = pContext.getSystemService( pContext.ALARM_SERVICE) as AlarmManager
                     var vAlarmManager = pContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
                     if (pAlarmIsOn) {
-//                        println( "555  IntentService_Notifications_Poll_Service - setServiceAlarm - pAlarmIsOn =  " + pAlarmIsOn )
+                        // how to...
+                        // https://developer.android.com/training/scheduling/alarms.html
+                        // Set the alarm to start at approximately 11:05 p.m.
+                        var pCalendar = Calendar.getInstance()
+                        pCalendar.timeInMillis = System.currentTimeMillis()
 
-        //                // USE FOR TESTING faster timer for testing notifications --- start
-        //                // run at so many seconds over and over
-        //                vAlarmManager.setRepeating(
-        //                        AlarmManager.RTC
-        //                        , System.currentTimeMillis() // start time for polling
-        //                        , EXTRA_NOTIFICATION_POLL_INTERVAL.toLong() // run every so many seconds
-        //                        , vPendingIntent
-        //                )
-        //                // USE FOR TESTING faster timer for testing notifications --- end
+//                        // USE FOR TESTING faster timer for testing notifications --- start
+//                    // reset hour, minutes, seconds and millis
+//                    pCalendar.set(Calendar.SECOND, 45)
+//                        // USE FOR TESTING faster timer for testing notifications --- end
+
+                        // use for live --- start
+                        // reset hour, minutes, seconds and millis
+                        pCalendar.set(Calendar.HOUR_OF_DAY, 23)  // 21 = 11pm / 0  -  midnight
+                        pCalendar.set(Calendar.MINUTE, 4) // 04   -  00:04
+                        pCalendar.set(Calendar.SECOND, 0) // 00
+                        pCalendar.set(Calendar.MILLISECOND, 0)
+                        // use for live --- start
+
+
+//                        // USE FOR TESTING faster timer for testing notifications --- start
+//                        // run at so many seconds over and over
+//                        vAlarmManager.setRepeating(
+//                                AlarmManager.RTC
+//                                , System.currentTimeMillis() // start time for polling
+//                                , EXTRA_NOTIFICATION_POLL_INTERVAL.toLong() // run every so many seconds
+//                                , vPendingIntent
+//                        )
+//                        // USE FOR TESTING faster timer for testing notifications --- end
+
 
                         // USE FOR LIVE notifications --- START
                         vAlarmManager.setRepeating(
@@ -86,15 +92,12 @@ class IntentService_Notifications_Poll_Service : IntentService("IntentService_No
                         )
                         // USE FOR LIVE notifications --- END
                     } else {
-                        println( "666  IntentService_Notifications_Poll_Service - setServiceAlarm - pAlarmIsOn =  " + pAlarmIsOn )
-
                         vAlarmManager.cancel(vPendingIntent)
                         vPendingIntent.cancel()
-                    } // if
+                    }
 
 
-        // save to preferences if the alarm is on or off for startup
-        //            println("888  save to preferences   pAlarmIsOn  =  "  + pAlarmIsOn )
+                    // save to preferences if the alarm is on or off for startup
                     PreferenceManager.getDefaultSharedPreferences(pContext)
                             .edit()
                             .putBoolean(EXTRA_NOTIFICATION_IS_ALARM_ON, pAlarmIsOn)
@@ -102,10 +105,9 @@ class IntentService_Notifications_Poll_Service : IntentService("IntentService_No
 
                 } // isServiceAlarm( Context pContext )
 
+
                 // pg 475
                 fun isServiceAlarmOn(pContext: Context): Boolean {
-        //            println("111  isServiceAlarmOn " )
-
                     var vIntent = Intent(pContext, IntentService_Notifications_Poll_Service::class.java)
                     var vPendingIntent = PendingIntent.getService(pContext, 0, vIntent, PendingIntent.FLAG_NO_CREATE)
                     return vPendingIntent != null
@@ -175,6 +177,10 @@ class IntentService_Notifications_Poll_Service : IntentService("IntentService_No
             .putString(KEY_MEH_RESPONSE_STRING, response)
             .apply()
 
+        // set site URL
+//        mehDealUrl = "https://meh.com/"
+        mehDealUrl = modelMeh.deal.url
+
         // set notification large image
         mehNotificationLargePhoto = modelMeh.deal.photos[0]
 
@@ -217,6 +223,7 @@ class IntentService_Notifications_Poll_Service : IntentService("IntentService_No
                             ,showactionLeftButtonIcon
                             ,notificationLargeBitmap
                             ,smallIcon
+                            ,mehDealUrl
                     )
                 } catch (e: IOException) {
                     e.printStackTrace()

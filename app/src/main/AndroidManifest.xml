@@ -78,7 +78,7 @@
         <!--&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;-->
 
         <!-- Broadcast receiver for notification -->
-        <receiver android:name=".notification.AlertReceiver" />
+        <!--<receiver android:name=".notification.AlertReceiver" />-->
 
 
         <!--&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;-->

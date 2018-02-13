@@ -1,6 +1,5 @@
 package com.keyontech.meh3
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.Snackbar
@@ -8,7 +7,7 @@ import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
 import com.example.jonesq.meh3.Models.ModelMeh
 import com.google.gson.GsonBuilder
-import com.keyontech.meh3.adaptersViewPager.AdapterViewPagerActivityMain
+import com.keyontech.meh3.adapters.AdapterViewPagerActivityMain
 
 import kotlinx.android.synthetic.main.content_activity_main.*
 import kotlinx.android.synthetic.main.activity_main_v2_nav_drawer.*
@@ -17,8 +16,6 @@ import kotlinx.android.synthetic.main.activity_main_v2_nav_drawer_include_conten
 import okhttp3.*
 import org.json.JSONException
 import java.io.IOException
-import com.squareup.picasso.Picasso
-import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.Build
 
@@ -29,14 +26,10 @@ import com.example.jonesq.meh3.Models.*
 import com.keyontech.meh3.Activities.ActivityAbout
 import com.keyontech.meh3.Activities.ActivityMehPoll
 import com.keyontech.meh3.Activities.ActivityMehVideo
-import android.os.Handler
-import android.os.HandlerThread
 import android.preference.PreferenceManager
 import com.example.jonesq.meh3.utils.*
 import com.keyontech.meh3.Activities.ActivityGoToSite
-import com.keyontech.meh3.services.BroadcastReceiver_Notifications_Service_Startup
 import com.keyontech.meh3.services.IntentService_Notifications_Poll_Service
-import kotlinx.android.synthetic.main.activity_meh_video.*
 import kotlinx.android.synthetic.main.nav_drawer_layout.*
 
 

@@ -1,4 +1,4 @@
-package com.keyontech.meh3.adaptersViewPager
+package com.keyontech.meh3.adapters
 
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -32,12 +32,23 @@ class AdapterRecyclerViewActivityPoll(val pollReturn: ModelMehPoll, val pollProg
     override fun onBindViewHolder(holder: CustomerViewHolderClass?, position: Int) {
         holder?.customViewHolder_View?.progressBar_Poll_Answer?.max = pollProgressMax
         holder?.customViewHolder_View?.progressBar_Poll_Answer?.setProgress(pollReturn.answers[position].voteCount, true)
-        holder?.customViewHolder_View?.textView_Poll_Answer?.text = pollReturn.answers[position].text
+//        holder?.customViewHolder_View?.textView_Poll_Answer?.text = pollReturn.answers[position].text + " - " + pollReturn.answers[position].voteCount + " votes"
+        holder?.customViewHolder_View?.textView_Poll_Answer?.text = "Votes: " + pollReturn.answers[position].voteCount + " - " + pollReturn.answers[position].text
     }
 
 }
 
 /*** the customViewHolder_View at the end is the same view defined as a parameter class CustomerViewHolderClass(val customViewHolder_View: View) */
 class CustomerViewHolderClass(val customViewHolder_View: View): RecyclerView.ViewHolder(customViewHolder_View) {
-
+////        companion object {
+////            val KEY_COURSELESSONLINK = "KEY_COURSELESSONLINK"
+////        }
+////
+////        init {
+////            customView.setOnClickListener {
+////                val intent = Intent(customView.context, ActivityMain::class.java)
+////                intent.putExtra( KEY_COURSELESSONLINK , courseLesson?.link )
+////                customView.context.startActivity( intent )
+////            }
+////        }
 }
