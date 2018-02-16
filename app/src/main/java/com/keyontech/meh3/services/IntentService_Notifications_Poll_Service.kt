@@ -4,9 +4,11 @@ import android.app.*
 import android.content.Intent
 import android.content.Context
 import android.graphics.Bitmap
+import android.os.AsyncTask
 import android.os.Handler
 import android.os.HandlerThread
 import android.preference.PreferenceManager
+import android.util.Log
 import com.example.jonesq.meh3.Models.JSONUrL
 import com.example.jonesq.meh3.Models.ModelMeh
 import com.example.jonesq.meh3.utils.*
@@ -14,7 +16,14 @@ import com.google.gson.GsonBuilder
 import com.keyontech.meh3.R
 import com.squareup.picasso.Picasso
 import okhttp3.*
+import java.io.BufferedReader
 import java.io.IOException
+import java.io.InputStream
+import java.io.InputStreamReader
+import java.net.HttpURLConnection
+import java.net.MalformedURLException
+import java.net.URL
+import java.nio.charset.Charset
 import java.util.*
 
 
@@ -59,8 +68,8 @@ class IntentService_Notifications_Poll_Service : IntentService("IntentService_No
                         pCalendar.timeInMillis = System.currentTimeMillis()
 
 //                        // USE FOR TESTING faster timer for testing notifications --- start
-//                    // reset hour, minutes, seconds and millis
-//                    pCalendar.set(Calendar.SECOND, 45)
+//                        // reset hour, minutes, seconds and millis
+//                        pCalendar.set(Calendar.SECOND, 45)
 //                        // USE FOR TESTING faster timer for testing notifications --- end
 
                         // use for live --- start
@@ -125,6 +134,9 @@ class IntentService_Notifications_Poll_Service : IntentService("IntentService_No
                 // show notification here
 //                println("IntentService_Notifications_Poll_Service - fetch JSON")
                 fetchJSON()
+                // Kick off an {@link AsyncTask} to perform the network request
+                val task_TsunamiAsyncTask1 = TsunamiAsyncTask2()
+                task_TsunamiAsyncTask1.execute()
 
                 // send broadcast
 //                println("onHandleIntent - send broadcast1 - send broadcast")
@@ -134,6 +146,11 @@ class IntentService_Notifications_Poll_Service : IntentService("IntentService_No
             }
         }
     }
+
+
+
+
+
 
 
 
@@ -156,8 +173,9 @@ class IntentService_Notifications_Poll_Service : IntentService("IntentService_No
 //                println("111aaa LOAD : live data")
 
                 var responseBody = response?.body()?.string()
-                println( "111bbb  fetchJSON - onResponse - body - " + responseBody )
+//                println( "666bbb  fetchJSON - onResponse - body - " + responseBody )
                 jsonResponse = responseBody.toString()
+                println("666ddd    jsonResponse = " + jsonResponse )
                 processReturn(jsonResponse)
             }
 
@@ -187,8 +205,8 @@ class IntentService_Notifications_Poll_Service : IntentService("IntentService_No
         // display notification
         createNotification(
                 this
-                ,"Meh"
-                ,modelMeh.deal.title
+                ,"Meh 1 fetchJSON"
+                ,modelMeh.deal.title + "-1-OkHttpClient"
                 ,priceLowtoHigh(modelMeh.deal)
                 , R.drawable.logo_32_x_32_2
                 , R.drawable.logo_32_x_32_2
@@ -224,6 +242,7 @@ class IntentService_Notifications_Poll_Service : IntentService("IntentService_No
                             ,notificationLargeBitmap
                             ,smallIcon
                             ,mehDealUrl
+                            ,NOTIFICATION_ID
                     )
                 } catch (e: IOException) {
                     e.printStackTrace()
@@ -237,4 +256,329 @@ class IntentService_Notifications_Poll_Service : IntentService("IntentService_No
             })
         }
 
-}
+
+
+
+
+
+
+
+
+    /**
+     * [AsyncTask] to perform the network request on a background thread, and then
+     * update the UI with the first earthquake in the response.
+     */
+//    private inner class TsunamiAsyncTask2 : AsyncTask<URL, Void, ModelMeh>() {
+    private inner class TsunamiAsyncTask2 : AsyncTask<URL, Void, String>() {
+
+        //        override fun doInBackground(vararg urls: URL): ModelMeh {
+        override fun doInBackground(vararg urls: URL): String{
+
+
+
+            val uString = fetchJSON_U()
+            println("666aaa  uString  = " + uString)
+
+            return uString
+
+
+
+
+            ////////////////////////
+
+
+
+
+
+
+
+
+//            // Create URL object
+//            val url = createUrl(jsonURL)
+//
+//            // Perform HTTP request to the URL and receive a JSON response back
+//            var jsonResponse = ""
+//            try {
+//                jsonResponse = makeHttpRequest(url)
+//            } catch (e: IOException) {
+//                // TODO Handle the IOException
+//            }
+//
+//            // Extract relevant fields from the JSON response and create an {@link ModelMeh} object
+//
+//            // Return the {@link ModelMeh} object as the result fo the {@link TsunamiAsyncTask}
+//            return extractFeatureFromJson(jsonResponse)
+
+        }
+
+        /**
+         * Update the screen with the given earthquake (which was the result of the
+         * [TsunamiAsyncTask]).
+         */
+//        override fun onPostExecute(earthquake: ModelMeh?) {
+        override fun onPostExecute(earthquake: String?) {
+            if (earthquake == null) {
+                return
+            }
+
+//            updateUi(earthquake)
+        }
+
+
+
+
+
+
+        ////////////////
+        //    /////////// prior fetchJSON udacitymeh2
+        @Throws(IOException::class)
+        fun fetchJSON_U(): String {
+            // jsonURL
+
+
+            var jsonResponse = ""
+            var urlConnection: HttpURLConnection? = null
+            var inputStream: InputStream? = null
+
+            try {
+                var siteURL = createUrl2(jsonURL)
+
+                urlConnection = siteURL?.openConnection() as HttpURLConnection
+                urlConnection.requestMethod = "GET"
+                urlConnection.readTimeout = 10000
+                urlConnection.connectTimeout = 15000
+                urlConnection.connect()
+
+                inputStream = urlConnection.inputStream
+                jsonResponse = readFromStream(inputStream);
+                println("666ccc    jsonResponse = " + jsonResponse )
+                processReturn2(jsonResponse)
+            } catch (e: IOException) {
+                //
+            } finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect()
+                }
+
+                if (inputStream != null) {
+                    inputStream.close()
+                }
+            }
+            return jsonResponse
+        }
+
+
+        fun createUrl2(stringUrl: String): URL? {
+            var url: URL? = null
+            try {
+                url = URL(stringUrl)
+            } catch (exception: MalformedURLException) {
+                Log.e("createUrl", "Error with creating URL", exception)
+                return null
+            }
+
+            return url
+        }
+
+        /**
+         * Convert the [InputStream] into a String which contains the
+         * whole JSON response from the server.
+         */
+        @Throws(IOException::class)
+        private fun readFromStream(inputStream: InputStream?): String {
+            val output = StringBuilder()
+            if (inputStream != null) {
+                val inputStreamReader = InputStreamReader(inputStream, Charset.forName("UTF-8"))
+                val reader = BufferedReader(inputStreamReader)
+                var line = reader.readLine()
+                while (line != null) {
+                    output.append(line)
+                    line = reader.readLine()
+                }
+            }
+            return output.toString()
+        }
+
+
+
+        fun processReturn2(response: String){
+            var gson = GsonBuilder().create()
+            var modelMeh = gson.fromJson( response , ModelMeh::class.java )
+
+            // save string to preferences
+            PreferenceManager.getDefaultSharedPreferences(applicationContext)
+                    .edit()
+                    .putString(KEY_MEH_RESPONSE_STRING, response)
+                    .apply()
+
+            // set site URL
+//        mehDealUrl = "https://meh.com/"
+            mehDealUrl = modelMeh.deal.url
+
+            // set notification large image
+            mehNotificationLargePhoto = modelMeh.deal.photos[0]
+
+            // display notification
+            createNotification2(
+                    applicationContext
+                    ,"Meh 2 async task"
+                    ,modelMeh.deal.title + "-2-Async_Task"
+                    ,priceLowtoHigh(modelMeh.deal)
+                    , R.drawable.logo_32_x_32_2
+                    , R.drawable.logo_32_x_32_2
+                    ,mehNotificationLargePhoto
+                    , R.drawable.logo_32_x_32_2
+            )
+        }
+
+
+        private fun createNotification2( pContext: Context, tickerText: String = "", notificationTitle: String = "", notificationText: String, showactionRightButtonIcon: Int, showactionLeftButtonIcon: Int, largebitmapImageURL : String, smallIcon : Int) {
+            var handlerThread = HandlerThread("aaa")
+            handlerThread.start()
+
+            var handler = Handler(handlerThread.getLooper())
+            handler.post(Runnable {
+                var notificationLargeBitmap: Bitmap? = null
+                try {
+                    notificationLargeBitmap  = Picasso
+                            .with(pContext)
+                            .load(largebitmapImageURL)
+                            .resize(512,512)
+                            .placeholder(R.mipmap.ic_launcher)
+                            .error(R.mipmap.ic_launcher)
+                            .get()
+
+                    showNotification(
+                            pContext
+                            ,tickerText
+                            ,notificationTitle
+                            ,notificationText
+                            ,showactionRightButtonIcon
+                            ,showactionLeftButtonIcon
+                            ,notificationLargeBitmap
+                            ,smallIcon
+                            ,mehDealUrl
+                            ,NOTIFICATION_ID + 1
+                    )
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                } finally {
+                    if (notificationLargeBitmap != null) {
+                        //do whatever you wanna do with the picture.
+                        //for me it was using my own cache
+                        //                    imageCaching.cacheImage(imageId, bitmap)
+                    }
+                }
+            })
+        }
+
+
+
+
+
+
+
+        ////////////////
+
+//        /**
+//         * Returns new URL object from the given string URL.
+//         */
+//        private fun createUrl(stringUrl: String): URL? {
+//            var url: URL? = null
+//            try {
+//                url = URL(stringUrl)
+//            } catch (exception: MalformedURLException) {
+//                Log.e("createUrl", "Error with creating URL", exception)
+//                return null
+//            }
+//
+//            return url
+//        }
+//
+//        /**
+//         * Make an HTTP request to the given URL and return a String as the response.
+//         */
+//        @Throws(IOException::class)
+//        private fun makeHttpRequest(url: URL): String {
+//            var jsonResponse = ""
+//            var urlConnection: HttpURLConnection? = null
+//            var inputStream: InputStream? = null
+//            try {
+//                urlConnection = url.openConnection() as HttpURLConnection
+//                urlConnection.requestMethod = "GET"
+//                urlConnection.readTimeout = 10000
+//                urlConnection.connectTimeout = 15000
+//                urlConnection.connect()
+//                inputStream = urlConnection.inputStream
+//                jsonResponse = readFromStream(inputStream)
+//            } catch (e: IOException) {
+//                // TODO: Handle the exception
+//            } finally {
+//                if (urlConnection != null) {
+//                    urlConnection.disconnect()
+//                }
+//                if (inputStream != null) {
+//                    // function must handle java.io.IOException here
+//                    inputStream.close()
+//                }
+//            }
+//            return jsonResponse
+//        }
+//
+//        /**
+//         * Convert the [InputStream] into a String which contains the
+//         * whole JSON response from the server.
+//         */
+//        @Throws(IOException::class)
+//        private fun readFromStream(inputStream: InputStream?): String {
+//            val output = StringBuilder()
+//            if (inputStream != null) {
+//                val inputStreamReader = InputStreamReader(inputStream, Charset.forName("UTF-8"))
+//                val reader = BufferedReader(inputStreamReader)
+//                var line = reader.readLine()
+//                while (line != null) {
+//                    output.append(line)
+//                    line = reader.readLine()
+//                }
+//            }
+//            return output.toString()
+//        }
+//
+//        /**
+//         * Return an [ModelMeh] object by parsing out information
+//         * about the first earthquake from the input earthquakeJSON string.
+//         */
+//        private fun extractFeatureFromJson(earthquakeJSON: String): ModelMeh? {
+//            try {
+//                val baseJsonResponse = JSONObject(earthquakeJSON)
+//                val featureArray = baseJsonResponse.getJSONArray("features")
+//
+//                // If there are results in the features array
+//                if (featureArray.length() > 0) {
+//                    // Extract out the first feature (which is an earthquake)
+//                    val firstFeature = featureArray.getJSONObject(0)
+//                    val properties = firstFeature.getJSONObject("properties")
+//
+//                    // Extract out the title, time, and tsunami values
+//                    val title = properties.getString("title")
+//                    val time = properties.getLong("time")
+//                    val tsunamiAlert = properties.getInt("tsunami")
+//
+//                    // Create a new {@link ModelMeh} object
+//                    return ModelMeh(title, time, tsunamiAlert)
+//                }
+//            } catch (e: JSONException) {
+//                Log.e("extractFeatureFromJson", "Problem parsing the earthquake JSON results", e)
+//            }
+//
+//            return null
+//        }
+
+
+    } // async task
+
+
+
+
+
+} // class

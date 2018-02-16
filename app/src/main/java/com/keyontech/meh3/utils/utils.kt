@@ -99,7 +99,7 @@ fun getMaxVotes(poll: ModelMehPoll): Int {
     return vMax
 }
 
-fun showNotification(pContext: Context, vNotification_TickerText: String, vNotification_Title: String, vNotification_Text: String, vShow_Action_Right_Button_Icon_INT: Int, vShow_Action_Left_Button_Icon_INT: Int, vShow_Large_Icon_Bitmap: Bitmap, vShow_Small_Icon_Int: Int, vBuyURL: String) {
+fun showNotification(pContext: Context, vNotification_TickerText: String, vNotification_Title: String, vNotification_Text: String, vShow_Action_Right_Button_Icon_INT: Int, vShow_Action_Left_Button_Icon_INT: Int, vShow_Large_Icon_Bitmap: Bitmap, vShow_Small_Icon_Int: Int, vBuyURL: String, vNotificationID: Int) {
     // new --- start
     try {
         // Gets a PendingIntent containing the entire back stack
@@ -197,9 +197,9 @@ fun showNotification(pContext: Context, vNotification_TickerText: String, vNotif
         var vNotification_Show = pNotification_Build.build()
         var vNotificationManager = pContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        vNotificationManager.notify(NOTIFICATION_ID, vNotification_Show)
+        vNotificationManager.notify(vNotificationID, vNotification_Show)
     } catch (e: Exception) {
-        println("Util - showNotification - error: " + e.printStackTrace())
-     }
+        println("Util - showNotification - error: ")
+    }
 
 }
