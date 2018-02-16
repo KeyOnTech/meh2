@@ -158,6 +158,8 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         jsonURL = jsonOutput.url
 
         setTitle("")
+
+
         fetchJSON()
         // Kick off an {@link AsyncTask} to perform the network request
         val task_TsunamiAsyncTask1 = TsunamiAsyncTask2()
@@ -169,8 +171,22 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 // fab buton Right
         fabbuttonNavDrawer.setOnClickListener { view ->
 //            setTitle("")
+
+
+
+            
 //            fetchJSON()
 //            mockInterface()
+
+
+
+            // test from other class fix this
+//        IntentService_Notifications_Poll_Service.fetchJSON()
+            // Kick off an {@link AsyncTask} to perform the network request
+//        val task_TsunamiAsyncTask3 = IntentService_Notifications_Poll_Service.Companion.TsunamiAsyncTask3()
+//        task_TsunamiAsyncTask3.execute()
+
+
 
             val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
             var jsonResponse = sharedPreferences.getString(KEY_MEH_RESPONSE_STRING, "")

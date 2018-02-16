@@ -126,6 +126,7 @@ class IntentService_Notifications_Poll_Service : IntentService("IntentService_No
 
 
 
+
     override fun onHandleIntent(intent: Intent?) {
         if (intent != null) {
             try {
@@ -135,7 +136,7 @@ class IntentService_Notifications_Poll_Service : IntentService("IntentService_No
 //                println("IntentService_Notifications_Poll_Service - fetch JSON")
                 fetchJSON()
                 // Kick off an {@link AsyncTask} to perform the network request
-                val task_TsunamiAsyncTask1 = TsunamiAsyncTask2()
+                val task_TsunamiAsyncTask1 = TsunamiAsyncTask3()
                 task_TsunamiAsyncTask1.execute()
 
                 // send broadcast
@@ -216,7 +217,7 @@ class IntentService_Notifications_Poll_Service : IntentService("IntentService_No
     }
 
 
-        private fun createNotification( pContext: Context, tickerText: String = "", notificationTitle: String = "", notificationText: String, showactionRightButtonIcon: Int, showactionLeftButtonIcon: Int, largebitmapImageURL : String, smallIcon : Int) {
+        fun createNotification( pContext: Context, tickerText: String = "", notificationTitle: String = "", notificationText: String, showactionRightButtonIcon: Int, showactionLeftButtonIcon: Int, largebitmapImageURL : String, smallIcon : Int) {
             var handlerThread = HandlerThread("aaa")
             handlerThread.start()
 
@@ -264,12 +265,15 @@ class IntentService_Notifications_Poll_Service : IntentService("IntentService_No
 
 
 
+
+
+
     /**
      * [AsyncTask] to perform the network request on a background thread, and then
      * update the UI with the first earthquake in the response.
      */
-//    private inner class TsunamiAsyncTask2 : AsyncTask<URL, Void, ModelMeh>() {
-    private inner class TsunamiAsyncTask2 : AsyncTask<URL, Void, String>() {
+//    inner class TsunamiAsyncTask3 : AsyncTask<URL, Void, ModelMeh>() {
+    inner class TsunamiAsyncTask3 : AsyncTask<URL, Void, String>() {
 
         //        override fun doInBackground(vararg urls: URL): ModelMeh {
         override fun doInBackground(vararg urls: URL): String{
@@ -385,7 +389,7 @@ class IntentService_Notifications_Poll_Service : IntentService("IntentService_No
          * whole JSON response from the server.
          */
         @Throws(IOException::class)
-        private fun readFromStream(inputStream: InputStream?): String {
+        fun readFromStream(inputStream: InputStream?): String {
             val output = StringBuilder()
             if (inputStream != null) {
                 val inputStreamReader = InputStreamReader(inputStream, Charset.forName("UTF-8"))
@@ -432,7 +436,7 @@ class IntentService_Notifications_Poll_Service : IntentService("IntentService_No
         }
 
 
-        private fun createNotification2( pContext: Context, tickerText: String = "", notificationTitle: String = "", notificationText: String, showactionRightButtonIcon: Int, showactionLeftButtonIcon: Int, largebitmapImageURL : String, smallIcon : Int) {
+        fun createNotification2( pContext: Context, tickerText: String = "", notificationTitle: String = "", notificationText: String, showactionRightButtonIcon: Int, showactionLeftButtonIcon: Int, largebitmapImageURL : String, smallIcon : Int) {
             var handlerThread = HandlerThread("aaa")
             handlerThread.start()
 
@@ -483,7 +487,7 @@ class IntentService_Notifications_Poll_Service : IntentService("IntentService_No
 //        /**
 //         * Returns new URL object from the given string URL.
 //         */
-//        private fun createUrl(stringUrl: String): URL? {
+//        fun createUrl(stringUrl: String): URL? {
 //            var url: URL? = null
 //            try {
 //                url = URL(stringUrl)
@@ -499,7 +503,7 @@ class IntentService_Notifications_Poll_Service : IntentService("IntentService_No
 //         * Make an HTTP request to the given URL and return a String as the response.
 //         */
 //        @Throws(IOException::class)
-//        private fun makeHttpRequest(url: URL): String {
+//        fun makeHttpRequest(url: URL): String {
 //            var jsonResponse = ""
 //            var urlConnection: HttpURLConnection? = null
 //            var inputStream: InputStream? = null
@@ -530,7 +534,7 @@ class IntentService_Notifications_Poll_Service : IntentService("IntentService_No
 //         * whole JSON response from the server.
 //         */
 //        @Throws(IOException::class)
-//        private fun readFromStream(inputStream: InputStream?): String {
+//        fun readFromStream(inputStream: InputStream?): String {
 //            val output = StringBuilder()
 //            if (inputStream != null) {
 //                val inputStreamReader = InputStreamReader(inputStream, Charset.forName("UTF-8"))
@@ -548,7 +552,7 @@ class IntentService_Notifications_Poll_Service : IntentService("IntentService_No
 //         * Return an [ModelMeh] object by parsing out information
 //         * about the first earthquake from the input earthquakeJSON string.
 //         */
-//        private fun extractFeatureFromJson(earthquakeJSON: String): ModelMeh? {
+//        fun extractFeatureFromJson(earthquakeJSON: String): ModelMeh? {
 //            try {
 //                val baseJsonResponse = JSONObject(earthquakeJSON)
 //                val featureArray = baseJsonResponse.getJSONArray("features")
@@ -576,7 +580,6 @@ class IntentService_Notifications_Poll_Service : IntentService("IntentService_No
 
 
     } // async task
-
 
 
 
