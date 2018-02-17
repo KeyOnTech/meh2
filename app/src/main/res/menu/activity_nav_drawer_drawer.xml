@@ -5,35 +5,72 @@
 
 
 
-    <item android:title="Meh Extras">
-    <menu >
-        <!--<item-->
+    <item
+        android:id="@+id/nav_bar_header_extras"
+        android:title="Meh Details"
+        >
+
+        <menu>
+            <!--<item-->
             <!--android:id="@+id/nav_bar_specifications"-->
             <!--android:icon="@drawable/ic_menu_camera"-->
             <!--android:title="@string/nav_bar_specifications" />-->
-        <item
-            android:id="@+id/nav_bar_poll"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="@string/nav_bar_poll" />
-        <item
-            android:id="@+id/nav_bar_video"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="@string/nav_bar_video" />
-    </menu>
+            <item
+                android:id="@+id/nav_bar_poll"
+                android:icon="@drawable/ic_menu_gallery"
+                android:title="@string/nav_bar_poll" />
+            <item
+                android:id="@+id/nav_bar_video"
+                android:icon="@drawable/ic_menu_slideshow"
+                android:title="@string/nav_bar_video" />
+        </menu>
     </item>
-    <item android:title="@string/nav_bar_about">
+
+    <item
+        android:id="@+id/nav_bar_header_extras2"
+        android:title="@string/nav_bar_header_extras"
+        >
+
+        <menu>
+            <!--<item-->
+            <!--android:id="@+id/nav_bar_specifications"-->
+            <!--android:icon="@drawable/ic_menu_camera"-->
+            <!--android:title="@string/nav_bar_specifications" />-->
+            <item
+                android:id="@+id/nav_bar_poll2"
+                android:icon="@drawable/ic_menu_gallery"
+                android:title="Woot" />
+            <item
+                android:id="@+id/nav_bar_video2"
+                android:icon="@drawable/ic_menu_slideshow"
+                android:title="Woot Electronics" />
+        </menu>
+    </item>
+
+    <item
+        android:id="@+id/nav_bar_header_extras3"
+        android:title="@string/nav_bar_about" >
+
         <menu>
             <item
                 android:id="@+id/nav_bar_about"
                 android:icon="@drawable/ic_menu_share"
                 android:title="@string/nav_bar_about" />
-        </menu>
-        <menu>
             <item
-                android:id="@+id/nav_bar_refresh"
+                android:id="@+id/nav_bar_rate_app"
                 android:icon="@drawable/ic_menu_share"
-                android:title="refresh data" />
+                android:title="@string/nav_bar_rate_app" />
+            <item
+                android:id="@+id/nav_bar_share_app"
+                android:icon="@drawable/ic_menu_share"
+                android:title="@string/nav_bar_share_app" />
         </menu>
     </item>
+
+    <item
+        android:id="@+id/nav_bar_refresh"
+        android:icon="@drawable/ic_menu_refresh"
+        android:title="@string/nav_bar_refresh"
+        />
 
 </menu>

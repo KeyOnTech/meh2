@@ -4,9 +4,11 @@ import android.app.Notification
 import android.app.NotificationManager
 import android.media.RingtoneManager
 import android.app.PendingIntent
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.net.Uri
 import android.support.v4.app.NotificationCompat
 import android.util.Log
 import android.widget.Toast
@@ -14,28 +16,33 @@ import com.example.jonesq.meh3.Models.ModelMehDeal
 import com.example.jonesq.meh3.Models.ModelMehPoll
 import com.keyontech.meh3.Activities.ActivityGoToSite
 import com.keyontech.meh3.ActivityMain
+import com.keyontech.meh3.R
 import java.io.IOException
+
+
 
 /**
  * Created by kot on 1/21/18.
  */
 
 /*** Activity constants */
-val KEY_PHOTO_URI = "KEY_PHOTO_URI"
-val KEY_MEH_RESPONSE_STRING = "KEY_MEH_RESPONSE_STRING"
-val KEY_MEH_VIDEO_LINK = "KEY_MEH_VIDEO_LINK"
-val EXTRA_GO_TO_SITE_URL = "EXTRA_GO_TO_SITE_URL"
-val EXTRA_ACTION_SHOW_NOTIFICATION = "com.keyontech.meh3.SHOW_NOTIFICATION"
-//    val JSONHeaderContentType = "Content-Type: application/json"
-//    val JSONHeaderAccept = "Accept: application/json"
+val ACT_EXTRA_MEH_VIDEO_LINK = "ACT_EXTRA_MEH_VIDEO_LINK"
+val ACT_EXTRA_GO_TO_SITE_URL = "ACT_EXTRA_GO_TO_SITE_URL"
+
+val FRAG_ARG_PHOTO_URI = "FRAG_ARG_PHOTO_URI"
+
+val PREF_KEY_MEH_RESPONSE_STRING = "KEY_MEH_RESPONSE_STRING"
+val PREF_KEY_SHOW_NAV_DRAWER_ONSTART = "PREF_KEY_SHOW_NAV_DRAWER_ONSTART"
+
+val BROADDCAST_EXTRA_ACTION_SHOW_NOTIFICATION = "com.keyontech.meh3.SHOW_NOTIFICATION"
 
 /*** this is used for the notification large image */
 //    var mehNotificationLargePhoto = ""
 val NOTIFICATION_ID = 333
 
 /*** used by intent service */
-val EXTRA_NOTIFICATION_IS_ALARM_ON = "isAlarmOn"
-val EXTRA_NOTIFICATION_POLL_INTERVAL = 1000 * 15 // 15 seconds // used for test alarm
+val PREF_EXTRA_NOTIFICATION_IS_ALARM_ON = "PREF_EXTRA_NOTIFICATION_IS_ALARM_ON"
+val TEST_NOTIFICATION_POLL_INTERVAL = 1000 * 15 // 15 seconds // used for test alarm
 
 
 
@@ -55,6 +62,40 @@ fun printToErrorLog_10(vTag: String, vStr: String) {
         Log.e(vTag, vStr)
     }
 }
+
+
+fun rateApp(vContext: Context): Intent {
+    val pIntent = Intent(Intent.ACTION_VIEW)
+    pIntent.data = Uri.parse(vContext.getString(R.string.app_store_url))
+    return pIntent
+} // androidRate
+
+fun shareApp(vContext: Context): Intent? {
+    try {
+        println("share app 1")
+        var pSubject = ""
+        var pMessage = ""
+        pSubject = "Check out the Meh.com app"
+        pMessage = vContext.getString(R.string.app_store_url)
+
+        var vIntent = Intent(Intent.ACTION_SEND)
+        vIntent.type = "text/plain"
+        vIntent.putExtra(Intent.EXTRA_EMAIL, "")
+        vIntent.putExtra(Intent.EXTRA_SUBJECT, pSubject)
+        vIntent.putExtra(Intent.EXTRA_TEXT, pMessage)
+        vIntent = Intent.createChooser(vIntent, "Share This App ")
+        println("share app 2")
+
+
+        return vIntent
+    } catch (e: Exception) {
+        printToLog_10(TAG, "ERROR " + e.message)
+        e.printStackTrace()
+        return null
+    }
+    // try
+} // androidShareYourStatus
+
 
 fun loadJsonFromFile(filename: String, context: Context): String {
     var json = ""
@@ -110,7 +151,7 @@ fun showNotification(pContext: Context, vNotification_TickerText: String, vNotif
 
         // buy button activity
         var vIntentShowActivity2 = Intent(pContext, ActivityGoToSite::class.java)
-            vIntentShowActivity2 .putExtra(EXTRA_GO_TO_SITE_URL, vBuyURL)
+            vIntentShowActivity2 .putExtra(ACT_EXTRA_GO_TO_SITE_URL, vBuyURL)
 
         // Android Wear
         var pIntent_AndroidWear = Intent(pContext, ActivityMain::class.java)

@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import com.example.jonesq.meh3.utils.KEY_PHOTO_URI
+import com.example.jonesq.meh3.utils.FRAG_ARG_PHOTO_URI
 import com.keyontech.meh3.R
 import com.squareup.picasso.Picasso
 
@@ -16,7 +16,7 @@ class FragmentViewPager1 : Fragment() {
         fun newInstance(photoURL: String): FragmentViewPager1 {
             /*** Store the mockModel data in a Bundle object */
             val args = Bundle()
-            args.putString(KEY_PHOTO_URI, photoURL)
+            args.putString(FRAG_ARG_PHOTO_URI, photoURL)
 
             /***
              * Create a new mockFragment and set the Bundle as the arguments
@@ -41,7 +41,7 @@ class FragmentViewPager1 : Fragment() {
         Picasso.with(activity)
 //            .downloader(new OkHttpDownloader( context , Integer.MAX_VALUE)
 //            .centerCrop()
-            .load( args.getString(KEY_PHOTO_URI) )
+            .load( args.getString(FRAG_ARG_PHOTO_URI) )
             .into(imageviewDealPhoto)
 
         return view

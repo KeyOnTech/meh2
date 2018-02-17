@@ -1,5 +1,6 @@
 package com.keyontech.meh3
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.Snackbar
@@ -17,6 +18,7 @@ import okhttp3.*
 import org.json.JSONException
 import java.io.IOException
 import android.graphics.Color
+import android.net.Uri
 import android.os.AsyncTask
 import android.os.Build
 
@@ -30,6 +32,7 @@ import com.keyontech.meh3.Activities.ActivityMehVideo
 import android.preference.PreferenceManager
 import android.util.Log
 import android.view.Gravity
+import android.view.View
 import com.example.jonesq.meh3.utils.*
 import com.keyontech.meh3.Activities.ActivityGoToSite
 import com.keyontech.meh3.services.IntentService_Notifications_Poll_Service
@@ -44,16 +47,7 @@ import java.io.InputStreamReader
 import java.nio.charset.Charset
 
 
-//import org.apache.http.HttpEntity
-//import org.apache.http.HttpResponse
-//import org.apache.http.StatusLine
-//import org.apache.http.client.ClientProtocolException
-//import org.apache.http.client.methods.HttpGet
-//import org.apache.http.impl.client.DefaultHttpClient
 
-
-
-//class ActivityMain : AppCompatActivity() {
 class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
 
@@ -85,6 +79,8 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
      * add a refresh button to the nav drawer
      *
      *
+     * view pager infinite loop
+     * https://www.raywenderlich.com/169774/viewpager-tutorial-android-getting-started-kotlin
      */
 
 
@@ -123,7 +119,7 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     companion object {
         var mehDealUrl: String = ""
-    }
+    } // companion object
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -133,15 +129,35 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
 // setup Nav Drawer
-        var toggle = ActionBarDrawerToggle(
-                this, drawer_layout, toolbarNavDrawer, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+        var toggle = object : ActionBarDrawerToggle(
+                this, drawer_layout, toolbarNavDrawer, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+            override fun onDrawerClosed(drawerView: View?) {
+                super.onDrawerClosed(drawerView)
+                // dont show nav bar on start
+                PreferenceManager.getDefaultSharedPreferences(applicationContext)
+                        .edit()
+                        .putBoolean(PREF_KEY_SHOW_NAV_DRAWER_ONSTART, false)
+                        .apply()
+            }
+        }
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
+        // close nav drawer - https://www.supinfo.com/articles/single/5610-android-navigation-drawer
+        // did nav drawer just clsoe - https://github.com/kittinunf/RxMovieKotlin/blob/master/app/src/main/kotlin/com/taskworld/android/rxmovie/view/fragment/NavigationDrawerFragment.kt
+//        // alternavitve method Defer code dependent on restoration of previous instance state.
+//        drawer_layout.setDrawerListener(drawerToggle)
+//        drawer_layout.post { drawerToggle!!.syncState() }
 
         nav_view.setNavigationItemSelectedListener(this)
 
 // auto open nav drawer
-        drawer_layout.openDrawer(Gravity.LEFT)
+        // show nav drawer first time
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+        var showNavDrawerOnStart = sharedPreferences.getBoolean(PREF_KEY_SHOW_NAV_DRAWER_ONSTART, true)
+
+        if (showNavDrawerOnStart) {
+            drawer_layout.openDrawer(Gravity.LEFT)
+        }
 
 // turn on auto check every night --- start
         if (!IntentService_Notifications_Poll_Service.isServiceAlarmOn(this)) {
@@ -162,7 +178,7 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         fetchJSON()
         // Kick off an {@link AsyncTask} to perform the network request
-        val task_TsunamiAsyncTask1 = TsunamiAsyncTask2()
+        val task_TsunamiAsyncTask1 = fetchJSONAsyncTask2()
         task_TsunamiAsyncTask1.execute()
 //        val sFetchJSON_U = fetchJSON_U()
 //        mockInterface()
@@ -174,7 +190,7 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
 
-            
+
 //            fetchJSON()
 //            mockInterface()
 
@@ -183,13 +199,13 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             // test from other class fix this
 //        IntentService_Notifications_Poll_Service.fetchJSON()
             // Kick off an {@link AsyncTask} to perform the network request
-//        val task_TsunamiAsyncTask3 = IntentService_Notifications_Poll_Service.Companion.TsunamiAsyncTask3()
-//        task_TsunamiAsyncTask3.execute()
+//        val task_fetchJSONAsyncTask3 = IntentService_Notifications_Poll_Service.Companion.fetchJSONAsyncTask3()
+//        task_fetchJSONAsyncTask3.execute()
 
 
 
             val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-            var jsonResponse = sharedPreferences.getString(KEY_MEH_RESPONSE_STRING, "")
+            var jsonResponse = sharedPreferences.getString(PREF_KEY_MEH_RESPONSE_STRING, "")
             println("sharedPreferences  :  jsonResponse = " + jsonResponse)
 
             goToURL(mehDealUrl)
@@ -202,7 +218,7 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     fun goToURL(pURL: String) {
         println("pUrl = " + pURL)
         var intent = Intent(baseContext, ActivityGoToSite::class.java)
-        intent.putExtra(EXTRA_GO_TO_SITE_URL, pURL)
+        intent.putExtra(ACT_EXTRA_GO_TO_SITE_URL, pURL)
         startActivity(intent)
     }
 
@@ -220,17 +236,23 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         when (item.itemId) {
             R.id.nav_bar_poll -> {
                 var intent = Intent(baseContext, ActivityMehPoll::class.java)
-                intent.putExtra(KEY_MEH_RESPONSE_STRING, jsonResponse)
+                intent.putExtra(PREF_KEY_MEH_RESPONSE_STRING, jsonResponse)
                 startActivity(intent)
             }
             R.id.nav_bar_video-> {
                 var intent = Intent(baseContext, ActivityMehVideo::class.java)
-                intent.putExtra(KEY_MEH_VIDEO_LINK, mehVideoLink)
+                intent.putExtra(ACT_EXTRA_MEH_VIDEO_LINK, mehVideoLink)
                 startActivity(intent)
             }
             R.id.nav_bar_about-> {
                 var intent = Intent(baseContext, ActivityAbout::class.java)
                 startActivity(intent)
+            }
+            R.id.nav_bar_rate_app-> {
+                startActivity(rateApp(this))
+            }
+            R.id.nav_bar_share_app-> {
+                startActivity(shareApp(this))
             }
             R.id.nav_bar_refresh-> {
                 fetchJSON()
@@ -275,7 +297,7 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     println("LOAD :  shared prefs data")
                     // get JSON response from prefs
                     val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-                    var jsonResponse = sharedPreferences.getString(KEY_MEH_RESPONSE_STRING, "")
+                    var jsonResponse = sharedPreferences.getString(PREF_KEY_MEH_RESPONSE_STRING, "")
                     println("sharedPreferences  :  jsonResponse " + jsonResponse)
 
                     if (jsonResponse.isEmpty() ) {
@@ -402,6 +424,9 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             // set video
             mehVideoLink = modelMeh.video.topic.url
+//            var firstFeature = featureArray.getJSONObject(0)
+// parse json object with out errors - https://stackoverflow.com/questions/34938640/advoid-many-try-catch-blog-when-parse-json/34938745#34938745
+
 
             // set site URL
 //            mehDealUrl = "https://meh.com/"
@@ -410,7 +435,7 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             // save string to preferences
             PreferenceManager.getDefaultSharedPreferences(this)
                 .edit()
-                .putString(KEY_MEH_RESPONSE_STRING, response)
+                .putString(PREF_KEY_MEH_RESPONSE_STRING, response)
                 .apply()
 
             // set notification large image
@@ -534,7 +559,7 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             // save string to preferences
             PreferenceManager.getDefaultSharedPreferences(this)
                     .edit()
-                    .putString(KEY_MEH_RESPONSE_STRING, response)
+                    .putString(PREF_KEY_MEH_RESPONSE_STRING, response)
                     .apply()
 
             // set notification large image
@@ -747,8 +772,8 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
      * [AsyncTask] to perform the network request on a background thread, and then
      * update the UI with the first earthquake in the response.
      */
-//    private inner class TsunamiAsyncTask2 : AsyncTask<URL, Void, ModelMeh>() {
-    private inner class TsunamiAsyncTask2 : AsyncTask<URL, Void, String>() {
+//    private inner class fetchJSONAsyncTask2 : AsyncTask<URL, Void, ModelMeh>() {
+    private inner class fetchJSONAsyncTask2 : AsyncTask<URL, Void, String>() {
 
 //        override fun doInBackground(vararg urls: URL): ModelMeh {
         override fun doInBackground(vararg urls: URL): String{

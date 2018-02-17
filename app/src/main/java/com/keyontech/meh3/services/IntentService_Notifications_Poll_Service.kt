@@ -47,38 +47,35 @@ class IntentService_Notifications_Poll_Service : IntentService("IntentService_No
     var jsonResponse = ""
 
 
+    companion object {
+        var mehDealUrl: String = ""
 
+        // pg 473
+            fun setServiceAlarm(pContext: Context, pAlarmIsOn: Boolean) {
+                var vIntent = Intent(pContext, IntentService_Notifications_Poll_Service::class.java)
+                var vPendingIntent = PendingIntent.getService(pContext, 0, vIntent, 0)
 
+                var vAlarmManager = pContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-        companion object {
-            var mehDealUrl: String = ""
-
-            // pg 473
-                fun setServiceAlarm(pContext: Context, pAlarmIsOn: Boolean) {
-                    var vIntent = Intent(pContext, IntentService_Notifications_Poll_Service::class.java)
-                    var vPendingIntent = PendingIntent.getService(pContext, 0, vIntent, 0)
-
-                    var vAlarmManager = pContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-
-                    if (pAlarmIsOn) {
-                        // how to...
-                        // https://developer.android.com/training/scheduling/alarms.html
-                        // Set the alarm to start at approximately 11:05 p.m.
-                        var pCalendar = Calendar.getInstance()
-                        pCalendar.timeInMillis = System.currentTimeMillis()
+                if (pAlarmIsOn) {
+                    // how to...
+                    // https://developer.android.com/training/scheduling/alarms.html
+                    // Set the alarm to start at approximately 11:05 p.m.
+                    var pCalendar = Calendar.getInstance()
+                    pCalendar.timeInMillis = System.currentTimeMillis()
 
 //                        // USE FOR TESTING faster timer for testing notifications --- start
 //                        // reset hour, minutes, seconds and millis
 //                        pCalendar.set(Calendar.SECOND, 45)
 //                        // USE FOR TESTING faster timer for testing notifications --- end
 
-                        // use for live --- start
-                        // reset hour, minutes, seconds and millis
-                        pCalendar.set(Calendar.HOUR_OF_DAY, 23)  // 21 = 11pm / 0  -  midnight
-                        pCalendar.set(Calendar.MINUTE, 4) // 04   -  00:04
-                        pCalendar.set(Calendar.SECOND, 0) // 00
-                        pCalendar.set(Calendar.MILLISECOND, 0)
-                        // use for live --- start
+                    // use for live --- start
+                    // reset hour, minutes, seconds and millis
+                    pCalendar.set(Calendar.HOUR_OF_DAY, 23)  // 21 = 11pm / 0  -  midnight
+                    pCalendar.set(Calendar.MINUTE, 4) // 04   -  00:04
+                    pCalendar.set(Calendar.SECOND, 0) // 00
+                    pCalendar.set(Calendar.MILLISECOND, 0)
+                    // use for live --- start
 
 
 //                        // USE FOR TESTING faster timer for testing notifications --- start
@@ -86,43 +83,43 @@ class IntentService_Notifications_Poll_Service : IntentService("IntentService_No
 //                        vAlarmManager.setRepeating(
 //                                AlarmManager.RTC
 //                                , System.currentTimeMillis() // start time for polling
-//                                , EXTRA_NOTIFICATION_POLL_INTERVAL.toLong() // run every so many seconds
+//                                , TEST_NOTIFICATION_POLL_INTERVAL.toLong() // run every so many seconds
 //                                , vPendingIntent
 //                        )
 //                        // USE FOR TESTING faster timer for testing notifications --- end
 
 
-                        // USE FOR LIVE notifications --- START
-                        vAlarmManager.setRepeating(
-                                AlarmManager.RTC
-                                , pCalendar.timeInMillis // AT time above
-                                , AlarmManager.INTERVAL_DAY // DAILY
-                                , vPendingIntent
-                        )
-                        // USE FOR LIVE notifications --- END
-                    } else {
-                        vAlarmManager.cancel(vPendingIntent)
-                        vPendingIntent.cancel()
-                    }
+                    // USE FOR LIVE notifications --- START
+                    vAlarmManager.setRepeating(
+                            AlarmManager.RTC
+                            , pCalendar.timeInMillis // AT time above
+                            , AlarmManager.INTERVAL_DAY // DAILY
+                            , vPendingIntent
+                    )
+                    // USE FOR LIVE notifications --- END
+                } else {
+                    vAlarmManager.cancel(vPendingIntent)
+                    vPendingIntent.cancel()
+                }
 
 
-                    // save to preferences if the alarm is on or off for startup
-                    PreferenceManager.getDefaultSharedPreferences(pContext)
-                            .edit()
-                            .putBoolean(EXTRA_NOTIFICATION_IS_ALARM_ON, pAlarmIsOn)
-                            .apply()
+                // save to preferences if the alarm is on or off for startup
+                PreferenceManager.getDefaultSharedPreferences(pContext)
+                        .edit()
+                        .putBoolean(PREF_EXTRA_NOTIFICATION_IS_ALARM_ON, pAlarmIsOn)
+                        .apply()
 
-                } // isServiceAlarm( Context pContext )
+            } // isServiceAlarm( Context pContext )
 
 
-                // pg 475
-                fun isServiceAlarmOn(pContext: Context): Boolean {
-                    var vIntent = Intent(pContext, IntentService_Notifications_Poll_Service::class.java)
-                    var vPendingIntent = PendingIntent.getService(pContext, 0, vIntent, PendingIntent.FLAG_NO_CREATE)
-                    return vPendingIntent != null
-                } // isServiceAlarmOn( Context pContext , boolean vIsOn )
+            // pg 475
+            fun isServiceAlarmOn(pContext: Context): Boolean {
+                var vIntent = Intent(pContext, IntentService_Notifications_Poll_Service::class.java)
+                var vPendingIntent = PendingIntent.getService(pContext, 0, vIntent, PendingIntent.FLAG_NO_CREATE)
+                return vPendingIntent != null
+            } // isServiceAlarmOn( Context pContext , boolean vIsOn )
 
-        } // companion
+    } // companion object
 
 
 
@@ -136,12 +133,12 @@ class IntentService_Notifications_Poll_Service : IntentService("IntentService_No
 //                println("IntentService_Notifications_Poll_Service - fetch JSON")
                 fetchJSON()
                 // Kick off an {@link AsyncTask} to perform the network request
-                val task_TsunamiAsyncTask1 = TsunamiAsyncTask3()
+                val task_TsunamiAsyncTask1 = fetchJSONAsyncTask()
                 task_TsunamiAsyncTask1.execute()
 
                 // send broadcast
 //                println("onHandleIntent - send broadcast1 - send broadcast")
-                sendBroadcast( Intent(EXTRA_ACTION_SHOW_NOTIFICATION))
+                sendBroadcast(Intent(BROADDCAST_EXTRA_ACTION_SHOW_NOTIFICATION))
             }  catch (e:Exception){
                 println("error in IntentService_Notifications_Poll_Service " + e.message )
             }
@@ -193,11 +190,10 @@ class IntentService_Notifications_Poll_Service : IntentService("IntentService_No
         // save string to preferences
         PreferenceManager.getDefaultSharedPreferences(this)
             .edit()
-            .putString(KEY_MEH_RESPONSE_STRING, response)
+            .putString(PREF_KEY_MEH_RESPONSE_STRING, response)
             .apply()
 
         // set site URL
-//        mehDealUrl = "https://meh.com/"
         mehDealUrl = modelMeh.deal.url
 
         // set notification large image
@@ -272,8 +268,8 @@ class IntentService_Notifications_Poll_Service : IntentService("IntentService_No
      * [AsyncTask] to perform the network request on a background thread, and then
      * update the UI with the first earthquake in the response.
      */
-//    inner class TsunamiAsyncTask3 : AsyncTask<URL, Void, ModelMeh>() {
-    inner class TsunamiAsyncTask3 : AsyncTask<URL, Void, String>() {
+//    inner class fetchJSONAsyncTask : AsyncTask<URL, Void, ModelMeh>() {
+    inner class fetchJSONAsyncTask : AsyncTask<URL, Void, String>() {
 
         //        override fun doInBackground(vararg urls: URL): ModelMeh {
         override fun doInBackground(vararg urls: URL): String{
@@ -412,7 +408,7 @@ class IntentService_Notifications_Poll_Service : IntentService("IntentService_No
             // save string to preferences
             PreferenceManager.getDefaultSharedPreferences(applicationContext)
                     .edit()
-                    .putString(KEY_MEH_RESPONSE_STRING, response)
+                    .putString(PREF_KEY_MEH_RESPONSE_STRING, response)
                     .apply()
 
             // set site URL

@@ -20,7 +20,7 @@ class ActivityMehPoll: AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView( R.layout.activity_meh_poll)
 
-        val jsonResponse = intent.getStringExtra(KEY_MEH_RESPONSE_STRING)
+        val jsonResponse = intent.getStringExtra(PREF_KEY_MEH_RESPONSE_STRING)
         val gson = GsonBuilder().create()
         val modelMeh = gson.fromJson( jsonResponse , ModelMeh::class.java )
 

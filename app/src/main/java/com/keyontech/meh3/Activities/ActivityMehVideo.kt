@@ -15,7 +15,7 @@ class ActivityMehVideo: AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView( R.layout.activity_meh_video)
 /***        webView_activity_meh_video.setBackgroundColor(Color.YELLOW) */
-        val courseLink = intent.getStringExtra(KEY_MEH_VIDEO_LINK)
+        val courseLink = intent.getStringExtra(ACT_EXTRA_MEH_VIDEO_LINK)
 /***        to make the webview allow java from pages add the following - start */
         webView_activity_meh_video.settings.javaScriptEnabled = true
         webView_activity_meh_video.settings.loadWithOverviewMode = true
