@@ -6,16 +6,8 @@ import com.keyontech.meh3.R
 
 /**
  * Created by kot on 2/17/18.
- */
-
-
-class TopRightToBottomLeftViewPagerPageTransform: ViewPager.PageTransformer {
-    var fragmentImage: View? = null
-
-    override fun transformPage(page: View?, position: Float) {
-        val pageWidth = page?.width ?: return
-
-//        var vX = 0.5 // works
+ *
+ * //        var vX = 0.5 // works
 //        var vX = 0.75 // works
 //        var vX = 1 // works
 //        var vX = 2 // works
@@ -34,7 +26,14 @@ class TopRightToBottomLeftViewPagerPageTransform: ViewPager.PageTransformer {
 //        var vY = 5 // works
 //        var vY = 7 // works
 //        var vY = 10 // works
+ */
 
+
+class TopRightToBottomLeftViewPagerPageTransform: ViewPager.PageTransformer {
+    var fragmentImage: View? = null
+
+    override fun transformPage(page: View?, position: Float) {
+        val pageWidth = page?.width ?: return
 
         /*** swipe comes from top right down to bottom left */
         var vX = 50 // works

@@ -179,12 +179,12 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setTitle("")
 
 
-//        fetchJSON()
-//        // Kick off an {@link AsyncTask} to perform the network request
-//        val task_TsunamiAsyncTask1 = fetchJSONAsyncTask2()
-//        task_TsunamiAsyncTask1.execute()
-////        val sFetchJSON_U = fetchJSON_U()
-        mockInterface()
+        fetchJSON()
+        // Kick off an {@link AsyncTask} to perform the network request
+        val task_TsunamiAsyncTask1 = fetchJSONAsyncTask2()
+        task_TsunamiAsyncTask1.execute()
+//        val sFetchJSON_U = fetchJSON_U()
+//        mockInterface()
 
 
 // fab buton Right
@@ -446,6 +446,7 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             // set photos viewPager
             adapterActivityMain = AdapterViewPagerActivityMain(supportFragmentManager, modelMeh.deal.photos )
+            viewPager_NavDrawer.offscreenPageLimit = 4
             viewPager_NavDrawer.adapter = adapterActivityMain
 
             // set custom swipe animations
@@ -581,6 +582,7 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             // set photos viewPager
             adapterActivityMain = AdapterViewPagerActivityMain(supportFragmentManager, modelMeh.deal.photos )
+            viewPager_NavDrawer.offscreenPageLimit = 4
             viewPager_NavDrawer.adapter = adapterActivityMain
 
         // set custom swipe animations
