@@ -1,5 +1,6 @@
 package com.example.jonesq.meh3.utils
 
+import android.app.Activity
 import android.app.Notification
 import android.app.NotificationManager
 import android.media.RingtoneManager
@@ -8,6 +9,7 @@ import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.net.ConnectivityManager
 import android.net.Uri
 import android.support.v4.app.NotificationCompat
 import android.util.Log
@@ -63,6 +65,18 @@ fun printToErrorLog_10(vTag: String, vStr: String) {
     }
 }
 
+
+// make sure the internet is turned on on the device
+fun isConnected_To_Network(vContext: Context): Boolean {
+    val connectivityManager = vContext.getSystemService(Activity.CONNECTIVITY_SERVICE) as ConnectivityManager
+    val networkInfo = connectivityManager.activeNetworkInfo
+
+    return if (networkInfo != null && networkInfo.isConnected) {
+        true
+    } else {
+        false
+    } // if
+} // isConnected_To_Network
 
 fun rateApp(vContext: Context): Intent {
     val pIntent = Intent(Intent.ACTION_VIEW)

@@ -36,6 +36,7 @@ import android.view.View
 import com.example.jonesq.meh3.utils.*
 import com.keyontech.meh3.Activities.ActivityGoToSite
 import com.keyontech.meh3.services.IntentService_Notifications_Poll_Service
+import com.keyontech.meh3.viewpager1.*
 import kotlinx.android.synthetic.main.nav_drawer_layout.*
 import java.io.InputStream
 import java.net.HttpURLConnection
@@ -45,7 +46,7 @@ import org.json.JSONObject
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.nio.charset.Charset
-
+import java.util.*
 
 
 class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -63,6 +64,8 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
      *
      * Move constants to Strings Resource file
      *
+     *viewPager animations / transforms
+     * http://myhexaville.com/2017/03/17/android-viewpager-transformations/
      *
      * viewPager tab icons
      * https://stackoverflow.com/questions/38459309/how-do-you-create-an-android-view-pager-with-a-dots-indicator
@@ -176,12 +179,12 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setTitle("")
 
 
-        fetchJSON()
-        // Kick off an {@link AsyncTask} to perform the network request
-        val task_TsunamiAsyncTask1 = fetchJSONAsyncTask2()
-        task_TsunamiAsyncTask1.execute()
-//        val sFetchJSON_U = fetchJSON_U()
-//        mockInterface()
+//        fetchJSON()
+//        // Kick off an {@link AsyncTask} to perform the network request
+//        val task_TsunamiAsyncTask1 = fetchJSONAsyncTask2()
+//        task_TsunamiAsyncTask1.execute()
+////        val sFetchJSON_U = fetchJSON_U()
+        mockInterface()
 
 
 // fab buton Right
@@ -445,6 +448,17 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             adapterActivityMain = AdapterViewPagerActivityMain(supportFragmentManager, modelMeh.deal.photos )
             viewPager_NavDrawer.adapter = adapterActivityMain
 
+            // set custom swipe animations
+            val randomNumberCreator = Random()
+            val randomNumber = randomNumberCreator.nextInt(3)
+
+            println("randomNumber " + randomNumber)
+            when (randomNumber) {
+                0 -> viewPager_NavDrawer.setPageTransformer(false, DepthViewPagerPageTransform())
+                1 -> viewPager_NavDrawer.setPageTransformer(false, TopRightToBottomLeftViewPagerPageTransform())
+                else -> viewPager_NavDrawer.setPageTransformer(false, ParallaxViewPagerPageTransform())
+            }
+
             // setup viewPager indicator buttons
             tab_layout_viewpager_indicator_dots_NavDrawer.setupWithViewPager(viewPager_NavDrawer,true)
 
@@ -569,7 +583,18 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             adapterActivityMain = AdapterViewPagerActivityMain(supportFragmentManager, modelMeh.deal.photos )
             viewPager_NavDrawer.adapter = adapterActivityMain
 
-            // setup viewPager indicator buttons
+        // set custom swipe animations
+        val randomNumberCreator = Random()
+        val randomNumber = randomNumberCreator.nextInt(3)
+
+        println("randomNumber " + randomNumber)
+        when (randomNumber) {
+            0 -> viewPager_NavDrawer.setPageTransformer(false, DepthViewPagerPageTransform())
+            1 -> viewPager_NavDrawer.setPageTransformer(false, TopRightToBottomLeftViewPagerPageTransform())
+            else -> viewPager_NavDrawer.setPageTransformer(false, ParallaxViewPagerPageTransform())
+        }
+
+        // setup viewPager indicator buttons
             tab_layout_viewpager_indicator_dots_NavDrawer.setupWithViewPager(viewPager_NavDrawer,true)
 
             /***
