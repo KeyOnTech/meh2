@@ -16,6 +16,7 @@ import com.google.gson.GsonBuilder
 import com.keyontech.meh3.R
 import com.squareup.picasso.Picasso
 import okhttp3.*
+import org.json.JSONException
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStream
@@ -154,37 +155,38 @@ class IntentService_Notifications_Poll_Service : IntentService("IntentService_No
 
 
     fun fetchJSON() {
-// get url from file
-// fetch data
-        var gson = GsonBuilder().create()
-        var urlFile = loadJsonFromFile("url.json", this)
-        var jsonOutput = gson.fromJson( urlFile , JSONUrL::class.java )
-        jsonURL = jsonOutput.url
+        try {
+            var gson = GsonBuilder().serializeNulls().create()
+            // get url from file
+            var urlFile = loadJsonFromFile("url.json", this)
+            var jsonOutput = gson.fromJson(urlFile, JSONUrL::class.java)
+            jsonURL = jsonOutput.url
 
-        var request = Request.Builder().url( jsonURL ).build()
-        var client = OkHttpClient()
+            var request = Request.Builder().url(jsonURL).build()
+            var client = OkHttpClient()
 
-        /*** had to enqueue because you cannot execute in the main method needs a thread to do so */
-//        client.newCall( request ).execute()
-        client.newCall( request ).enqueue(object: Callback {
-            override fun onResponse(call: Call?, response: Response?) {
-//                println("111aaa LOAD : live data")
+            // fetch data
+            /*** had to enqueue because you cannot execute in the main method needs a thread to do so */
+            //        client.newCall( request ).execute()
+            client.newCall(request).enqueue(object : Callback {
+                override fun onResponse(call: Call?, response: Response?) {
+                    var responseBody = response?.body()?.string()
+                    jsonResponse = responseBody.toString()
+                    println("444ggg    jsonResponse = " + jsonResponse )
+                    processReturn(jsonResponse)
+                }
 
-                var responseBody = response?.body()?.string()
-//                println( "666bbb  fetchJSON - onResponse - body - " + responseBody )
-                jsonResponse = responseBody.toString()
-                println("666ddd    jsonResponse = " + jsonResponse )
-                processReturn(jsonResponse)
-            }
-
-            override fun onFailure(call: Call?, e: IOException?) {
-                println("fetchJSON - failed to execute request - error: " + e.toString() )
-            }
-        })
+                override fun onFailure(call: Call?, e: IOException?) {
+                    println("Fetch data service call failed - Error: " + e.toString())
+                }
+            })
+        } catch (e: JSONException) {
+            printToErrorLog_10("IntentService_Notifications_Poll_Service Error", "fetchJSON try")
+        }
     }
 
     fun processReturn(response: String){
-        var gson = GsonBuilder().create()
+        var gson = GsonBuilder().serializeNulls().create()
         var modelMeh = gson.fromJson( response , ModelMeh::class.java )
 
         // save string to preferences
@@ -193,65 +195,102 @@ class IntentService_Notifications_Poll_Service : IntentService("IntentService_No
             .putString(PREF_KEY_MEH_RESPONSE_STRING, response)
             .apply()
 
+
         // set site URL
-        mehDealUrl = modelMeh.deal.url
+        if (modelMeh.deal != null )
+        {
+            // set site URL
+            // set fab action button link
+            if(modelMeh.deal.url != null && modelMeh.deal.url.isNotEmpty()) {
+                mehDealUrl = modelMeh.deal.url
+            }else{
+                mehDealUrl = ""
+                println("set Deal Url here")
+            }
 
-        // set notification large image
-        mehNotificationLargePhoto = modelMeh.deal.photos[0]
+            // set notification large image
+            if (modelMeh.deal.photos != null) {
+                if(modelMeh.deal.photos[0].isNotEmpty()) {
+                    mehNotificationLargePhoto = modelMeh.deal.photos[0]
+                }else {
+                    mehNotificationLargePhoto= ""
+                    println("set default large photo image here")
+                }
 
-        // display notification
-        createNotification(
-                this
-                ,"Meh 1 fetchJSON"
-                ,modelMeh.deal.title + "-1-OkHttpClient"
-                ,priceLowtoHigh(modelMeh.deal)
-                , R.drawable.logo_32_x_32_2
-                , R.drawable.logo_32_x_32_2
-                ,mehNotificationLargePhoto
-                , R.drawable.logo_32_x_32_2
-        )
+                if ((modelMeh.deal.items != null) && (modelMeh.deal.items[0].condition != "" && modelMeh.deal.items[0].condition != null)) {
+                    // display notification
+                    createNotification(
+                            this
+                            ,"Meh 1 fetchJSON"
+                            ,modelMeh.deal.title + "-1-OkHttpClient"
+                            ,modelMeh.deal.items[0].condition + " - " + priceLowtoHigh(modelMeh.deal)
+                            , R.drawable.logo_32_x_32_2
+                            , R.drawable.logo_32_x_32_2
+                            ,mehNotificationLargePhoto
+                            , R.drawable.logo_32_x_32_2
+                    )
+                }else{
+                    println("set view pager to null repsonse image")
+                }
+            }else{
+                println("set view pager to null repsonse image")
+            }
+
+        }else{
+            println("set all content boxes to to null repsonses")
+        }
+
+    }
+
+    fun createNotification( pContext: Context, tickerText: String = "", notificationTitle: String = "", notificationText: String, showactionRightButtonIcon: Int, showactionLeftButtonIcon: Int, largebitmapImageURL : String, smallIcon : Int) {
+        var handlerThread = HandlerThread("IntentService_Notifications_Poll_Service_createNotification_handlerThread")
+        handlerThread.start()
+
+        var handler = Handler(handlerThread.looper)
+        handler.post(Runnable {
+            var notificationLargeBitmap: Bitmap? = null
+            try {
+                notificationLargeBitmap  = Picasso
+                        .with(pContext)
+                        .load(largebitmapImageURL)
+                        .resize(512,512)
+                        .placeholder(R.mipmap.ic_launcher)
+                        .error(R.mipmap.ic_launcher)
+                        .get()
+
+                showNotification(
+                        pContext
+                        ,tickerText
+                        ,notificationTitle
+                        ,notificationText
+                        ,showactionRightButtonIcon
+                        ,showactionLeftButtonIcon
+                        ,notificationLargeBitmap
+                        ,smallIcon
+                        ,mehDealUrl
+                        ,NOTIFICATION_ID
+                )
+            } catch (e: IOException) {
+                e.printStackTrace()
+            } finally {
+                if (notificationLargeBitmap != null) {
+                    //do whatever you wanna do with the picture.
+                    //for me it was using my own cache
+//                    imageCaching.cacheImage(imageId, bitmap)
+                }
+            }
+        })
     }
 
 
-        fun createNotification( pContext: Context, tickerText: String = "", notificationTitle: String = "", notificationText: String, showactionRightButtonIcon: Int, showactionLeftButtonIcon: Int, largebitmapImageURL : String, smallIcon : Int) {
-            var handlerThread = HandlerThread("aaa")
-            handlerThread.start()
 
-            var handler = Handler(handlerThread.getLooper())
-            handler.post(Runnable {
-                var notificationLargeBitmap: Bitmap? = null
-                try {
-                    notificationLargeBitmap  = Picasso
-                            .with(pContext)
-                            .load(largebitmapImageURL)
-                            .resize(512,512)
-                            .placeholder(R.mipmap.ic_launcher)
-                            .error(R.mipmap.ic_launcher)
-                            .get()
 
-                    showNotification(
-                            pContext
-                            ,tickerText
-                            ,notificationTitle
-                            ,notificationText
-                            ,showactionRightButtonIcon
-                            ,showactionLeftButtonIcon
-                            ,notificationLargeBitmap
-                            ,smallIcon
-                            ,mehDealUrl
-                            ,NOTIFICATION_ID
-                    )
-                } catch (e: IOException) {
-                    e.printStackTrace()
-                } finally {
-                    if (notificationLargeBitmap != null) {
-                        //do whatever you wanna do with the picture.
-                        //for me it was using my own cache
-    //                    imageCaching.cacheImage(imageId, bitmap)
-                    }
-                }
-            })
-        }
+
+
+
+
+
+
 
 
 
@@ -266,32 +305,15 @@ class IntentService_Notifications_Poll_Service : IntentService("IntentService_No
 
     /**
      * [AsyncTask] to perform the network request on a background thread, and then
-     * update the UI with the first earthquake in the response.
+     * update the UI with the first mehrequest in the response.
      */
 //    inner class fetchJSONAsyncTask : AsyncTask<URL, Void, ModelMeh>() {
     inner class fetchJSONAsyncTask : AsyncTask<URL, Void, String>() {
 
         //        override fun doInBackground(vararg urls: URL): ModelMeh {
         override fun doInBackground(vararg urls: URL): String{
-
-
-
-            val uString = fetchJSON_U()
-            println("666aaa  uString  = " + uString)
-
+            val uString = fetchJSON_AsyncTask()
             return uString
-
-
-
-
-            ////////////////////////
-
-
-
-
-
-
-
 
 //            // Create URL object
 //            val url = createUrl(jsonURL)
@@ -312,16 +334,15 @@ class IntentService_Notifications_Poll_Service : IntentService("IntentService_No
         }
 
         /**
-         * Update the screen with the given earthquake (which was the result of the
+         * Update the screen with the given mehrequest (which was the result of the
          * [TsunamiAsyncTask]).
          */
-//        override fun onPostExecute(earthquake: ModelMeh?) {
-        override fun onPostExecute(earthquake: String?) {
-            if (earthquake == null) {
+//        override fun onPostExecute(mehrequest: ModelMeh?) {
+        override fun onPostExecute(mehrequest: String?) {
+            if (mehrequest == null) {
                 return
             }
-
-//            updateUi(earthquake)
+//            updateUi(mehrequest)
         }
 
 
@@ -332,10 +353,8 @@ class IntentService_Notifications_Poll_Service : IntentService("IntentService_No
         ////////////////
         //    /////////// prior fetchJSON udacitymeh2
         @Throws(IOException::class)
-        fun fetchJSON_U(): String {
+        fun fetchJSON_AsyncTask(): String {
             // jsonURL
-
-
             var jsonResponse = ""
             var urlConnection: HttpURLConnection? = null
             var inputStream: InputStream? = null
@@ -350,7 +369,7 @@ class IntentService_Notifications_Poll_Service : IntentService("IntentService_No
                 urlConnection.connect()
 
                 inputStream = urlConnection.inputStream
-                jsonResponse = readFromStream(inputStream);
+                jsonResponse = readFromStream(inputStream)
                 println("666ccc    jsonResponse = " + jsonResponse )
                 processReturn2(jsonResponse)
             } catch (e: IOException) {
@@ -401,8 +420,15 @@ class IntentService_Notifications_Poll_Service : IntentService("IntentService_No
 
 
 
+
+
+
+
+
+
+
         fun processReturn2(response: String){
-            var gson = GsonBuilder().create()
+            var gson = GsonBuilder().serializeNulls().create()
             var modelMeh = gson.fromJson( response , ModelMeh::class.java )
 
             // save string to preferences
@@ -412,28 +438,53 @@ class IntentService_Notifications_Poll_Service : IntentService("IntentService_No
                     .apply()
 
             // set site URL
-//        mehDealUrl = "https://meh.com/"
-            mehDealUrl = modelMeh.deal.url
+            if (modelMeh.deal != null )
+            {
+                // set site URL
+                // set fab action button link
+                if(modelMeh.deal.url != null && modelMeh.deal.url.isNotEmpty()) {
+                    mehDealUrl = modelMeh.deal.url
+                }else{
+                    mehDealUrl = ""
+                    println("set Deal Url here")
+                }
 
-            // set notification large image
-            mehNotificationLargePhoto = modelMeh.deal.photos[0]
 
-            // display notification
-            createNotification2(
-                    applicationContext
-                    ,"Meh 2 async task"
-                    ,modelMeh.deal.title + "-2-Async_Task"
-                    ,priceLowtoHigh(modelMeh.deal)
-                    , R.drawable.logo_32_x_32_2
-                    , R.drawable.logo_32_x_32_2
-                    ,mehNotificationLargePhoto
-                    , R.drawable.logo_32_x_32_2
-            )
+                // set notification large image
+                if (modelMeh.deal.photos != null) {
+                    if(modelMeh.deal.photos[0].isNotEmpty()) {
+                        mehNotificationLargePhoto = modelMeh.deal.photos[0]
+                    }else {
+                        mehNotificationLargePhoto= ""
+                        println("set default large photo image here")
+                    }
+
+                    if ((modelMeh.deal.items != null) && (modelMeh.deal.items[0].condition != "" && modelMeh.deal.items[0].condition != null)) {
+                        // display notification
+                        createNotification2(
+                                applicationContext
+                                , "Meh 2 async task"
+                                , modelMeh.deal.title + "-2-Async_Task"
+                                , modelMeh.deal.items[0].condition + " - " + priceLowtoHigh(modelMeh.deal)
+                                , R.drawable.logo_32_x_32_2
+                                , R.drawable.logo_32_x_32_2
+                                , mehNotificationLargePhoto
+                                , R.drawable.logo_32_x_32_2
+                        )
+                    }
+                }else{
+                    println("set view pager to null repsonse image")
+                }
+
+            }else{
+                println("set all content boxes to to null repsonses")
+            }
+
         }
 
 
         fun createNotification2( pContext: Context, tickerText: String = "", notificationTitle: String = "", notificationText: String, showactionRightButtonIcon: Int, showactionLeftButtonIcon: Int, largebitmapImageURL : String, smallIcon : Int) {
-            var handlerThread = HandlerThread("aaa")
+            var handlerThread = HandlerThread("IntentService_Notifications_Poll_Service_createNotification2_handlerThread")
             handlerThread.start()
 
             var handler = Handler(handlerThread.getLooper())
@@ -546,16 +597,16 @@ class IntentService_Notifications_Poll_Service : IntentService("IntentService_No
 //
 //        /**
 //         * Return an [ModelMeh] object by parsing out information
-//         * about the first earthquake from the input earthquakeJSON string.
+//         * about the first mehrequest from the input mehrequestJSON string.
 //         */
-//        fun extractFeatureFromJson(earthquakeJSON: String): ModelMeh? {
+//        fun extractFeatureFromJson(mehrequestJSON: String): ModelMeh? {
 //            try {
-//                val baseJsonResponse = JSONObject(earthquakeJSON)
+//                val baseJsonResponse = JSONObject(mehrequestJSON)
 //                val featureArray = baseJsonResponse.getJSONArray("features")
 //
 //                // If there are results in the features array
 //                if (featureArray.length() > 0) {
-//                    // Extract out the first feature (which is an earthquake)
+//                    // Extract out the first feature (which is an mehrequest)
 //                    val firstFeature = featureArray.getJSONObject(0)
 //                    val properties = firstFeature.getJSONObject("properties")
 //
@@ -568,7 +619,7 @@ class IntentService_Notifications_Poll_Service : IntentService("IntentService_No
 //                    return ModelMeh(title, time, tsunamiAlert)
 //                }
 //            } catch (e: JSONException) {
-//                Log.e("extractFeatureFromJson", "Problem parsing the earthquake JSON results", e)
+//                Log.e("extractFeatureFromJson", "Problem parsing the mehrequest JSON results", e)
 //            }
 //
 //            return null

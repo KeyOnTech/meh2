@@ -171,7 +171,7 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 // get url from file
 // fetch data
-        var gson = GsonBuilder().create()
+        var gson = GsonBuilder().serializeNulls().create() // include null opjects when null
         var urlFile = loadJsonFromFile("url.json", this)
         var jsonOutput = gson.fromJson( urlFile , JSONUrL::class.java )
         jsonURL = jsonOutput.url
@@ -181,10 +181,10 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         fetchJSON()
         // Kick off an {@link AsyncTask} to perform the network request
-        val task_TsunamiAsyncTask1 = fetchJSONAsyncTask2()
-        task_TsunamiAsyncTask1.execute()
+        val fetchJSONAsyncTask2_1 = fetchJSONAsyncTask2()
+        fetchJSONAsyncTask2_1.execute()
 //        val sFetchJSON_U = fetchJSON_U()
-//        mockInterface()
+//        fetchMockInterface()
 
 
 // fab buton Right
@@ -195,7 +195,7 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
 //            fetchJSON()
-//            mockInterface()
+//            fetchMockInterface()
 
 
 
@@ -243,9 +243,11 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 startActivity(intent)
             }
             R.id.nav_bar_video-> {
-                var intent = Intent(baseContext, ActivityMehVideo::class.java)
-                intent.putExtra(ACT_EXTRA_MEH_VIDEO_LINK, mehVideoLink)
-                startActivity(intent)
+                if (mehVideoLink.isNotEmpty()) {
+                    var intent = Intent(baseContext, ActivityMehVideo::class.java)
+                    intent.putExtra(ACT_EXTRA_MEH_VIDEO_LINK, mehVideoLink)
+                    startActivity(intent)
+                }
             }
             R.id.nav_bar_about-> {
                 var intent = Intent(baseContext, ActivityAbout::class.java)
@@ -270,6 +272,15 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
 
+
+
+
+    fun setupAlarm_To_Auto_Check_EveryNight() {
+        println("333  set alarm to check every night stared ")
+        var shouldStartAlarm = true
+        //            printToToast( this , TAG , "Should I start the polling notification True or False??? " + shouldStartAlarm ); ;
+        IntentService_Notifications_Poll_Service.setServiceAlarm(this , shouldStartAlarm)  // .set.setServiceAlarm(this, shouldStartAlarm)
+    } // setPollingNotifications
 
 
 
@@ -325,147 +336,189 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-    fun mockInterface() {
+    fun fetchMockInterface() {
         println("Mock Data initiated ")
 
         try {
             println("LOAD :  MOCK data")
-            var mockData = loadJsonFromFile("sample1.json", this)
+//            var mockData = loadJsonFromFile("sample1.json", this)
+            var mockData = loadJsonFromFile("sampleNULLsTopics.json", this)
             jsonResponse = mockData
 
+            println("jsonResponse = " + jsonResponse)
             processMOCKReturn(jsonResponse)
         } catch (e: JSONException) {
-            println("mockInterface Error: " + e)
+            println("fetchMockInterface Error: " + e)
         } // try
 
     } //
 
-
-
     fun processReturn(response: String){
-        var gson = GsonBuilder().create()
-        var modelMeh = gson.fromJson( response , ModelMeh::class.java )
-
-
-//        println( "222bbb  modelMeh.deal = " + modelMeh.deal )
-//        println( "222bbb  modelMeh.deal title = " + modelMeh.deal.title )
-//
-//        println( "222ccc  modelMeh.deal.theme.accentColor = " + modelMeh.deal.theme.accentColor )
-//        println( "222ccc  modelMeh.deal.theme.backgroundColor = " + modelMeh.deal.theme.backgroundColor )
-//
-//
-////        mehPoll = modelMeh.poll
-//
-//        println( "333aaa  modelMeh.poll = " + modelMeh.poll)
-//        println( "333bbb  modelMeh.poll title = " + modelMeh.poll.title )
-//        println( "333ccc  modelMeh.poll id = " + modelMeh.poll.id )
-//        println( "333ddd  modelMeh.poll startDate = " + modelMeh.poll.startDate )
-//        println( "333eee  modelMeh.poll answers[0].text = " + modelMeh.poll.answers[0].text )
-//        println( "333fff  modelMeh.poll answers[0].voteCount = " + modelMeh.poll.answers[0].voteCount )
-//        println( "333ggg  modelMeh.poll topic.url = " + modelMeh.poll.topic.url)
-//
-//
-//        println( " 77777777     modelMeh.video  " + modelMeh.video )
-////                if (modelMeh.video == null )
-//        println( "444aaa  modelMeh.vieo = " + modelMeh.video)
-//        println( "444bbb  modelMeh.video title = " + modelMeh.video.title )
-//        println( "444ccc  modelMeh.video topic.url = " + modelMeh.video.topic.url)
-
-
-
-
-
-
-
-
         // setup interface
         runOnUiThread{
-//          setTitle(priceLowtoHigh(modelMeh.deal.title))
+            displayResults(response)
+        }
+    }
 
-            // set the color scheme  --- START
-            try {
-                if (!(modelMeh.deal.theme.accentColor === "" || modelMeh.deal.theme.accentColor == null) || !(modelMeh.deal.theme.backgroundColor === "" || modelMeh.deal.theme.backgroundColor == null)) {
-                    if (Build.VERSION.SDK_INT >= 21) {
-                        // Lollipop and above colors
-                        window.statusBarColor = Color.parseColor(modelMeh.deal.theme.accentColor)
-                        window.navigationBarColor = Color.parseColor(modelMeh.deal.theme.accentColor)
-                    }
 
-                    try {
-                        toolbarNavDrawer.setBackgroundColor(Color.parseColor(modelMeh.deal.theme.backgroundColor))
 
-                        // set the custom color for the tabs
-                        viewPager_NavDrawer.setBackgroundColor(Color.parseColor(modelMeh.deal.theme.backgroundColor))
-                        //                    mViewPager_Tabs.setSelectedIndicatorColors(Color.parseColor(modelMeh.deal.theme.accentColor ) );
-                    } catch (e: Exception) {
-                        printToErrorLog_10("ActivityMain", "runOnUiThread")
-                    }
 
-                    nav_drawer_header_linear_layout.setBackgroundColor( Color.parseColor(modelMeh.deal.theme.accentColor))
-//                    nav_drawer_header_linear_layout.setBackgroundColor(Color.parseColor(modelMeh.deal.theme.backgroundColor))
-                }
-            } catch (e: JSONException) {
-                printToErrorLog_10("ActivityMain", "runOnUiThread try")
-            }
 
-            // set body text
-            textView_content_activity_main_card_view_1.text = modelMeh.deal.title
-            textView_content_activity_main_card_view_4.text = priceLowtoHigh(modelMeh.deal)
-            textView_content_activity_main_card_view_2.text = modelMeh.deal.features
-            textView_content_activity_main_card_view_3.text = modelMeh.deal.specifications
 
-            // set video
-            mehVideoLink = modelMeh.video.topic.url
+
+
+
+
+
+
+
+    fun displayResults(response: String) {
+        try {
+
+            var gson = GsonBuilder().serializeNulls().create()
+            var modelMeh = gson.fromJson(response, ModelMeh::class.java)
+
+/***        test returns
+////        println( "222bbb  modelMeh.deal = " + modelMeh.deal )
+////        println( "222bbb  modelMeh.deal title = " + modelMeh.deal.title )
+////
+////        println( "222ccc  modelMeh.deal.theme.accentColor = " + modelMeh.deal.theme.accentColor )
+////        println( "222ccc  modelMeh.deal.theme.backgroundColor = " + modelMeh.deal.theme.backgroundColor )
+////
+////
+//////        mehPoll = modelMeh.poll
+////
+////        println( "333aaa  modelMeh.poll = " + modelMeh.poll)
+////        println( "333bbb  modelMeh.poll title = " + modelMeh.poll.title )
+////        println( "333ccc  modelMeh.poll id = " + modelMeh.poll.id )
+////        println( "333ddd  modelMeh.poll startDate = " + modelMeh.poll.startDate )
+////        println( "333eee  modelMeh.poll answers[0].text = " + modelMeh.poll.answers[0].text )
+////        println( "333fff  modelMeh.poll answers[0].voteCount = " + modelMeh.poll.answers[0].voteCount )
+//////        println( "333hhh  modelMeh.poll topic.url = " + modelMeh.poll.topic)
+//////        println( "333ggg  modelMeh.poll topic.url = " + modelMeh.poll.topic.url)
+////
+////
+////        println( " 77777777     modelMeh.video  " + modelMeh.video )
+//////                if (modelMeh.video == null )
+////        println( "444aaa  modelMeh.vieo = " + modelMeh.video)
+////        println( "444bbb  modelMeh.video title = " + modelMeh.video.title )
+////        println( "444ccc  modelMeh.video topic.url = " + modelMeh.video.topic.url)
+*/
+
+            // setup video activity
+            mehVideoLink = if (modelMeh.video != null) {
+                                if (modelMeh.video.topic != null) {
+                                    if (modelMeh.video.topic.url != null && modelMeh.video.topic.url.isNotEmpty()) {
+                                        modelMeh.video.topic.url
+                                    } else {
+                                        ""
+                                    }
+                                }else{
+                                    ""
+                                }
+                            }else{
+                                ""
+                            }
 //            var firstFeature = featureArray.getJSONObject(0)
 // parse json object with out errors - https://stackoverflow.com/questions/34938640/advoid-many-try-catch-blog-when-parse-json/34938745#34938745
 
 
             // set site URL
-//            mehDealUrl = "https://meh.com/"
-            mehDealUrl = modelMeh.deal.url
+            if (modelMeh.deal != null )
+            {
+                // set main activity body text
+//                setTitle(priceLowtoHigh(modelMeh.deal.title))
+                textView_content_activity_main_card_view_1.text = modelMeh.deal.title
+                textView_content_activity_main_card_view_4.text = priceLowtoHigh(modelMeh.deal)
+                textView_content_activity_main_card_view_2.text = modelMeh.deal.features
+                textView_content_activity_main_card_view_3.text = modelMeh.deal.specifications
 
-            // save string to preferences
-            PreferenceManager.getDefaultSharedPreferences(this)
-                .edit()
-                .putString(PREF_KEY_MEH_RESPONSE_STRING, response)
-                .apply()
 
-            // set notification large image
-            mehNotificationLargePhoto = modelMeh.deal.photos[0]
+                // set the color scheme  --- START
+                if (modelMeh.deal.theme != null ) {
+                    if ((modelMeh.deal.theme.accentColor != "" || modelMeh.deal.theme.accentColor != null) || (modelMeh.deal.theme.backgroundColor != "" || modelMeh.deal.theme.backgroundColor != null)) {
+//                        if (Build.VERSION.SDK_INT >= 21) {
+                            /*** Lollipop and above colors min sdk is 21 so if no longer needed */
+                            window.statusBarColor = Color.parseColor(modelMeh.deal.theme.accentColor)
+                            window.navigationBarColor = Color.parseColor(modelMeh.deal.theme.accentColor)
+//                        }
 
-            // set photos viewPager
-            adapterActivityMain = AdapterViewPagerActivityMain(supportFragmentManager, modelMeh.deal.photos )
-            viewPager_NavDrawer.offscreenPageLimit = 4
-            viewPager_NavDrawer.adapter = adapterActivityMain
+                        try {
+                            toolbarNavDrawer.setBackgroundColor(Color.parseColor(modelMeh.deal.theme.backgroundColor))
 
-            // set custom swipe animations
-            val randomNumberCreator = Random()
-            val randomNumber = randomNumberCreator.nextInt(3)
+                            // set the custom color for the tabs
+                            viewPager_NavDrawer.setBackgroundColor(Color.parseColor(modelMeh.deal.theme.backgroundColor))
+                            //                    mViewPager_Tabs.setSelectedIndicatorColors(Color.parseColor(modelMeh.deal.theme.accentColor ) );
+                        } catch (e: Exception) {
+                            printToErrorLog_10("ActivityMain", "runOnUiThread")
+                        }
 
-            println("randomNumber " + randomNumber)
-            when (randomNumber) {
-                0 -> viewPager_NavDrawer.setPageTransformer(false, DepthViewPagerPageTransform())
-                1 -> viewPager_NavDrawer.setPageTransformer(false, TopRightToBottomLeftViewPagerPageTransform())
-                else -> viewPager_NavDrawer.setPageTransformer(false, ParallaxViewPagerPageTransform())
-            }
+                        try {
+                            nav_drawer_header_linear_layout.setBackgroundColor(Color.parseColor(modelMeh.deal.theme.accentColor))
+                            //                    nav_drawer_header_linear_layout.setBackgroundColor(Color.parseColor(modelMeh.deal.theme.backgroundColor))
+                        } catch (e: Exception) {
+                            //
+                        }
 
-            // setup viewPager indicator buttons
-            tab_layout_viewpager_indicator_dots_NavDrawer.setupWithViewPager(viewPager_NavDrawer,true)
+                        try {
+    //                                fabbuttonNavDrawer.setBackgroundColor(Color.parseColor(modelMeh.deal.theme.backgroundColor))
+    //                                fabbuttonNavDrawer.back.backgroundTint =  (Color.parseColor(modelMeh.deal.theme.backgroundColor))
 
-/***
-            // display notification
-            createNotification(
+    //                                fabbuttonNavDrawer.rippleColor = Color.parseColor(modelMeh.deal.theme.backgroundColor)
+                            fabbuttonNavDrawer.rippleColor = Color.parseColor(modelMeh.deal.theme.accentColor)
+                        } catch (e: Exception) {
+                            //
+                        }
+                    }
+                }
+
+                // set fab action button link
+                if(modelMeh.deal.url != null && modelMeh.deal.url.isNotEmpty()) {
+                    mehDealUrl = modelMeh.deal.url
+                }else{
+                    mehDealUrl = ""
+                    println("set Deal Url here")
+                }
+
+                // save string to preferences
+                PreferenceManager.getDefaultSharedPreferences(this)
+                        .edit()
+                        .putString(PREF_KEY_MEH_RESPONSE_STRING, response)
+                        .apply()
+
+                // set notification large image
+                if (modelMeh.deal.photos != null) {
+                    if(modelMeh.deal.photos[0].isNotEmpty()) {
+                        mehNotificationLargePhoto = modelMeh.deal.photos[0]
+                    }else {
+                        mehNotificationLargePhoto= ""
+                        println("set default large photo image here")
+                    }
+
+                    // set photos viewPager
+                    adapterActivityMain = AdapterViewPagerActivityMain(supportFragmentManager, modelMeh.deal.photos)
+                    viewPager_NavDrawer.offscreenPageLimit = 4
+                    viewPager_NavDrawer.adapter = adapterActivityMain
+
+                    // set custom swipe animations
+                    val randomNumberCreator = Random()
+                    val randomNumber = randomNumberCreator.nextInt(3)
+
+                    when (randomNumber) {
+                        0 -> viewPager_NavDrawer.setPageTransformer(false, DepthViewPagerPageTransform())
+                        1 -> viewPager_NavDrawer.setPageTransformer(false, TopRightToBottomLeftViewPagerPageTransform())
+                        else -> viewPager_NavDrawer.setPageTransformer(false, ParallaxViewPagerPageTransform())
+                    }
+
+                    // setup viewPager indicator buttons
+                    tab_layout_viewpager_indicator_dots_NavDrawer.setupWithViewPager(viewPager_NavDrawer, true)
+                }else{
+                    println("set view pager to null repsonse image")
+                }
+
+                /***
+                // display notification
+                createNotification(
                 this
                 ,"Meh"
                 ,modelMeh.deal.title
@@ -474,12 +527,17 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 ,R.drawable.logo_32_x_32_2
                 ,mehNotificationLargePhoto
                 ,R.drawable.logo_32_x_32_2
-            )
-*/
+                )
+                 */
+            }else{
+                println("set all content boxes to to null repsonses")
+            }
+
+        } catch (e: JSONException) {
+            printToErrorLog_10("ActivityMain", "runOnUiThread try")
         }
+
     }
-
-
 
 
 
@@ -487,133 +545,13 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
     fun processMOCKReturn(response: String){
-        var gson = GsonBuilder().create()
-        var modelMeh = gson.fromJson( response , ModelMeh::class.java )
-
-
-        println( "222bbb  modelMeh.deal = " + modelMeh.deal )
-        println( "222bbb  modelMeh.deal title = " + modelMeh.deal.title )
-
-        println( "222ccc  modelMeh.deal.theme.accentColor = " + modelMeh.deal.theme.accentColor )
-        println( "222ccc  modelMeh.deal.theme.backgroundColor = " + modelMeh.deal.theme.backgroundColor )
-
-
-//        mehPoll = modelMeh.poll
-
-        println( "333aaa  modelMeh.poll = " + modelMeh.poll)
-        println( "333bbb  modelMeh.poll title = " + modelMeh.poll.title )
-        println( "333ccc  modelMeh.poll id = " + modelMeh.poll.id )
-        println( "333ddd  modelMeh.poll startDate = " + modelMeh.poll.startDate )
-        println( "333eee  modelMeh.poll answers[0].text = " + modelMeh.poll.answers[0].text )
-        println( "333fff  modelMeh.poll answers[0].voteCount = " + modelMeh.poll.answers[0].voteCount )
-        println( "333ggg  modelMeh.poll topic.url = " + modelMeh.poll.topic.url)
-
-
-        println( " 77777777     modelMeh.video  " + modelMeh.video )
-//                if (modelMeh.video == null )
-        println( "444aaa  modelMeh.vieo = " + modelMeh.video)
-        println( "444bbb  modelMeh.video title = " + modelMeh.video.title )
-        println( "444ccc  modelMeh.video topic.url = " + modelMeh.video.topic.url)
-
-
-
-
-
-
-
-
-        // setup interface
-//        runOnUiThread{
-            //          setTitle(priceLowtoHigh(modelMeh.deal.title))
-
-            // set the color scheme  --- START
-            try {
-                if (!(modelMeh.deal.theme.accentColor === "" || modelMeh.deal.theme.accentColor == null) || !(modelMeh.deal.theme.backgroundColor === "" || modelMeh.deal.theme.backgroundColor == null)) {
-                    if (Build.VERSION.SDK_INT >= 21) {
-                        // Lollipop and above colors
-                        window.statusBarColor = Color.parseColor(modelMeh.deal.theme.accentColor)
-                        window.navigationBarColor = Color.parseColor(modelMeh.deal.theme.accentColor)
-                    }
-
-                    try {
-                        toolbarNavDrawer.setBackgroundColor(Color.parseColor(modelMeh.deal.theme.backgroundColor))
-
-                        // set the custom color for the tabs
-                        viewPager_NavDrawer.setBackgroundColor(Color.parseColor(modelMeh.deal.theme.backgroundColor))
-                        //                    mViewPager_Tabs.setSelectedIndicatorColors(Color.parseColor(modelMeh.deal.theme.accentColor ) );
-                    } catch (e: Exception) {
-                        printToErrorLog_10("ActivityMain", "runOnUiThread")
-                    }
-
-//                    navBackgroundColor = Color.parseColor(modelMeh.deal.theme.accentColor)
-//                    nav_drawer_header_linear_layout.setBackgroundColor( Color.parseColor(modelMeh.deal.theme.accentColor))
-////                    nav_drawer_header_linear_layout.setBackgroundColor(Color.parseColor(modelMeh.deal.theme.backgroundColor))
-                }
-            } catch (e: JSONException) {
-                printToErrorLog_10("ActivityMain", "runOnUiThread try")
-            }
-
-
-//            navBackgroundColor = Color.parseColor(modelMeh.deal.theme.accentColor)
-//            nav_drawer_header_linear_layout.setBackgroundColor(navBackgroundColor)
-
-
-            // set body text
-            textView_content_activity_main_card_view_1.text = modelMeh.deal.title
-            textView_content_activity_main_card_view_4.text = priceLowtoHigh(modelMeh.deal)
-            textView_content_activity_main_card_view_2.text = modelMeh.deal.features
-            textView_content_activity_main_card_view_3.text = modelMeh.deal.specifications
-
-            // set video
-            mehVideoLink = modelMeh.video.topic.url
-
-            // set site URL
-//            mehDealUrl = "https://meh.com/"
-            mehDealUrl = modelMeh.deal.url
-
-            // save string to preferences
-            PreferenceManager.getDefaultSharedPreferences(this)
-                    .edit()
-                    .putString(PREF_KEY_MEH_RESPONSE_STRING, response)
-                    .apply()
-
-            // set notification large image
-            mehNotificationLargePhoto = modelMeh.deal.photos[0]
-
-            // set photos viewPager
-            adapterActivityMain = AdapterViewPagerActivityMain(supportFragmentManager, modelMeh.deal.photos )
-            viewPager_NavDrawer.offscreenPageLimit = 4
-            viewPager_NavDrawer.adapter = adapterActivityMain
-
-        // set custom swipe animations
-        val randomNumberCreator = Random()
-        val randomNumber = randomNumberCreator.nextInt(3)
-
-        println("randomNumber " + randomNumber)
-        when (randomNumber) {
-            0 -> viewPager_NavDrawer.setPageTransformer(false, DepthViewPagerPageTransform())
-            1 -> viewPager_NavDrawer.setPageTransformer(false, TopRightToBottomLeftViewPagerPageTransform())
-            else -> viewPager_NavDrawer.setPageTransformer(false, ParallaxViewPagerPageTransform())
-        }
-
-        // setup viewPager indicator buttons
-            tab_layout_viewpager_indicator_dots_NavDrawer.setupWithViewPager(viewPager_NavDrawer,true)
-
-            /***
-            // display notification
-            createNotification(
-            this
-            ,"Meh"
-            ,modelMeh.deal.title
-            ,priceLowtoHigh(modelMeh.deal)
-            ,R.drawable.logo_32_x_32_2
-            ,R.drawable.logo_32_x_32_2
-            ,mehNotificationLargePhoto
-            ,R.drawable.logo_32_x_32_2
-            )
-             */
-//        }
+        displayResults(response)
+        println("review meh2 utils class amd move all to here")
+//    review meh2 utils class amd move all to here
     }
+
+
+
 
 
 
@@ -713,15 +651,6 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
 
-    fun setupAlarm_To_Auto_Check_EveryNight() {
-        println("333  set alarm to check every night stared ")
-        var shouldStartAlarm = true
-        //            printToToast( this , TAG , "Should I start the polling notification True or False??? " + shouldStartAlarm ); ;
-        IntentService_Notifications_Poll_Service.setServiceAlarm(this , shouldStartAlarm)  // .set.setServiceAlarm(this, shouldStartAlarm)
-    } // setPollingNotifications
-
-
-
 
 
 
@@ -794,79 +723,36 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
 
-
     /**
      * [AsyncTask] to perform the network request on a background thread, and then
-     * update the UI with the first earthquake in the response.
+     * update the UI with the first mehrequest in the response.
      */
-//    private inner class fetchJSONAsyncTask2 : AsyncTask<URL, Void, ModelMeh>() {
+//    inner class fetchJSONAsyncTask2 : AsyncTask<URL, Void, ModelMeh>() {
     private inner class fetchJSONAsyncTask2 : AsyncTask<URL, Void, String>() {
 
-//        override fun doInBackground(vararg urls: URL): ModelMeh {
+        //        override fun doInBackground(vararg urls: URL): ModelMeh {
         override fun doInBackground(vararg urls: URL): String{
-
-
-
-            val uString = fetchJSON_U()
+            val uString = fetchJSON_AsyncTask()
             println("555aaa  uString  = " + uString)
-
             return uString
-
-
-
-
-            ////////////////////////
-
-
-
-
-
-
-
-
-//            // Create URL object
-//            val url = createUrl(jsonURL)
-//
-//            // Perform HTTP request to the URL and receive a JSON response back
-//            var jsonResponse = ""
-//            try {
-//                jsonResponse = makeHttpRequest(url)
-//            } catch (e: IOException) {
-//                // TODO Handle the IOException
-//            }
-//
-//            // Extract relevant fields from the JSON response and create an {@link ModelMeh} object
-//
-//            // Return the {@link ModelMeh} object as the result fo the {@link TsunamiAsyncTask}
-//            return extractFeatureFromJson(jsonResponse)
-
         }
 
         /**
-         * Update the screen with the given earthquake (which was the result of the
-         * [TsunamiAsyncTask]).
+         * Update the screen with the given mehrequest (which was the result of the
+         * [fetchJSONAsyncTask2 ]).
          */
-//        override fun onPostExecute(earthquake: ModelMeh?) {
-        override fun onPostExecute(earthquake: String?) {
-            if (earthquake == null) {
+//        override fun onPostExecute(mehrequest: ModelMeh?) {
+        override fun onPostExecute(mehrequest: String?) {
+            if (mehrequest == null) {
                 return
             }
-
-//            updateUi(earthquake)
+//            updateUi(mehrequest)
         }
 
-
-
-
-
-
-        ////////////////
         //    /////////// prior fetchJSON udacitymeh2
         @Throws(IOException::class)
-        fun fetchJSON_U(): String {
+        fun fetchJSON_AsyncTask(): String {
             // jsonURL
-
-
             var jsonResponse = ""
             var urlConnection: HttpURLConnection? = null
             var inputStream: InputStream? = null
@@ -881,8 +767,8 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 urlConnection.connect()
 
                 inputStream = urlConnection.inputStream
-                            jsonResponse = readFromStream(inputStream);
-                println("555ccc    jsonResponse = " + jsonResponse )
+                jsonResponse = readFromStream(inputStream)
+                println("666ccc    jsonResponse = " + jsonResponse )
             } catch (e: IOException) {
                 //
             } finally {
@@ -915,7 +801,7 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
          * whole JSON response from the server.
          */
         @Throws(IOException::class)
-        private fun readFromStream(inputStream: InputStream?): String {
+        fun readFromStream(inputStream: InputStream?): String {
             val output = StringBuilder()
             if (inputStream != null) {
                 val inputStreamReader = InputStreamReader(inputStream, Charset.forName("UTF-8"))
@@ -934,104 +820,6 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
 
-
-
-
-        ////////////////
-
-//        /**
-//         * Returns new URL object from the given string URL.
-//         */
-//        private fun createUrl(stringUrl: String): URL? {
-//            var url: URL? = null
-//            try {
-//                url = URL(stringUrl)
-//            } catch (exception: MalformedURLException) {
-//                Log.e("createUrl", "Error with creating URL", exception)
-//                return null
-//            }
-//
-//            return url
-//        }
-//
-//        /**
-//         * Make an HTTP request to the given URL and return a String as the response.
-//         */
-//        @Throws(IOException::class)
-//        private fun makeHttpRequest(url: URL): String {
-//            var jsonResponse = ""
-//            var urlConnection: HttpURLConnection? = null
-//            var inputStream: InputStream? = null
-//            try {
-//                urlConnection = url.openConnection() as HttpURLConnection
-//                urlConnection.requestMethod = "GET"
-//                urlConnection.readTimeout = 10000
-//                urlConnection.connectTimeout = 15000
-//                urlConnection.connect()
-//                inputStream = urlConnection.inputStream
-//                jsonResponse = readFromStream(inputStream)
-//            } catch (e: IOException) {
-//                // TODO: Handle the exception
-//            } finally {
-//                if (urlConnection != null) {
-//                    urlConnection.disconnect()
-//                }
-//                if (inputStream != null) {
-//                    // function must handle java.io.IOException here
-//                    inputStream.close()
-//                }
-//            }
-//            return jsonResponse
-//        }
-//
-//        /**
-//         * Convert the [InputStream] into a String which contains the
-//         * whole JSON response from the server.
-//         */
-//        @Throws(IOException::class)
-//        private fun readFromStream(inputStream: InputStream?): String {
-//            val output = StringBuilder()
-//            if (inputStream != null) {
-//                val inputStreamReader = InputStreamReader(inputStream, Charset.forName("UTF-8"))
-//                val reader = BufferedReader(inputStreamReader)
-//                var line = reader.readLine()
-//                while (line != null) {
-//                    output.append(line)
-//                    line = reader.readLine()
-//                }
-//            }
-//            return output.toString()
-//        }
-//
-//        /**
-//         * Return an [ModelMeh] object by parsing out information
-//         * about the first earthquake from the input earthquakeJSON string.
-//         */
-//        private fun extractFeatureFromJson(earthquakeJSON: String): ModelMeh? {
-//            try {
-//                val baseJsonResponse = JSONObject(earthquakeJSON)
-//                val featureArray = baseJsonResponse.getJSONArray("features")
-//
-//                // If there are results in the features array
-//                if (featureArray.length() > 0) {
-//                    // Extract out the first feature (which is an earthquake)
-//                    val firstFeature = featureArray.getJSONObject(0)
-//                    val properties = firstFeature.getJSONObject("properties")
-//
-//                    // Extract out the title, time, and tsunami values
-//                    val title = properties.getString("title")
-//                    val time = properties.getLong("time")
-//                    val tsunamiAlert = properties.getInt("tsunami")
-//
-//                    // Create a new {@link ModelMeh} object
-//                    return ModelMeh(title, time, tsunamiAlert)
-//                }
-//            } catch (e: JSONException) {
-//                Log.e("extractFeatureFromJson", "Problem parsing the earthquake JSON results", e)
-//            }
-//
-//            return null
-//        }
 
 
     } // async task

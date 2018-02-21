@@ -76,9 +76,10 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/fab_margin"
         app:layout_anchor="@id/nav_app_bar"
-        app:layout_anchorGravity="bottom|end"
-        app:srcCompat="@drawable/buy_green_buy"
 
-        />
+        app:layout_anchorGravity="bottom|end"
+        app:srcCompat="@drawable/ic_buy" />
+    <!--app:rippleColor="@color/colorPrimaryDark"-->
+    <!--app:backgroundTint="@android:color/background_dark"-->
 
 </android.support.design.widget.CoordinatorLayout>

@@ -49,7 +49,8 @@
 
     <item
         android:id="@+id/nav_bar_header_extras3"
-        android:title="@string/nav_bar_about" >
+        android:title="@string/nav_bar_about"
+        >
 
         <menu>
             <item
