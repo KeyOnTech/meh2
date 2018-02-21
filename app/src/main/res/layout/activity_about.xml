@@ -45,9 +45,52 @@
 
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Libraries Used"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+                    android:text="what is Meh.com"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Title"
                 />
+                <!--android:layout_margin="@dimen/text_margin"-->
+
+                <TextView
+                    android:textIsSelectable="true"
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Meh: A new deal every day at midnight Eastern"
+                    />
+                <!--android:layout_margin="@dimen/text_margin"-->
+
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/card_margin"
+            android:layout_marginLeft="@dimen/card_margin"
+            android:layout_marginRight="@dimen/card_margin"
+
+            android:foreground="?android:selectableItemBackground"
+
+            card_view:cardCornerRadius="25dp"
+            >
+            <!--#71C3DE-->
+            <!--card_view:cardBackgroundColor="@color/cardview_initial_background"-->
+
+            <LinearLayout
+                style="@style/Widget.CardContent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:textIsSelectable="true"
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Libraries Used"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                    />
                 <!--android:layout_margin="@dimen/text_margin"-->
 
                 <TextView
@@ -91,7 +134,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="OkHttp"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+                    android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                    />
 
                 <TextView
                     android:textIsSelectable="true"
@@ -132,7 +176,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="GSON"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+                    android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                    />
 
                 <TextView
                     android:textIsSelectable="true"
@@ -173,7 +218,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Picasso"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+                    android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                    />
 
                 <TextView
                     android:textIsSelectable="true"
@@ -215,7 +261,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Google Card View"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+                    android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                    />
 
                 <TextView
                     android:textIsSelectable="true"
@@ -257,7 +304,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Google Constraint Layout"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+                    android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                    />
 
                 <TextView
                     android:textIsSelectable="true"
@@ -267,6 +315,54 @@
                     android:text="Content Container \n\n Web site: \n  https://developer.android.com/training/constraint-layout/index.html  \n\n Gradle: \n  implementation 'com.android.support.constraint:constraint-layout:1.0.2' "
                     />
                 <!--android:layout_margin="@dimen/text_margin"-->
+
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+
+
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/card_margin"
+            android:layout_marginLeft="@dimen/card_margin"
+            android:layout_marginRight="@dimen/card_margin"
+
+            android:foreground="?android:selectableItemBackground"
+
+            card_view:cardCornerRadius="25dp"
+            >
+            <!--#71C3DE-->
+            <!--card_view:cardBackgroundColor="@color/cardview_initial_background"-->
+
+            <LinearLayout
+                style="@style/Widget.CardContent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:textIsSelectable="true"
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Developed By"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                    />
+
+                <TextView
+                    android:textIsSelectable="true"
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="KeyOnTech"
+                    />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/nav_header_vertical_spacing"
+                    app:srcCompat="@mipmap/ic_kot_1_round" />
 
             </LinearLayout>
 

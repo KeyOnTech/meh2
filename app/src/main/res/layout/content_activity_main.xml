@@ -44,8 +44,10 @@
                     android:id="@+id/textView_content_activity_main_card_view_1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/large_text"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+                    android:text="Deal Title"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Title"
+
+                    android:textIsSelectable="true"
                     />
                 <!--android:layout_margin="@dimen/text_margin"-->
 
@@ -53,7 +55,9 @@
                     android:id="@+id/textView_content_activity_main_card_view_4"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/large_text"
+                    android:text="Deal Amount"
+
+                    android:textIsSelectable="true"
                     />
                 <!--android:layout_margin="@dimen/text_margin"-->
 
@@ -85,14 +89,20 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/card_view_2_header"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+                    android:textAppearance="@style/TextAppearance.AppCompat.Title"
+
+                    android:textIsSelectable="true"
+                    />
 
                 <TextView
                     android:id="@+id/textView_content_activity_main_card_view_2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/large_text"
+                    android:text="Details"
+
+                    android:textIsSelectable="true"
                     />
+
                 <!--android:layout_margin="@dimen/text_margin"-->
 
             </LinearLayout>
@@ -122,13 +132,18 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/card_view_3_header"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+                    android:textAppearance="@style/TextAppearance.AppCompat.Title"
+
+                    android:textIsSelectable="true"
+                    />
 
                 <TextView
                     android:id="@+id/textView_content_activity_main_card_view_3"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/large_text"
+                    android:text="Details"
+
+                    android:textIsSelectable="true"
                     />
                 <!--android:layout_margin="@dimen/text_margin"-->
 

@@ -1,5 +1,6 @@
 package com.keyontech.meh3
 
+import android.app.PendingIntent.getActivity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -33,8 +34,10 @@ import android.preference.PreferenceManager
 import android.util.Log
 import android.view.Gravity
 import android.view.View
+import android.widget.TextView
 import com.example.jonesq.meh3.utils.*
 import com.keyontech.meh3.Activities.ActivityGoToSite
+import com.keyontech.meh3.R.id.container
 import com.keyontech.meh3.services.IntentService_Notifications_Poll_Service
 import com.keyontech.meh3.viewpager1.*
 import kotlinx.android.synthetic.main.nav_drawer_layout.*
@@ -143,6 +146,8 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         .apply()
             }
         }
+
+        fabbuttonNavDrawer.visibility = View.VISIBLE
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
         // close nav drawer - https://www.supinfo.com/articles/single/5610-android-navigation-drawer
@@ -164,7 +169,7 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 // turn on auto check every night --- start
         if (!IntentService_Notifications_Poll_Service.isServiceAlarmOn(this)) {
-            println("222  setupAlarm_To_Auto_Check_EveryNight")
+//            println("222  setupAlarm_To_Auto_Check_EveryNight")
             setupAlarm_To_Auto_Check_EveryNight()
         } // if
 
@@ -181,9 +186,9 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         fetchJSON()
         // Kick off an {@link AsyncTask} to perform the network request
-        val fetchJSONAsyncTask2_1 = fetchJSONAsyncTask2()
-        fetchJSONAsyncTask2_1.execute()
-//        val sFetchJSON_U = fetchJSON_U()
+//        val fetchJSONAsyncTask2_1 = fetchJSONAsyncTask2()
+//        fetchJSONAsyncTask2_1.execute()
+////        val sFetchJSON_U = fetchJSON_U()
 //        fetchMockInterface()
 
 
@@ -276,9 +281,9 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
     fun setupAlarm_To_Auto_Check_EveryNight() {
-        println("333  set alarm to check every night stared ")
+//        println("333  set alarm to check every night stared ")
         var shouldStartAlarm = true
-        //            printToToast( this , TAG , "Should I start the polling notification True or False??? " + shouldStartAlarm ); ;
+//        printToToast( this , TAG , "Should I start the polling notification True or False??? " + shouldStartAlarm ); ;
         IntentService_Notifications_Poll_Service.setServiceAlarm(this , shouldStartAlarm)  // .set.setServiceAlarm(this, shouldStartAlarm)
     } // setPollingNotifications
 
@@ -308,18 +313,18 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 println("fetchJSON - failed to execute request - error: " + e.toString() )
 
                 try {
-                    println("LOAD :  shared prefs data")
-                    // get JSON response from prefs
-                    val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-                    var jsonResponse = sharedPreferences.getString(PREF_KEY_MEH_RESPONSE_STRING, "")
-                    println("sharedPreferences  :  jsonResponse " + jsonResponse)
+//                    println("LOAD :  shared prefs data")
+//                    // get JSON response from prefs
+//                    val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+//                    var jsonResponse = sharedPreferences.getString(PREF_KEY_MEH_RESPONSE_STRING, "")
+//                    println("sharedPreferences  :  jsonResponse " + jsonResponse)
 
-                    if (jsonResponse.isEmpty() ) {
-                        println("LOAD :  MOCK data")
-                        // get JSON response from assets file
-                        var mockData = loadJsonFromFile("sample1.json", applicationContext)
-                        jsonResponse = mockData
-                    }
+//                    if (jsonResponse.isEmpty() ) {
+//                        println("LOAD :  MOCK data")
+//                        // get JSON response from assets file
+//                        var mockData = loadJsonFromFile("sample1.json", applicationContext)
+//                        jsonResponse = mockData
+//                    }
 
                     processReturn(jsonResponse)
                 } catch (e: JSONException) {
@@ -373,164 +378,327 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
     fun displayResults(response: String) {
+        println("88888bbbb ------ ")
         try {
 
-            var gson = GsonBuilder().serializeNulls().create()
-            var modelMeh = gson.fromJson(response, ModelMeh::class.java)
+            println("8888ccccccc ------")
 
-/***        test returns
-////        println( "222bbb  modelMeh.deal = " + modelMeh.deal )
-////        println( "222bbb  modelMeh.deal title = " + modelMeh.deal.title )
-////
-////        println( "222ccc  modelMeh.deal.theme.accentColor = " + modelMeh.deal.theme.accentColor )
-////        println( "222ccc  modelMeh.deal.theme.backgroundColor = " + modelMeh.deal.theme.backgroundColor )
-////
-////
-//////        mehPoll = modelMeh.poll
-////
-////        println( "333aaa  modelMeh.poll = " + modelMeh.poll)
-////        println( "333bbb  modelMeh.poll title = " + modelMeh.poll.title )
-////        println( "333ccc  modelMeh.poll id = " + modelMeh.poll.id )
-////        println( "333ddd  modelMeh.poll startDate = " + modelMeh.poll.startDate )
-////        println( "333eee  modelMeh.poll answers[0].text = " + modelMeh.poll.answers[0].text )
-////        println( "333fff  modelMeh.poll answers[0].voteCount = " + modelMeh.poll.answers[0].voteCount )
-//////        println( "333hhh  modelMeh.poll topic.url = " + modelMeh.poll.topic)
-//////        println( "333ggg  modelMeh.poll topic.url = " + modelMeh.poll.topic.url)
-////
-////
-////        println( " 77777777     modelMeh.video  " + modelMeh.video )
-//////                if (modelMeh.video == null )
-////        println( "444aaa  modelMeh.vieo = " + modelMeh.video)
-////        println( "444bbb  modelMeh.video title = " + modelMeh.video.title )
-////        println( "444ccc  modelMeh.video topic.url = " + modelMeh.video.topic.url)
-*/
+            if (response != null && response.isNotEmpty()) {
+                println("8888ddd  ------")
 
-            // setup video activity
-            mehVideoLink = if (modelMeh.video != null) {
-                                if (modelMeh.video.topic != null) {
-                                    if (modelMeh.video.topic.url != null && modelMeh.video.topic.url.isNotEmpty()) {
-                                        modelMeh.video.topic.url
-                                    } else {
-                                        ""
-                                    }
-                                }else{
-                                    ""
-                                }
-                            }else{
-                                ""
-                            }
-//            var firstFeature = featureArray.getJSONObject(0)
-// parse json object with out errors - https://stackoverflow.com/questions/34938640/advoid-many-try-catch-blog-when-parse-json/34938745#34938745
+                var gson = GsonBuilder().serializeNulls().create()
+                var modelMeh = gson.fromJson(response, ModelMeh::class.java)
+
+                /***        test returns
+                ////        println( "222bbb  modelMeh.deal = " + modelMeh.deal )
+                ////        println( "222bbb  modelMeh.deal title = " + modelMeh.deal.title )
+                ////
+                ////        println( "222ccc  modelMeh.deal.theme.accentColor = " + modelMeh.deal.theme.accentColor )
+                ////        println( "222ccc  modelMeh.deal.theme.backgroundColor = " + modelMeh.deal.theme.backgroundColor )
+                ////
+                ////
+                //////        mehPoll = modelMeh.poll
+                ////
+                ////        println( "333aaa  modelMeh.poll = " + modelMeh.poll)
+                ////        println( "333bbb  modelMeh.poll title = " + modelMeh.poll.title )
+                ////        println( "333ccc  modelMeh.poll id = " + modelMeh.poll.id )
+                ////        println( "333ddd  modelMeh.poll startDate = " + modelMeh.poll.startDate )
+                ////        println( "333eee  modelMeh.poll answers[0].text = " + modelMeh.poll.answers[0].text )
+                ////        println( "333fff  modelMeh.poll answers[0].voteCount = " + modelMeh.poll.answers[0].voteCount )
+                //////        println( "333hhh  modelMeh.poll topic.url = " + modelMeh.poll.topic)
+                //////        println( "333ggg  modelMeh.poll topic.url = " + modelMeh.poll.topic.url)
+                ////
+                ////
+                ////        println( " 77777777     modelMeh.video  " + modelMeh.video )
+                //////                if (modelMeh.video == null )
+                ////        println( "444aaa  modelMeh.vieo = " + modelMeh.video)
+                ////        println( "444bbb  modelMeh.video title = " + modelMeh.video.title )
+                ////        println( "444ccc  modelMeh.video topic.url = " + modelMeh.video.topic.url)
+                 */
 
 
-            // set site URL
-            if (modelMeh.deal != null )
-            {
-                // set main activity body text
-//                setTitle(priceLowtoHigh(modelMeh.deal.title))
-                textView_content_activity_main_card_view_1.text = modelMeh.deal.title
-                textView_content_activity_main_card_view_4.text = priceLowtoHigh(modelMeh.deal)
-                textView_content_activity_main_card_view_2.text = modelMeh.deal.features
-                textView_content_activity_main_card_view_3.text = modelMeh.deal.specifications
+                // setup video activity
+                mehVideoLink = if (modelMeh.video != null) {
+                    if (modelMeh.video.topic != null) {
+                        if (modelMeh.video.topic.url != null && modelMeh.video.topic.url.isNotEmpty()) {
+                            modelMeh.video.topic.url
+                        } else {
+                            ""
+                        }
+                    } else {
+                        ""
+                    }
+                } else {
+                    ""
+                }
+    //            var firstFeature = featureArray.getJSONObject(0)
+    // parse json object with out errors - https://stackoverflow.com/questions/34938640/advoid-many-try-catch-blog-when-parse-json/34938745#34938745
 
 
-                // set the color scheme  --- START
-                if (modelMeh.deal.theme != null ) {
-                    if ((modelMeh.deal.theme.accentColor != "" || modelMeh.deal.theme.accentColor != null) || (modelMeh.deal.theme.backgroundColor != "" || modelMeh.deal.theme.backgroundColor != null)) {
-//                        if (Build.VERSION.SDK_INT >= 21) {
+                // set site URL
+                if (modelMeh.deal != null) {
+                    // set main activity body text
+    //                setTitle(priceLowtoHigh(modelMeh.deal.title))
+                    textView_content_activity_main_card_view_1.text = modelMeh.deal.title
+                    textView_content_activity_main_card_view_2.text = modelMeh.deal.features
+                    textView_content_activity_main_card_view_3.text = modelMeh.deal.specifications
+
+                    if ((modelMeh.deal.items != null) && (modelMeh.deal.items[0].condition != "" && modelMeh.deal.items[0].condition != null)) {
+                        textView_content_activity_main_card_view_4.text = modelMeh.deal.items[0].condition + " - " + priceLowtoHigh(modelMeh.deal)
+                    } else {
+                        textView_content_activity_main_card_view_4.text = priceLowtoHigh(modelMeh.deal)
+                    }
+
+
+                    // set the color scheme  --- START
+                    if (modelMeh.deal.theme != null) {
+                        if ((modelMeh.deal.theme.accentColor != "" || modelMeh.deal.theme.accentColor != null) || (modelMeh.deal.theme.backgroundColor != "" || modelMeh.deal.theme.backgroundColor != null)) {
+    //                        if (Build.VERSION.SDK_INT >= 21) {
                             /*** Lollipop and above colors min sdk is 21 so if no longer needed */
                             window.statusBarColor = Color.parseColor(modelMeh.deal.theme.accentColor)
                             window.navigationBarColor = Color.parseColor(modelMeh.deal.theme.accentColor)
-//                        }
+    //                        }
 
-                        try {
-                            toolbarNavDrawer.setBackgroundColor(Color.parseColor(modelMeh.deal.theme.backgroundColor))
+                            try {
+                                toolbarNavDrawer.setBackgroundColor(Color.parseColor(modelMeh.deal.theme.backgroundColor))
 
-                            // set the custom color for the tabs
-                            viewPager_NavDrawer.setBackgroundColor(Color.parseColor(modelMeh.deal.theme.backgroundColor))
-                            //                    mViewPager_Tabs.setSelectedIndicatorColors(Color.parseColor(modelMeh.deal.theme.accentColor ) );
-                        } catch (e: Exception) {
-                            printToErrorLog_10("ActivityMain", "runOnUiThread")
-                        }
+                                // set the custom color for the tabs
+                                viewPager_NavDrawer.setBackgroundColor(Color.parseColor(modelMeh.deal.theme.backgroundColor))
+                                //                    mViewPager_Tabs.setSelectedIndicatorColors(Color.parseColor(modelMeh.deal.theme.accentColor ) );
+                            } catch (e: Exception) {
+                                printToErrorLog_10("ActivityMain", "runOnUiThread")
+                            }
 
-                        try {
-                            nav_drawer_header_linear_layout.setBackgroundColor(Color.parseColor(modelMeh.deal.theme.accentColor))
-                            //                    nav_drawer_header_linear_layout.setBackgroundColor(Color.parseColor(modelMeh.deal.theme.backgroundColor))
-                        } catch (e: Exception) {
-                            //
-                        }
+                            try {
+                                nav_drawer_header_linear_layout.setBackgroundColor(Color.parseColor(modelMeh.deal.theme.accentColor))
+                                //                    nav_drawer_header_linear_layout.setBackgroundColor(Color.parseColor(modelMeh.deal.theme.backgroundColor))
+                            } catch (e: Exception) {
+                                //
+                            }
 
-                        try {
-    //                                fabbuttonNavDrawer.setBackgroundColor(Color.parseColor(modelMeh.deal.theme.backgroundColor))
-    //                                fabbuttonNavDrawer.back.backgroundTint =  (Color.parseColor(modelMeh.deal.theme.backgroundColor))
+                            try {
+                                //                                fabbuttonNavDrawer.setBackgroundColor(Color.parseColor(modelMeh.deal.theme.backgroundColor))
+                                //                                fabbuttonNavDrawer.back.backgroundTint =  (Color.parseColor(modelMeh.deal.theme.backgroundColor))
 
-    //                                fabbuttonNavDrawer.rippleColor = Color.parseColor(modelMeh.deal.theme.backgroundColor)
-                            fabbuttonNavDrawer.rippleColor = Color.parseColor(modelMeh.deal.theme.accentColor)
-                        } catch (e: Exception) {
-                            //
+                                //                                fabbuttonNavDrawer.rippleColor = Color.parseColor(modelMeh.deal.theme.backgroundColor)
+                                fabbuttonNavDrawer.rippleColor = Color.parseColor(modelMeh.deal.theme.accentColor)
+                            } catch (e: Exception) {
+                                //
+                            }
                         }
                     }
-                }
 
-                // set fab action button link
-                if(modelMeh.deal.url != null && modelMeh.deal.url.isNotEmpty()) {
-                    mehDealUrl = modelMeh.deal.url
-                }else{
-                    mehDealUrl = ""
-                    println("set Deal Url here")
-                }
-
-                // save string to preferences
-                PreferenceManager.getDefaultSharedPreferences(this)
-                        .edit()
-                        .putString(PREF_KEY_MEH_RESPONSE_STRING, response)
-                        .apply()
-
-                // set notification large image
-                if (modelMeh.deal.photos != null) {
-                    if(modelMeh.deal.photos[0].isNotEmpty()) {
-                        mehNotificationLargePhoto = modelMeh.deal.photos[0]
-                    }else {
-                        mehNotificationLargePhoto= ""
-                        println("set default large photo image here")
+                    // set fab action button link
+                    if (modelMeh.deal.url != null && modelMeh.deal.url.isNotEmpty()) {
+                        mehDealUrl = modelMeh.deal.url
+                    } else {
+                        mehDealUrl = ""
+                        println("set Deal Url here")
                     }
+
+                    // save string to preferences
+                    PreferenceManager.getDefaultSharedPreferences(this)
+                            .edit()
+                            .putString(PREF_KEY_MEH_RESPONSE_STRING, response)
+                            .apply()
+
+                    // set notification large image
+                    if (modelMeh.deal.photos != null) {
+                        if (modelMeh.deal.photos[0].isNotEmpty()) {
+                            mehNotificationLargePhoto = modelMeh.deal.photos[0]
+                        } else {
+                            mehNotificationLargePhoto = ""
+                            println("set default large photo image here")
+                        }
+
+                        // set photos viewPager
+                        adapterActivityMain = AdapterViewPagerActivityMain(supportFragmentManager, modelMeh.deal.photos)
+                        viewPager_NavDrawer.offscreenPageLimit = 4
+                        viewPager_NavDrawer.adapter = adapterActivityMain
+
+                        // set custom swipe animations
+                        val randomNumberCreator = Random()
+                        val randomNumber = randomNumberCreator.nextInt(3)
+
+                        when (randomNumber) {
+                            0 -> viewPager_NavDrawer.setPageTransformer(false, DepthViewPagerPageTransform())
+                            1 -> viewPager_NavDrawer.setPageTransformer(false, TopRightToBottomLeftViewPagerPageTransform())
+                            else -> viewPager_NavDrawer.setPageTransformer(false, ParallaxViewPagerPageTransform())
+                        }
+
+                        // setup viewPager indicator buttons
+                        tab_layout_viewpager_indicator_dots_NavDrawer.setupWithViewPager(viewPager_NavDrawer, true)
+                    } else {
+                        println("set view pager to null repsonse image")
+                    }
+
+                    /***
+                    // display notification
+                    createNotification(
+                    this
+                    ,"Meh"
+                    ,modelMeh.deal.title
+                    ,priceLowtoHigh(modelMeh.deal)
+                    ,R.drawable.logo_32_x_32_2
+                    ,R.drawable.logo_32_x_32_2
+                    ,mehNotificationLargePhoto
+                    ,R.drawable.logo_32_x_32_2
+                    )
+                     */
+                } else {
+                    val failedToLoadPhoto : ArrayList<String> = ArrayList()
+                    failedToLoadPhoto .add("")
 
                     // set photos viewPager
-                    adapterActivityMain = AdapterViewPagerActivityMain(supportFragmentManager, modelMeh.deal.photos)
-                    viewPager_NavDrawer.offscreenPageLimit = 4
+                    adapterActivityMain = AdapterViewPagerActivityMain(supportFragmentManager, failedToLoadPhoto )
+                    viewPager_NavDrawer.offscreenPageLimit = 1
                     viewPager_NavDrawer.adapter = adapterActivityMain
 
-                    // set custom swipe animations
-                    val randomNumberCreator = Random()
-                    val randomNumber = randomNumberCreator.nextInt(3)
-
-                    when (randomNumber) {
-                        0 -> viewPager_NavDrawer.setPageTransformer(false, DepthViewPagerPageTransform())
-                        1 -> viewPager_NavDrawer.setPageTransformer(false, TopRightToBottomLeftViewPagerPageTransform())
-                        else -> viewPager_NavDrawer.setPageTransformer(false, ParallaxViewPagerPageTransform())
-                    }
-
-                    // setup viewPager indicator buttons
-                    tab_layout_viewpager_indicator_dots_NavDrawer.setupWithViewPager(viewPager_NavDrawer, true)
-                }else{
-                    println("set view pager to null repsonse image")
+                    println("set all content boxes to to null repsonses")
                 }
-
-                /***
-                // display notification
-                createNotification(
-                this
-                ,"Meh"
-                ,modelMeh.deal.title
-                ,priceLowtoHigh(modelMeh.deal)
-                ,R.drawable.logo_32_x_32_2
-                ,R.drawable.logo_32_x_32_2
-                ,mehNotificationLargePhoto
-                ,R.drawable.logo_32_x_32_2
-                )
-                 */
             }else{
-                println("set all content boxes to to null repsonses")
+                /*** no internet response */
+                fabbuttonNavDrawer.visibility = View.GONE
+
+                val failedToLoadPhoto : ArrayList<String> = ArrayList()
+                failedToLoadPhoto .add("")
+
+                // set photos viewPager
+                adapterActivityMain = AdapterViewPagerActivityMain(supportFragmentManager, failedToLoadPhoto )
+                viewPager_NavDrawer.offscreenPageLimit = 1
+                viewPager_NavDrawer.adapter = adapterActivityMain
+
+                /***  http://onetouchcode.com/2016/12/24/use-snackbar-android-apps/  */
+                /***  https://androidteachers.com/android/android-material-design-snackbar-example/  */
+                Snackbar.make(
+                        findViewById(android.R.id.content)
+                        , "Unable to fetch data please check internet connection"
+                        , Snackbar.LENGTH_INDEFINITE)
+                        .setAction("Retry") {
+                            fetchJSON()
+                            Snackbar.make(
+                                    findViewById(android.R.id.content)
+                                    , "Attempting to fetch data!"
+                                    , Snackbar.LENGTH_SHORT).show()
+                        }.show()
+
+
+/***
+
+                //                http://onetouchcode.com/2016/12/24/use-snackbar-android-apps/
+                //                https://stackoverflow.com/questions/36474397/android-design-library-snackbar-getting-textview-returns-null
+                //                https://antonioleiva.com/kotlin-awesome-tricks-for-android/
+
+//                Snackbar.make(this, "Unable to fetch data please check internet connection", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show()
+
+//                val snackbar = Snackbar.make(onCreatePanelView(), "Welcome To Main Activity", Snackbar.LENGTH_LONG)
+//                snackbar.show()
+
+
+
+
+
+
+                // works
+//                Snackbar.make(findViewById(android.R.id.content), "Unable to fetch data please check internet connection", Snackbar.LENGTH_LONG).show();
+
+
+
+
+
+
+
+
+//                val snackbar3 = Snackbar.make(
+//                        findViewById(android.R.id.content)
+//                        , "No internet connection!", Snackbar.LENGTH_LONG)
+//                        .setAction("RETRY") { }
+//
+//                snackbar3.setActionTextColor(Color.GREEN)
+//                val sbView = snackbar3.view
+//                val textView = sbView.findViewById(android.support.design.R.id.snackbar_text) as TextView
+//                textView.setTextColor(Color.RED)
+//
+//                snackbar3.show()
+
+
+
+
+
+
+
+
+//                final Snackbar snackbar = Snackbar.make(getActivity().findViewById(android.R.id.content), "Onetouchcode welcome's you", Snackbar.LENGTH_LONG);
+//        snackbar.setAction("Close", new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                snackbar.dismiss();
+//            }
+//        });
+//        snackbar.setActionTextColor(Color.BLUE);
+//        View snackbarView = snackbar.getView();
+//        snackbarView.setBackgroundColor(getResources().getColor(android.R.color.holo_orange_dark));
+//        TextView textView = (TextView) snackbarView.findViewById(android.support.design.R.id.snackbar_text);
+//        textView.setTextColor(Color.WHITE);
+//        snackbar.show();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//                val snackbar = Snackbar.make(findViewById(android.R.id.content), "Onetouchcode welcome's you", Snackbar.LENGTH_LONG)
+//                val snackbarView = snackbar.view
+//                snackbarView.setBackgroundColor(resources.getColor(android.R.color.holo_orange_dark))
+//
+//
+//                val textView = snackbarView.findViewById(android.support.design.R.id.snackbar_text) as TextView
+//                textView.setTextColor(Color.WHITE)
+//
+////                val textView = findViewById(android.support.design.R.id.snackbar_text)
+////                textView.setTextColor(Color.WHITE)
+//                snackbar.show()
+
+
+
+
+
+
+
+
+
+////                val containerView = inflater.inflate(android.R.id.content, container, false)
+////                val snackbar = Snackbar.make(containerView, "snackbar text", Snackbar.LENGTH_SHORT)
+//                val snackbarView2 = snackbar.view
+//                val textView = snackbarView2.findViewById<View>(android.support.design.R.id.snackbar_text) as TextView
+////                text.setText("It works")
+//                snackbar.show()
+
+
+
+
+
+
+
+//                view.snack("This is my snack")
+//                view.snack("This snack is short", Snackbar.LENGTH_SHORT)
+
+//                view.snack("Snack message") {
+//                    action("Action") { toast("Action clicked") }
+//                }
+
+*/
+
+
             }
 
         } catch (e: JSONException) {
@@ -538,8 +706,6 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
 
     }
-
-
 
 
 

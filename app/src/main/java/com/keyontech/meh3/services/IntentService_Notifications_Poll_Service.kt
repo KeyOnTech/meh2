@@ -134,8 +134,8 @@ class IntentService_Notifications_Poll_Service : IntentService("IntentService_No
 //                println("IntentService_Notifications_Poll_Service - fetch JSON")
                 fetchJSON()
                 // Kick off an {@link AsyncTask} to perform the network request
-                val task_TsunamiAsyncTask1 = fetchJSONAsyncTask()
-                task_TsunamiAsyncTask1.execute()
+//                val fetchJSONAsyncTask11 = fetchJSONAsyncTask1()
+//                fetchJSONAsyncTask11.execute()
 
                 // send broadcast
 //                println("onHandleIntent - send broadcast1 - send broadcast")
@@ -197,7 +197,7 @@ class IntentService_Notifications_Poll_Service : IntentService("IntentService_No
 
 
         // set site URL
-        if (modelMeh.deal != null )
+        if (modelMeh.deal != null)
         {
             // set site URL
             // set fab action button link
@@ -226,11 +226,21 @@ class IntentService_Notifications_Poll_Service : IntentService("IntentService_No
                             ,modelMeh.deal.items[0].condition + " - " + priceLowtoHigh(modelMeh.deal)
                             , R.drawable.logo_32_x_32_2
                             , R.drawable.logo_32_x_32_2
-                            ,mehNotificationLargePhoto
+                            , mehNotificationLargePhoto
                             , R.drawable.logo_32_x_32_2
                     )
                 }else{
-                    println("set view pager to null repsonse image")
+                    // display notification
+                    createNotification(
+                            this
+                            ,"Meh 1 fetchJSON"
+                            ,modelMeh.deal.title + "-1-OkHttpClient"
+                            , priceLowtoHigh(modelMeh.deal)
+                            , R.drawable.logo_32_x_32_2
+                            , R.drawable.logo_32_x_32_2
+                            , mehNotificationLargePhoto
+                            , R.drawable.logo_32_x_32_2
+                    )
                 }
             }else{
                 println("set view pager to null repsonse image")
@@ -255,7 +265,7 @@ class IntentService_Notifications_Poll_Service : IntentService("IntentService_No
                         .load(largebitmapImageURL)
                         .resize(512,512)
                         .placeholder(R.mipmap.ic_launcher)
-                        .error(R.mipmap.ic_launcher)
+                        .error(R.drawable.ic_failed_to_load_image)
                         .get()
 
                 showNotification(
@@ -307,8 +317,8 @@ class IntentService_Notifications_Poll_Service : IntentService("IntentService_No
      * [AsyncTask] to perform the network request on a background thread, and then
      * update the UI with the first mehrequest in the response.
      */
-//    inner class fetchJSONAsyncTask : AsyncTask<URL, Void, ModelMeh>() {
-    inner class fetchJSONAsyncTask : AsyncTask<URL, Void, String>() {
+//    inner class fetchJSONAsyncTask1 : AsyncTask<URL, Void, ModelMeh>() {
+    inner class fetchJSONAsyncTask1 : AsyncTask<URL, Void, String>() {
 
         //        override fun doInBackground(vararg urls: URL): ModelMeh {
         override fun doInBackground(vararg urls: URL): String{
@@ -328,14 +338,14 @@ class IntentService_Notifications_Poll_Service : IntentService("IntentService_No
 //
 //            // Extract relevant fields from the JSON response and create an {@link ModelMeh} object
 //
-//            // Return the {@link ModelMeh} object as the result fo the {@link TsunamiAsyncTask}
+//            // Return the {@link ModelMeh} object as the result fo the {@link fetchJSONAsyncTask1}
 //            return extractFeatureFromJson(jsonResponse)
 
         }
 
         /**
          * Update the screen with the given mehrequest (which was the result of the
-         * [TsunamiAsyncTask]).
+         * [fetchJSONAsyncTask11]).
          */
 //        override fun onPostExecute(mehrequest: ModelMeh?) {
         override fun onPostExecute(mehrequest: String?) {
@@ -438,7 +448,7 @@ class IntentService_Notifications_Poll_Service : IntentService("IntentService_No
                     .apply()
 
             // set site URL
-            if (modelMeh.deal != null )
+            if (modelMeh.deal != null)
             {
                 // set site URL
                 // set fab action button link
@@ -471,6 +481,18 @@ class IntentService_Notifications_Poll_Service : IntentService("IntentService_No
                                 , mehNotificationLargePhoto
                                 , R.drawable.logo_32_x_32_2
                         )
+                    }else{
+                        // display notification
+                        createNotification(
+                                applicationContext
+                                ,"Meh 1 fetchJSON"
+                                ,modelMeh.deal.title + "-1-OkHttpClient"
+                                , priceLowtoHigh(modelMeh.deal)
+                                , R.drawable.logo_32_x_32_2
+                                , R.drawable.logo_32_x_32_2
+                                , mehNotificationLargePhoto
+                                , R.drawable.logo_32_x_32_2
+                        )
                     }
                 }else{
                     println("set view pager to null repsonse image")
@@ -496,7 +518,7 @@ class IntentService_Notifications_Poll_Service : IntentService("IntentService_No
                             .load(largebitmapImageURL)
                             .resize(512,512)
                             .placeholder(R.mipmap.ic_launcher)
-                            .error(R.mipmap.ic_launcher)
+                            .error(R.drawable.ic_failed_to_load_image)
                             .get()
 
                     showNotification(
@@ -610,13 +632,13 @@ class IntentService_Notifications_Poll_Service : IntentService("IntentService_No
 //                    val firstFeature = featureArray.getJSONObject(0)
 //                    val properties = firstFeature.getJSONObject("properties")
 //
-//                    // Extract out the title, time, and tsunami values
+//                    // Extract out the title, time, and fetchJSONAsyncTask1 values
 //                    val title = properties.getString("title")
 //                    val time = properties.getLong("time")
-//                    val tsunamiAlert = properties.getInt("tsunami")
+//                    val fetchJSONAsyncTask1Alert = properties.getInt("fetchJSONAsyncTask1")
 //
 //                    // Create a new {@link ModelMeh} object
-//                    return ModelMeh(title, time, tsunamiAlert)
+//                    return ModelMeh(title, time, fetchJSONAsyncTask1Alert)
 //                }
 //            } catch (e: JSONException) {
 //                Log.e("extractFeatureFromJson", "Problem parsing the mehrequest JSON results", e)

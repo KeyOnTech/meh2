@@ -8,6 +8,8 @@
     <item
         android:id="@+id/nav_bar_header_extras"
         android:title="Meh Details"
+
+        android:visible="false"
         >
 
         <menu>
@@ -29,6 +31,9 @@
     <item
         android:id="@+id/nav_bar_header_extras2"
         android:title="@string/nav_bar_header_extras"
+
+        android:visible="false"
+
         >
 
         <menu>
@@ -55,11 +60,11 @@
         <menu>
             <item
                 android:id="@+id/nav_bar_about"
-                android:icon="@drawable/ic_menu_share"
+                android:icon="@drawable/ic_about_1"
                 android:title="@string/nav_bar_about" />
             <item
                 android:id="@+id/nav_bar_rate_app"
-                android:icon="@drawable/ic_menu_share"
+                android:icon="@drawable/ic_rateapp"
                 android:title="@string/nav_bar_rate_app" />
             <item
                 android:id="@+id/nav_bar_share_app"

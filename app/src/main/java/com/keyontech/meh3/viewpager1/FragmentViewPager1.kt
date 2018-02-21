@@ -37,22 +37,31 @@ class FragmentViewPager1 : Fragment() {
         // Retrieve and display the movie data from the Bundle
         val args = arguments
 
+        println("888aaaa --------- ")
 
         // Download the image and display it using Picasso
         val picassoImage = Picasso.with(activity)
         /*** color codes: Red: Network / Blue: Disk / Yellow: Memory - dev preferred not on live apk */
         picassoImage.setIndicatorsEnabled(true)
 
-        picassoImage
+        if (args.getString(FRAG_ARG_PHOTO_URI) != null && args.getString(FRAG_ARG_PHOTO_URI).isNotEmpty()) {
+            picassoImage
 //            .with(activity) /*** set during declaration above  */
 ////            .downloader(new OkHttpDownloader( context , Integer.MAX_VALUE)
 ////            .centerCrop()
 ////           .resize(512,512)
-            .load( args.getString(FRAG_ARG_PHOTO_URI) )
-            .placeholder(R.mipmap.ic_launcher)
-            .error(R.mipmap.ic_launcher)
-            .into(imageviewDealPhoto)
+                    .load(args.getString(FRAG_ARG_PHOTO_URI))
+                    .placeholder(R.mipmap.ic_launcher)
+                    .error(R.drawable.ic_failed_to_load_image)
+                    .into(imageviewDealPhoto)
+        }else{
+            picassoImage
+                    .load(R.drawable.ic_failed_to_load_image)
+                    .placeholder(R.mipmap.ic_launcher)
+                    .error(R.drawable.ic_failed_to_load_image)
+                    .into(imageviewDealPhoto)
 
+        }
         return view
     }
 
