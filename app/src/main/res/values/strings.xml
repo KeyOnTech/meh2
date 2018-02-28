@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Snap Meh - Meh.com</string>
+    <string name="app_name">Meh Today</string>
     <string name="large_text">"Large Text Sample"</string>
     <string name="action_settings">Settings</string>
 
@@ -15,7 +15,7 @@
     <string name="menu_action_share">Share</string>
     <string name="menu_action_rate">Rate</string>
 
-    <string name="app_store_url">https://play.google.com/store/apps/details?id=com.keyontech.meh1</string>
+    <string name="app_store_url">https://play.google.com/store/apps/details?id=com.keyontech.mehtoday</string>
 
 
     <string-array name="pager_adapter_activity_main_tab_headers">

@@ -22,6 +22,10 @@ import com.keyontech.meh3.R
 import java.io.IOException
 
 
+//error catch when you swipe to fast it crashes
+//
+//then build and publish app
+
 
 /**
  * Created by kot on 1/21/18.
@@ -45,6 +49,11 @@ val NOTIFICATION_ID = 333
 /*** used by intent service */
 val PREF_EXTRA_NOTIFICATION_IS_ALARM_ON = "PREF_EXTRA_NOTIFICATION_IS_ALARM_ON"
 val TEST_NOTIFICATION_POLL_INTERVAL = 1000 * 15 // 15 seconds // used for test alarm
+
+/*** used by job scheduler */
+val JS_PERSISTABLE_BUNDLE_DEAL_URL = "JS_PERSISTABLE_BUNDLE_DEAL_URL"
+val JS_SCHEDULE_5_SECONDS: Long = 5000 // setMinimum time to run will not work 15 min is the minimum
+val JS_SCHEDULE_8_HOURS: Long = 28800000 // setPeriodic 8 hours time to run will not work 15 min is the minimum
 
 
 

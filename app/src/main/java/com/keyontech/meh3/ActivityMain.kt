@@ -1,6 +1,9 @@
 package com.keyontech.meh3
 
 import android.app.PendingIntent.getActivity
+import android.app.job.JobInfo
+import android.app.job.JobScheduler
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -22,6 +25,7 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.AsyncTask
 import android.os.Build
+import android.os.PersistableBundle
 
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
@@ -35,10 +39,13 @@ import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.widget.TextView
+import android.widget.Toast
 import com.example.jonesq.meh3.utils.*
 import com.keyontech.meh3.Activities.ActivityGoToSite
 import com.keyontech.meh3.R.id.container
 import com.keyontech.meh3.services.IntentService_Notifications_Poll_Service
+import com.keyontech.meh3.services.MJobExecuter
+import com.keyontech.meh3.services.MJobScheduler
 import com.keyontech.meh3.viewpager1.*
 import kotlinx.android.synthetic.main.nav_drawer_layout.*
 import java.io.InputStream
@@ -87,6 +94,23 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
      *
      * view pager infinite loop
      * https://www.raywenderlich.com/169774/viewpager-tutorial-android-getting-started-kotlin
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     * update string xml file and upload to language screen so it can translate the text for you to spanish
+     *
+     *
+     * pass data to jobScheduler
+     * https://stackoverflow.com/questions/29343480/persistablebundle-pass-values-to-service-and-retrieve
+     *
+     * asynctask multiple paramters
+     * https://freakycoder.com/android-notes-16-how-to-pass-multiple-primitive-parameters-to-asynctask-d51c2aee2afb
+     *
      */
 
 
@@ -118,8 +142,25 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
 
+    /*** job scheduler */
+    val JSCHEDULER_JOB_ID = 44448
+    //    lateinit var mJobScheduler: JobScheduler
+//    lateinit var mJobInfo: JobInfo
+//    private var mJobScheduler: JobScheduler? = null
+    lateinit var mJobScheduler: JobScheduler
+    //    private var mJobScheduler: MJobScheduler? = null
+    private var mJobInfo: JobInfo? = null
+//    lateinit private var serviceComponent: ComponentName
+//    private var persistableBundle: PersistableBundle? = null
+//    lateinit var persistableBundle: PersistableBundle
 
+    lateinit var mJobExecuter: MJobExecuter
 
+    /***
+     * job scheduler kotlin sample
+     * https://github.com/googlesamples/android-JobScheduler
+     * https://github.com/googlesamples/android-JobScheduler/blob/master/kotlinApp/app/src/main/java/com/example/android/jobscheduler/MainActivity.kt
+     * */
 
 
 
@@ -173,6 +214,66 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             setupAlarm_To_Auto_Check_EveryNight()
         } // if
 
+        /*** job scheduler */
+
+
+
+        /*** Job scheduler Paramters and conditions  */
+        val componentName = ComponentName(this, MJobScheduler::class.java)
+//        serviceComponent = ComponentName(this, MJobScheduler::class.java)
+
+//        val cn: ComponentName = ComponentName(context, WeatherWidgetProvider::class.java)
+        val jobInfoBuilder = JobInfo.Builder(JSCHEDULER_JOB_ID, componentName)
+
+        /*** Job scheduler conditions  */
+
+
+        /*** Job scheduler extras */
+//        println( "ActivityMain  ---  onCreate  ---  url " + mehDealUrl)
+//
+//        persistableBundle = PersistableBundle()
+//        persistableBundle.putString(JS_PERSISTABLE_BUNDLE_DEAL_URL, mehDealUrl)
+//        jobInfoBuilder.setExtras(persistableBundle)
+
+
+
+        /*** Specify that this job should recur with the provided interval, not more than once per period. */
+//        jobInfoBuilder.setPeriodic(JS_SCHEDULE_5_SECONDS) // time to run will not work 15 min is the minimum
+        jobInfoBuilder.setPeriodic(JS_SCHEDULE_8_HOURS) // setPeriodic 8 hours time to run will not work 15 min is the minimum
+
+// https://stackoverflow.com/questions/38344220/job-scheduler-not-running-on-android-n
+
+        /*** Specify that this job should be delayed by the provided amount of time. */
+        /*** USE FOR TESTING ONLY 5 */
+//        jobInfoBuilder.setMinimumLatency(5000) // testing 5 sec.s  YOUR_TIME_INTERVAL
+
+        jobInfoBuilder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY) // require internet
+        /*** Set whether or not to persist this job across device reboots.  */
+        jobInfoBuilder.setPersisted(true) // keep running on system reboot
+
+
+        /*** this is the job it self  */
+        mJobInfo = jobInfoBuilder.build()
+        /*** this is the jobs schedule  */
+        mJobScheduler = getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
+//        (getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler).schedule(jobInfoBuilder.build())
+//        mJobScheduler.mehDealUrl = mehDealUrl
+        /*** start job */
+        scheduleJob()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // get url from file
 // fetch data
@@ -221,6 +322,26 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     .setAction("Action", null).show()
         }
     }
+
+
+
+    fun scheduleJob() {
+        println("MainActivity  -  scheduleJob")
+        /*** start / schedule the job service  */
+        mJobScheduler!!.schedule(mJobInfo!!)
+//        Toast.makeText(this, "Job Scheduled", Toast.LENGTH_LONG).show()
+    }
+
+    fun stopScheduledJob() {
+        println("MainActivity  -  stopScheduledJob")
+        /*** cancel all job services by ID  */
+        mJobScheduler!!.cancel(JSCHEDULER_JOB_ID)
+//        Toast.makeText(this, "Job Stopped / Canceled", Toast.LENGTH_LONG).show()
+    }
+
+
+
+
 
 
     fun goToURL(pURL: String) {
@@ -513,7 +634,7 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
                         // set photos viewPager
                         adapterActivityMain = AdapterViewPagerActivityMain(supportFragmentManager, modelMeh.deal.photos)
-                        viewPager_NavDrawer.offscreenPageLimit = 4
+                        viewPager_NavDrawer.offscreenPageLimit = 3
                         viewPager_NavDrawer.adapter = adapterActivityMain
 
                         // set custom swipe animations
@@ -734,8 +855,8 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         .with(pContext)
                         .load(largebitmapImageURL)
                         .resize(512,512)
-                        .placeholder(R.mipmap.ic_launcher)
-                        .error(R.mipmap.ic_launcher)
+                        .placeholder(R.mipmap.ic_failed_to_load_image)
+                        .error(R.mipmap.ic_failed_to_load_image)
                         .get()
 
                 showNotification(

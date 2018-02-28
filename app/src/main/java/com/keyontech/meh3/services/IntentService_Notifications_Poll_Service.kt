@@ -264,7 +264,7 @@ class IntentService_Notifications_Poll_Service : IntentService("IntentService_No
                         .with(pContext)
                         .load(largebitmapImageURL)
                         .resize(512,512)
-                        .placeholder(R.mipmap.ic_launcher)
+                        .placeholder(R.drawable.ic_failed_to_load_image)
                         .error(R.drawable.ic_failed_to_load_image)
                         .get()
 
@@ -318,10 +318,13 @@ class IntentService_Notifications_Poll_Service : IntentService("IntentService_No
      * update the UI with the first mehrequest in the response.
      */
 //    inner class fetchJSONAsyncTask1 : AsyncTask<URL, Void, ModelMeh>() {
-    inner class fetchJSONAsyncTask1 : AsyncTask<URL, Void, String>() {
+//    inner class fetchJSONAsyncTask1 : AsyncTask<URL, Void, String>() {
+    inner class fetchJSONAsyncTask1 : AsyncTask<Object, Void, String>() {
 
         //        override fun doInBackground(vararg urls: URL): ModelMeh {
-        override fun doInBackground(vararg urls: URL): String{
+//        override fun doInBackground(vararg urls: URL): String{
+//        override fun doInBackground(Object... params): String{
+        override fun doInBackground(vararg p0: Object?): String? {
             val uString = fetchJSON_AsyncTask()
             return uString
 
@@ -517,7 +520,7 @@ class IntentService_Notifications_Poll_Service : IntentService("IntentService_No
                             .with(pContext)
                             .load(largebitmapImageURL)
                             .resize(512,512)
-                            .placeholder(R.mipmap.ic_launcher)
+                            .placeholder(R.drawable.ic_failed_to_load_image)
                             .error(R.drawable.ic_failed_to_load_image)
                             .get()
 
