@@ -1,0 +1,52 @@
+{
+  "deal": "
+     * Issues to resolve
+     *
+     * notification at 11pm
+     * ask for permission to use the internet
+     * check if not allowed app wont work
+     * shows mock data
+     *
+     * picasso cache the photos
+     *
+     * Move constants to Strings Resource file
+     *
+     *viewPager animations / transforms
+     * http://myhexaville.com/2017/03/17/android-viewpager-transformations/
+     *
+     * viewPager tab icons
+     * https://stackoverflow.com/questions/38459309/how-do-you-create-an-android-view-pager-with-a-dots-indicator
+     *
+     * picasso notifications
+     * https://futurestud.io/tutorials/picasso-callbacks-remoteviews-and-notifications
+     *
+     * store last call to meh.com in app preferences then when the app opens use that as the mockdata
+     *
+     * when the notification call is made store that in app preferencse as responseJSON for the mockdata
+     *
+     * this way without internet it still works
+     *
+     * add a refresh button to the nav drawer
+     *
+     *
+     * view pager infinite loop
+     * https://www.raywenderlich.com/169774/viewpager-tutorial-android-getting-started-kotlin
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     * update string xml file and upload to language screen so it can translate the text for you to spanish
+     *
+     *
+     * pass data to jobScheduler
+     * https://stackoverflow.com/questions/29343480/persistablebundle-pass-values-to-service-and-retrieve
+     *
+     * asynctask multiple paramters
+     * https://freakycoder.com/android-notes-16-how-to-pass-multiple-primitive-parameters-to-asynctask-d51c2aee2afb
+     *
+    "
+  }

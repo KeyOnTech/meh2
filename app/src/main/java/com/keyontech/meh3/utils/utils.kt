@@ -20,6 +20,10 @@ import com.keyontech.meh3.Activities.ActivityGoToSite
 import com.keyontech.meh3.ActivityMain
 import com.keyontech.meh3.R
 import java.io.IOException
+import android.app.job.JobInfo
+import android.app.job.JobScheduler
+import android.content.ComponentName
+import com.keyontech.meh3.services.MJobScheduler
 
 
 //error catch when you swipe to fast it crashes
@@ -46,14 +50,16 @@ val BROADDCAST_EXTRA_ACTION_SHOW_NOTIFICATION = "com.keyontech.meh3.SHOW_NOTIFIC
 //    var mehNotificationLargePhoto = ""
 val NOTIFICATION_ID = 333
 
-/*** used by intent service */
+/*** intent service */
 val PREF_EXTRA_NOTIFICATION_IS_ALARM_ON = "PREF_EXTRA_NOTIFICATION_IS_ALARM_ON"
 val TEST_NOTIFICATION_POLL_INTERVAL = 1000 * 15 // 15 seconds // used for test alarm
 
-/*** used by job scheduler */
+/*** job scheduler */
+val JSCHEDULER_JOB_ID = 44448
 val JS_PERSISTABLE_BUNDLE_DEAL_URL = "JS_PERSISTABLE_BUNDLE_DEAL_URL"
 val JS_SCHEDULE_5_SECONDS: Long = 5000 // setMinimum time to run will not work 15 min is the minimum
 val JS_SCHEDULE_8_HOURS: Long = 28800000 // setPeriodic 8 hours time to run will not work 15 min is the minimum
+val JS_SCHEDULE_12_HOURS: Long = 43200000 // setPeriodic 8 hours time to run will not work 15 min is the minimum
 
 
 
@@ -86,6 +92,60 @@ fun isConnected_To_Network(vContext: Context): Boolean {
         false
     } // if
 } // isConnected_To_Network
+
+
+// Check whether this job is currently scheduled.
+fun isNotificationJobScheduled(context: Context): Boolean {
+    val js = context.getSystemService(JobScheduler::class.java)
+    val jobs = js!!.allPendingJobs ?: return false
+//    for (i in jobs.indices) {
+////        if (jobs[i].id == JobIds.PHOTOS_CONTENT_JOB) {
+//        if (jobs[i].id == JSCHEDULER_JOB_ID) {
+//            return true
+//        }
+//    }
+//    return false
+
+    return jobs.indices.any {
+        //        if (jobs[i].id == JobIds.PHOTOS_CONTENT_JOB) {
+        jobs[it].id == JSCHEDULER_JOB_ID
+    }
+}
+
+
+fun scheduleNotificationJob(pContext: Context) {
+    val componentName = ComponentName(pContext, MJobScheduler::class.java)
+    /*** Job schedule paramters and conditions */
+    val jobInfoBuilder = JobInfo.Builder(JSCHEDULER_JOB_ID, componentName)
+    /*** this is the job to schedule  */
+    var mJobScheduler = pContext.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
+
+    /*** Job scheduler extras */
+//            var persistableBundle: PersistableBundle
+//            persistableBundle = PersistableBundle()
+//            persistableBundle.putString(JS_PERSISTABLE_BUNDLE_DEAL_URL, mehDealUrl)
+//            jobInfoBuilder.setExtras(persistableBundle)
+
+
+/*** Job scheduler conditions  */
+    /*** job should be delayed by the provided amount of time. */
+//      /*** USE FOR TESTING ONLY 5 end */
+//    jobInfoBuilder.setMinimumLatency(5000) // testing 5 sec.s  YOUR_TIME_INTERVAL comment out setPeriodic to use this
+
+    /*** recur time interval, not more than once per period */
+    jobInfoBuilder.setPeriodic(JS_SCHEDULE_12_HOURS)
+
+    /*** require internet */
+    jobInfoBuilder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+
+    /*** persist this job across device reboots */
+    jobInfoBuilder.setPersisted(true)
+
+    /*** this is the job it self  */
+    var mJobInfo = jobInfoBuilder.build()
+    /*** start / schedule the job service  */
+    mJobScheduler!!.schedule(mJobInfo!!)
+}
 
 fun rateApp(vContext: Context): Intent {
     val pIntent = Intent(Intent.ACTION_VIEW)

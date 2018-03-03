@@ -87,16 +87,6 @@ open class MJobExecuter : AsyncTask<modelJobExecuterAsyncTaskParams, Void, Strin
 //        this.mehDealUrl = mehDealUrl
 //    }
 
-    /***
-    start an alarm manager
-    have that create a job scheduler
-    the job scheudler runs when wifi is available
-    delete job
-
-    repeat when alarm manager starts the next alart
-    make the ID the time stamp in miliseconds
-
-     */
 
 
 //    override fun doInBackground(vararg params: Void?): String? {

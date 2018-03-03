@@ -1,6 +1,5 @@
 package com.keyontech.meh3
 
-import android.app.PendingIntent.getActivity
 import android.app.job.JobInfo
 import android.app.job.JobScheduler
 import android.content.ComponentName
@@ -22,10 +21,7 @@ import okhttp3.*
 import org.json.JSONException
 import java.io.IOException
 import android.graphics.Color
-import android.net.Uri
 import android.os.AsyncTask
-import android.os.Build
-import android.os.PersistableBundle
 
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
@@ -38,11 +34,8 @@ import android.preference.PreferenceManager
 import android.util.Log
 import android.view.Gravity
 import android.view.View
-import android.widget.TextView
-import android.widget.Toast
 import com.example.jonesq.meh3.utils.*
 import com.keyontech.meh3.Activities.ActivityGoToSite
-import com.keyontech.meh3.R.id.container
 import com.keyontech.meh3.services.IntentService_Notifications_Poll_Service
 import com.keyontech.meh3.services.MJobExecuter
 import com.keyontech.meh3.services.MJobScheduler
@@ -52,7 +45,6 @@ import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.MalformedURLException
 import java.net.URL
-import org.json.JSONObject
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.nio.charset.Charset
@@ -111,6 +103,25 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
      * asynctask multiple paramters
      * https://freakycoder.com/android-notes-16-how-to-pass-multiple-primitive-parameters-to-asynctask-d51c2aee2afb
      *
+     * // https://stackoverflow.com/questions/38344220/job-scheduler-not-running-on-android-n
+     *
+     *
+     * job scheduler kotlin sample
+     * https://github.com/googlesamples/android-JobScheduler
+     * https://github.com/googlesamples/android-JobScheduler/blob/master/kotlinApp/app/src/main/java/com/example/android/jobscheduler/MainActivity.kt
+     *
+     * // close nav drawer - https://www.supinfo.com/articles/single/5610-android-navigation-drawer
+     * // did nav drawer just clsoe - https://github.com/kittinunf/RxMovieKotlin/blob/master/app/src/main/kotlin/com/taskworld/android/rxmovie/view/fragment/NavigationDrawerFragment.kt
+     *
+     *
+     * snack bar in kotlin
+     *  http://onetouchcode.com/2016/12/24/use-snackbar-android-apps/
+     *  https://androidteachers.com/android/android-material-design-snackbar-example/
+     *
+     *
+     * JOB SCHEDULER
+     * USE FOR TESTING ONLY 5 end
+     *
      */
 
 
@@ -127,46 +138,26 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     var mehVideoLink = ""
 
-//    var navBackgroundColor = 0
-
     /*** this is used for the notification large image */
-    var mehNotificationLargePhoto = ""
-
-    /*** Broadcast Receiver  */
-//    lateinit var receiver : BroadcastReceiver
-    // make broadcastreceiver work on api 26
-//    lateinit var broadcastReceiverContext : Context
+//    var mehNotificationLargePhoto = ""
 
     // define View Pager
     private lateinit var adapterActivityMain: AdapterViewPagerActivityMain
 
-
-
-    /*** job scheduler */
-    val JSCHEDULER_JOB_ID = 44448
-    //    lateinit var mJobScheduler: JobScheduler
-//    lateinit var mJobInfo: JobInfo
-//    private var mJobScheduler: JobScheduler? = null
-    lateinit var mJobScheduler: JobScheduler
-    //    private var mJobScheduler: MJobScheduler? = null
-    private var mJobInfo: JobInfo? = null
-//    lateinit private var serviceComponent: ComponentName
-//    private var persistableBundle: PersistableBundle? = null
+//    lateinit var mJobScheduler: JobScheduler
+//    private var mJobInfo: JobInfo? = null
 //    lateinit var persistableBundle: PersistableBundle
 
-    lateinit var mJobExecuter: MJobExecuter
+//    var navBackgroundColor = 0
 
-    /***
-     * job scheduler kotlin sample
-     * https://github.com/googlesamples/android-JobScheduler
-     * https://github.com/googlesamples/android-JobScheduler/blob/master/kotlinApp/app/src/main/java/com/example/android/jobscheduler/MainActivity.kt
-     * */
 
 
 
     companion object {
         var mehDealUrl: String = ""
-    } // companion object
+    }
+
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -174,13 +165,12 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setContentView(R.layout.activity_main_v2_nav_drawer)
         setSupportActionBar(toolbarNavDrawer)
 
-
 // setup Nav Drawer
         var toggle = object : ActionBarDrawerToggle(
                 this, drawer_layout, toolbarNavDrawer, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
             override fun onDrawerClosed(drawerView: View?) {
                 super.onDrawerClosed(drawerView)
-                // dont show nav bar on start
+                /*** dont show nav bar on start */
                 PreferenceManager.getDefaultSharedPreferences(applicationContext)
                         .edit()
                         .putBoolean(PREF_KEY_SHOW_NAV_DRAWER_ONSTART, false)
@@ -191,8 +181,6 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         fabbuttonNavDrawer.visibility = View.VISIBLE
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
-        // close nav drawer - https://www.supinfo.com/articles/single/5610-android-navigation-drawer
-        // did nav drawer just clsoe - https://github.com/kittinunf/RxMovieKotlin/blob/master/app/src/main/kotlin/com/taskworld/android/rxmovie/view/fragment/NavigationDrawerFragment.kt
 //        // alternavitve method Defer code dependent on restoration of previous instance state.
 //        drawer_layout.setDrawerListener(drawerToggle)
 //        drawer_layout.post { drawerToggle!!.syncState() }
@@ -208,72 +196,9 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             drawer_layout.openDrawer(Gravity.LEFT)
         }
 
-// turn on auto check every night --- start
-        if (!IntentService_Notifications_Poll_Service.isServiceAlarmOn(this)) {
-//            println("222  setupAlarm_To_Auto_Check_EveryNight")
-            setupAlarm_To_Auto_Check_EveryNight()
-        } // if
-
-        /*** job scheduler */
-
-
-
-        /*** Job scheduler Paramters and conditions  */
-        val componentName = ComponentName(this, MJobScheduler::class.java)
-//        serviceComponent = ComponentName(this, MJobScheduler::class.java)
-
-//        val cn: ComponentName = ComponentName(context, WeatherWidgetProvider::class.java)
-        val jobInfoBuilder = JobInfo.Builder(JSCHEDULER_JOB_ID, componentName)
-
-        /*** Job scheduler conditions  */
-
-
-        /*** Job scheduler extras */
-//        println( "ActivityMain  ---  onCreate  ---  url " + mehDealUrl)
-//
-//        persistableBundle = PersistableBundle()
-//        persistableBundle.putString(JS_PERSISTABLE_BUNDLE_DEAL_URL, mehDealUrl)
-//        jobInfoBuilder.setExtras(persistableBundle)
-
-
-
-        /*** Specify that this job should recur with the provided interval, not more than once per period. */
-//        jobInfoBuilder.setPeriodic(JS_SCHEDULE_5_SECONDS) // time to run will not work 15 min is the minimum
-        jobInfoBuilder.setPeriodic(JS_SCHEDULE_8_HOURS) // setPeriodic 8 hours time to run will not work 15 min is the minimum
-
-// https://stackoverflow.com/questions/38344220/job-scheduler-not-running-on-android-n
-
-        /*** Specify that this job should be delayed by the provided amount of time. */
-        /*** USE FOR TESTING ONLY 5 */
-//        jobInfoBuilder.setMinimumLatency(5000) // testing 5 sec.s  YOUR_TIME_INTERVAL
-
-        jobInfoBuilder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY) // require internet
-        /*** Set whether or not to persist this job across device reboots.  */
-        jobInfoBuilder.setPersisted(true) // keep running on system reboot
-
-
-        /*** this is the job it self  */
-        mJobInfo = jobInfoBuilder.build()
-        /*** this is the jobs schedule  */
-        mJobScheduler = getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
-//        (getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler).schedule(jobInfoBuilder.build())
-//        mJobScheduler.mehDealUrl = mehDealUrl
-        /*** start job */
-        scheduleJob()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        /*** start job scheduler */
+        if (!isNotificationJobScheduled(this))
+            scheduleNotificationJob(this)
 
 // get url from file
 // fetch data
@@ -284,21 +209,12 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         setTitle("")
 
-
         fetchJSON()
-        // Kick off an {@link AsyncTask} to perform the network request
-//        val fetchJSONAsyncTask2_1 = fetchJSONAsyncTask2()
-//        fetchJSONAsyncTask2_1.execute()
-////        val sFetchJSON_U = fetchJSON_U()
-//        fetchMockInterface()
 
 
 // fab buton Right
         fabbuttonNavDrawer.setOnClickListener { view ->
 //            setTitle("")
-
-
-
 
 //            fetchJSON()
 //            fetchMockInterface()
@@ -318,26 +234,19 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             println("sharedPreferences  :  jsonResponse = " + jsonResponse)
 
             goToURL(mehDealUrl)
-            Snackbar.make(view, "GoTo site", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
+//            Snackbar.make(view, "GoTo site", Snackbar.LENGTH_LONG)
+//                    .setAction("Action", null).show()
         }
     }
 
 
 
-    fun scheduleJob() {
-        println("MainActivity  -  scheduleJob")
-        /*** start / schedule the job service  */
-        mJobScheduler!!.schedule(mJobInfo!!)
-//        Toast.makeText(this, "Job Scheduled", Toast.LENGTH_LONG).show()
+    fun cancelNotificationJobScheduled() {
+        /*** cancel all job services by ID  */
+        var vJobScheduler = getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
+        vJobScheduler!!.cancel(JSCHEDULER_JOB_ID)
     }
 
-    fun stopScheduledJob() {
-        println("MainActivity  -  stopScheduledJob")
-        /*** cancel all job services by ID  */
-        mJobScheduler!!.cancel(JSCHEDULER_JOB_ID)
-//        Toast.makeText(this, "Job Stopped / Canceled", Toast.LENGTH_LONG).show()
-    }
 
 
 
@@ -401,12 +310,12 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
 
-    fun setupAlarm_To_Auto_Check_EveryNight() {
-//        println("333  set alarm to check every night stared ")
-        var shouldStartAlarm = true
-//        printToToast( this , TAG , "Should I start the polling notification True or False??? " + shouldStartAlarm ); ;
-        IntentService_Notifications_Poll_Service.setServiceAlarm(this , shouldStartAlarm)  // .set.setServiceAlarm(this, shouldStartAlarm)
-    } // setPollingNotifications
+//    fun setupAlarm_To_Auto_Check_EveryNight() {
+////        println("333  set alarm to check every night stared ")
+//        var shouldStartAlarm = true
+////        printToToast( this , TAG , "Should I start the polling notification True or False??? " + shouldStartAlarm ); ;
+//        IntentService_Notifications_Poll_Service.setServiceAlarm(this , shouldStartAlarm)  // .set.setServiceAlarm(this, shouldStartAlarm)
+//    } // setPollingNotifications
 
 
 
@@ -625,12 +534,12 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
                     // set notification large image
                     if (modelMeh.deal.photos != null) {
-                        if (modelMeh.deal.photos[0].isNotEmpty()) {
-                            mehNotificationLargePhoto = modelMeh.deal.photos[0]
-                        } else {
-                            mehNotificationLargePhoto = ""
-                            println("set default large photo image here")
-                        }
+//                        if (modelMeh.deal.photos[0].isNotEmpty()) {
+//                            mehNotificationLargePhoto = modelMeh.deal.photos[0]
+//                        } else {
+//                            mehNotificationLargePhoto = ""
+//                            println("set default large photo image here")
+//                        }
 
                         // set photos viewPager
                         adapterActivityMain = AdapterViewPagerActivityMain(supportFragmentManager, modelMeh.deal.photos)
@@ -689,8 +598,6 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 viewPager_NavDrawer.offscreenPageLimit = 1
                 viewPager_NavDrawer.adapter = adapterActivityMain
 
-                /***  http://onetouchcode.com/2016/12/24/use-snackbar-android-apps/  */
-                /***  https://androidteachers.com/android/android-material-design-snackbar-example/  */
                 Snackbar.make(
                         findViewById(android.R.id.content)
                         , "Unable to fetch data please check internet connection"
