@@ -2,7 +2,7 @@ package com.keyontech.meh3.Activities
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import com.example.jonesq.meh3.utils.ACT_EXTRA_GO_TO_SITE_URL
+import com.keyontech.meh3.utils.ACT_EXTRA_GO_TO_SITE_URL
 import com.keyontech.meh3.R
 import com.keyontech.meh3.R.id.webView_activity_meh_video
 import kotlinx.android.synthetic.main.activity_go_to_site_url.*

@@ -40,7 +40,7 @@
             <!-- use this to auto add the back button on top left -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ActivityMain" />
+                android:value="com.keyontech.meh3.ActivityMain" />
         </activity>
 
         <!-- Meh Poll screen -->
@@ -52,7 +52,7 @@
             <!-- use this to auto add the back button on top left -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ActivityMain" />
+                android:value="com.keyontech.meh3.ActivityMain" />
         </activity>
 
         <!-- About screen -->
@@ -64,7 +64,7 @@
             <!-- use this to auto add the back button on top left -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ActivityMain" />
+                android:value="com.keyontech.meh3.ActivityMain" />
         </activity>
 
         <!-- GO TO URL screen -->
@@ -76,66 +76,14 @@
             <!-- use this to auto add the back button on top left -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ActivityMain" />
+                android:value="com.keyontech.meh3.ActivityMain" />
         </activity>
-
-
-
-
-        <!--&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;-->
-
-        <!---->
-        <!--&lt;!&ndash; Broadcast receiver for notification &ndash;&gt;-->
-        <!--&lt;!&ndash;<receiver android:name=".notification.AlertReceiver" />&ndash;&gt;-->
-
-
-        <!--&lt;!&ndash;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&ndash;&gt;-->
-
-
-        <!--&lt;!&ndash; Used by Polling Service - start &ndash;&gt;-->
-        <!--&lt;!&ndash; Used for Polling Service Alarm Service Auto Check API at 11pm &ndash;&gt;-->
-        <!--&lt;!&ndash;<service android:name=".IntentService1" />&ndash;&gt;-->
-        <!--<receiver-->
-            <!--android:name=".services.BroadcastReceiver_Notifications_Service_Startup"-->
-            <!--android:enabled="true"-->
-            <!--android:exported="true"-->
-            <!--&gt;-->
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.BOOT_COMPLETED" />-->
-            <!--</intent-filter>-->
-        <!--</receiver>-->
-
-
-        <!--&lt;!&ndash; Used for Polling Service StartUp on Boot automatically USE &ndash;&gt;-->
-        <!--&lt;!&ndash;<receiver android:name=".BroadcastReceiver_Notifications_Service_Startup" >&ndash;&gt;-->
-        <!--&lt;!&ndash;<intent-filter>&ndash;&gt;-->
-        <!--&lt;!&ndash;<action android:name="android.intent.action.BOOT_COMPLETED" />&ndash;&gt;-->
-        <!--&lt;!&ndash;</intent-filter>&ndash;&gt;-->
-        <!--&lt;!&ndash;</receiver>&ndash;&gt;-->
-        <!--<service-->
-            <!--android:name=".services.IntentService_Notifications_Poll_Service"-->
-            <!--android:exported="false"-->
-            <!--/>-->
-        <!--&lt;!&ndash; Used by Polling Service - end &ndash;&gt;-->
-
-        <!--&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;-->
-
-
-
-
-
-        <!--&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;-->
 
         <!--Job Scheduler Requirements-->
         <service android:name=".services.MJobScheduler"
             android:permission="android.permission.BIND_JOB_SERVICE"
             android:exported="true"
             />
-
-        <!--&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;-->
-
-
-
 
     </application>
 

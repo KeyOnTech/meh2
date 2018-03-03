@@ -1,4 +1,4 @@
-package com.example.jonesq.meh3.Models
+package com.keyontech.meh3.Models
 
 /**
  * Created by kot on 1/16/18.

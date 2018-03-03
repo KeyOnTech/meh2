@@ -3,8 +3,8 @@ package com.keyontech.meh3.Activities
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
-import com.example.jonesq.meh3.Models.ModelMeh
-import com.example.jonesq.meh3.utils.*
+import com.keyontech.meh3.Models.ModelMeh
+import com.keyontech.meh3.utils.*
 import com.google.gson.GsonBuilder
 import com.keyontech.meh3.R
 import com.keyontech.meh3.adapters.AdapterRecyclerViewActivityPoll

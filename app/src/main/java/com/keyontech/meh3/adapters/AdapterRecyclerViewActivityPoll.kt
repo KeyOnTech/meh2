@@ -4,7 +4,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.jonesq.meh3.Models.ModelMehPoll
+import com.keyontech.meh3.Models.ModelMehPoll
 import com.keyontech.meh3.R
 import kotlinx.android.synthetic.main.recyclerview_row_poll_activity.view.*
 

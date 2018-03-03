@@ -6,8 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import com.example.jonesq.meh3.utils.FRAG_ARG_PHOTO_URI
 import com.keyontech.meh3.R
+import com.keyontech.meh3.utils.FRAG_ARG_PHOTO_URI
 import com.squareup.picasso.Picasso
 
 class FragmentViewPager1 : Fragment() {

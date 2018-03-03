@@ -9,9 +9,7 @@ import com.keyontech.meh3.Models.modelJobExecuterAsyncTaskParams
  *
 */
 
-
 class MJobScheduler : JobService() {
-//class MJobScheduler(var mehDealUrl: String) : JobService() {
     lateinit var mJobExecuter: MJobExecuter
 
     override fun onStartJob(jobParameters: JobParameters): Boolean

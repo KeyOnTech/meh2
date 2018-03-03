@@ -1,135 +1,37 @@
 package com.keyontech.meh3
 
-import android.app.job.JobInfo
-import android.app.job.JobScheduler
-import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
-import com.example.jonesq.meh3.Models.ModelMeh
 import com.google.gson.GsonBuilder
 import com.keyontech.meh3.adapters.AdapterViewPagerActivityMain
-
 import kotlinx.android.synthetic.main.content_activity_main.*
 import kotlinx.android.synthetic.main.activity_main_v2_nav_drawer.*
 import kotlinx.android.synthetic.main.activity_main_v2_nav_drawer_include_content.*
-
 import okhttp3.*
 import org.json.JSONException
 import java.io.IOException
 import android.graphics.Color
-import android.os.AsyncTask
-
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
-import com.example.jonesq.meh3.Models.*
 import com.keyontech.meh3.Activities.ActivityAbout
 import com.keyontech.meh3.Activities.ActivityMehPoll
 import com.keyontech.meh3.Activities.ActivityMehVideo
 import android.preference.PreferenceManager
-import android.util.Log
 import android.view.Gravity
 import android.view.View
-import com.example.jonesq.meh3.utils.*
 import com.keyontech.meh3.Activities.ActivityGoToSite
-import com.keyontech.meh3.services.IntentService_Notifications_Poll_Service
-import com.keyontech.meh3.services.MJobExecuter
-import com.keyontech.meh3.services.MJobScheduler
+import com.keyontech.meh3.Models.JSONUrL
+import com.keyontech.meh3.Models.ModelMeh
+import com.keyontech.meh3.utils.*
 import com.keyontech.meh3.viewpager1.*
 import kotlinx.android.synthetic.main.nav_drawer_layout.*
-import java.io.InputStream
-import java.net.HttpURLConnection
-import java.net.MalformedURLException
-import java.net.URL
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.nio.charset.Charset
 import java.util.*
 
-
 class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
-
-
-    /***
-     * Issues to resolve
-     *
-     * notification at 11pm
-     * ask for permission to use the internet
-     * check if not allowed app wont work
-     * shows mock data
-     *
-     * picasso cache the photos
-     *
-     * Move constants to Strings Resource file
-     *
-     *viewPager animations / transforms
-     * http://myhexaville.com/2017/03/17/android-viewpager-transformations/
-     *
-     * viewPager tab icons
-     * https://stackoverflow.com/questions/38459309/how-do-you-create-an-android-view-pager-with-a-dots-indicator
-     *
-     * picasso notifications
-     * https://futurestud.io/tutorials/picasso-callbacks-remoteviews-and-notifications
-     *
-     * store last call to meh.com in app preferences then when the app opens use that as the mockdata
-     *
-     * when the notification call is made store that in app preferencse as responseJSON for the mockdata
-     *
-     * this way without internet it still works
-     *
-     * add a refresh button to the nav drawer
-     *
-     *
-     * view pager infinite loop
-     * https://www.raywenderlich.com/169774/viewpager-tutorial-android-getting-started-kotlin
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     * update string xml file and upload to language screen so it can translate the text for you to spanish
-     *
-     *
-     * pass data to jobScheduler
-     * https://stackoverflow.com/questions/29343480/persistablebundle-pass-values-to-service-and-retrieve
-     *
-     * asynctask multiple paramters
-     * https://freakycoder.com/android-notes-16-how-to-pass-multiple-primitive-parameters-to-asynctask-d51c2aee2afb
-     *
-     * // https://stackoverflow.com/questions/38344220/job-scheduler-not-running-on-android-n
-     *
-     *
-     * job scheduler kotlin sample
-     * https://github.com/googlesamples/android-JobScheduler
-     * https://github.com/googlesamples/android-JobScheduler/blob/master/kotlinApp/app/src/main/java/com/example/android/jobscheduler/MainActivity.kt
-     *
-     * // close nav drawer - https://www.supinfo.com/articles/single/5610-android-navigation-drawer
-     * // did nav drawer just clsoe - https://github.com/kittinunf/RxMovieKotlin/blob/master/app/src/main/kotlin/com/taskworld/android/rxmovie/view/fragment/NavigationDrawerFragment.kt
-     *
-     *
-     * snack bar in kotlin
-     *  http://onetouchcode.com/2016/12/24/use-snackbar-android-apps/
-     *  https://androidteachers.com/android/android-material-design-snackbar-example/
-     *
-     *
-     * JOB SCHEDULER
-     * USE FOR TESTING ONLY 5 end
-     *
-     */
-
-
-
-
-
-
-
 
     /*** api request url */
     var jsonURL = ""
@@ -138,15 +40,8 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     var mehVideoLink = ""
 
-    /*** this is used for the notification large image */
-//    var mehNotificationLargePhoto = ""
-
     // define View Pager
     private lateinit var adapterActivityMain: AdapterViewPagerActivityMain
-
-//    lateinit var mJobScheduler: JobScheduler
-//    private var mJobInfo: JobInfo? = null
-//    lateinit var persistableBundle: PersistableBundle
 
 //    var navBackgroundColor = 0
 
@@ -209,6 +104,7 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         setTitle("")
 
+
         fetchJSON()
 
 
@@ -219,39 +115,13 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 //            fetchJSON()
 //            fetchMockInterface()
 
-
-
-            // test from other class fix this
-//        IntentService_Notifications_Poll_Service.fetchJSON()
-            // Kick off an {@link AsyncTask} to perform the network request
-//        val task_fetchJSONAsyncTask3 = IntentService_Notifications_Poll_Service.Companion.fetchJSONAsyncTask3()
-//        task_fetchJSONAsyncTask3.execute()
-
-
-
             val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
             var jsonResponse = sharedPreferences.getString(PREF_KEY_MEH_RESPONSE_STRING, "")
             println("sharedPreferences  :  jsonResponse = " + jsonResponse)
 
             goToURL(mehDealUrl)
-//            Snackbar.make(view, "GoTo site", Snackbar.LENGTH_LONG)
-//                    .setAction("Action", null).show()
         }
     }
-
-
-
-    fun cancelNotificationJobScheduled() {
-        /*** cancel all job services by ID  */
-        var vJobScheduler = getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
-        vJobScheduler!!.cancel(JSCHEDULER_JOB_ID)
-    }
-
-
-
-
-
-
 
     fun goToURL(pURL: String) {
         println("pUrl = " + pURL)
@@ -260,7 +130,6 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         startActivity(intent)
     }
 
-// nav drawer
     override fun onBackPressed() {
         if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
             drawer_layout.closeDrawer(GravityCompat.START)
@@ -270,7 +139,7 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        // Handle navigation view item clicks here.
+        /*** Handle navigation view item clicks here. */
         when (item.itemId) {
             R.id.nav_bar_poll -> {
                 var intent = Intent(baseContext, ActivityMehPoll::class.java)
@@ -297,7 +166,6 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.nav_bar_refresh-> {
                 fetchJSON()
             }
-
         }
 
         drawer_layout.closeDrawer(GravityCompat.START)
@@ -306,35 +174,14 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
 
-
-
-
-
-//    fun setupAlarm_To_Auto_Check_EveryNight() {
-////        println("333  set alarm to check every night stared ")
-//        var shouldStartAlarm = true
-////        printToToast( this , TAG , "Should I start the polling notification True or False??? " + shouldStartAlarm ); ;
-//        IntentService_Notifications_Poll_Service.setServiceAlarm(this , shouldStartAlarm)  // .set.setServiceAlarm(this, shouldStartAlarm)
-//    } // setPollingNotifications
-
-
-
-
-
-
-
     fun fetchJSON() {
         var request = Request.Builder().url( jsonURL ).build()
         var client = OkHttpClient()
 
         /*** had to enqueue because you cannot execute in the main method needs a thread to do so */
-//        client.newCall( request ).execute()
-        client.newCall( request ).enqueue(object: Callback {
+        client.newCall(request).enqueue(object: Callback {
             override fun onResponse(call: Call?, response: Response?) {
-//                println("111aaa LOAD : live data")
-
                 var responseBody = response?.body()?.string()
-//                println( "111bbb  fetchJSON - onResponse - body - " + responseBody )
                 jsonResponse = responseBody.toString()
                 processReturn(jsonResponse)
             }
@@ -408,44 +255,10 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
     fun displayResults(response: String) {
-        println("88888bbbb ------ ")
         try {
-
-            println("8888ccccccc ------")
-
             if (response != null && response.isNotEmpty()) {
-                println("8888ddd  ------")
-
                 var gson = GsonBuilder().serializeNulls().create()
                 var modelMeh = gson.fromJson(response, ModelMeh::class.java)
-
-                /***        test returns
-                ////        println( "222bbb  modelMeh.deal = " + modelMeh.deal )
-                ////        println( "222bbb  modelMeh.deal title = " + modelMeh.deal.title )
-                ////
-                ////        println( "222ccc  modelMeh.deal.theme.accentColor = " + modelMeh.deal.theme.accentColor )
-                ////        println( "222ccc  modelMeh.deal.theme.backgroundColor = " + modelMeh.deal.theme.backgroundColor )
-                ////
-                ////
-                //////        mehPoll = modelMeh.poll
-                ////
-                ////        println( "333aaa  modelMeh.poll = " + modelMeh.poll)
-                ////        println( "333bbb  modelMeh.poll title = " + modelMeh.poll.title )
-                ////        println( "333ccc  modelMeh.poll id = " + modelMeh.poll.id )
-                ////        println( "333ddd  modelMeh.poll startDate = " + modelMeh.poll.startDate )
-                ////        println( "333eee  modelMeh.poll answers[0].text = " + modelMeh.poll.answers[0].text )
-                ////        println( "333fff  modelMeh.poll answers[0].voteCount = " + modelMeh.poll.answers[0].voteCount )
-                //////        println( "333hhh  modelMeh.poll topic.url = " + modelMeh.poll.topic)
-                //////        println( "333ggg  modelMeh.poll topic.url = " + modelMeh.poll.topic.url)
-                ////
-                ////
-                ////        println( " 77777777     modelMeh.video  " + modelMeh.video )
-                //////                if (modelMeh.video == null )
-                ////        println( "444aaa  modelMeh.vieo = " + modelMeh.video)
-                ////        println( "444bbb  modelMeh.video title = " + modelMeh.video.title )
-                ////        println( "444ccc  modelMeh.video topic.url = " + modelMeh.video.topic.url)
-                 */
-
 
                 // setup video activity
                 mehVideoLink = if (modelMeh.video != null) {
@@ -461,13 +274,10 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 } else {
                     ""
                 }
-    //            var firstFeature = featureArray.getJSONObject(0)
-    // parse json object with out errors - https://stackoverflow.com/questions/34938640/advoid-many-try-catch-blog-when-parse-json/34938745#34938745
-
 
                 // set site URL
                 if (modelMeh.deal != null) {
-                    // set main activity body text
+                    /*** set main activity body text */
     //                setTitle(priceLowtoHigh(modelMeh.deal.title))
                     textView_content_activity_main_card_view_1.text = modelMeh.deal.title
                     textView_content_activity_main_card_view_2.text = modelMeh.deal.features
@@ -483,11 +293,8 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     // set the color scheme  --- START
                     if (modelMeh.deal.theme != null) {
                         if ((modelMeh.deal.theme.accentColor != "" || modelMeh.deal.theme.accentColor != null) || (modelMeh.deal.theme.backgroundColor != "" || modelMeh.deal.theme.backgroundColor != null)) {
-    //                        if (Build.VERSION.SDK_INT >= 21) {
-                            /*** Lollipop and above colors min sdk is 21 so if no longer needed */
                             window.statusBarColor = Color.parseColor(modelMeh.deal.theme.accentColor)
                             window.navigationBarColor = Color.parseColor(modelMeh.deal.theme.accentColor)
-    //                        }
 
                             try {
                                 toolbarNavDrawer.setBackgroundColor(Color.parseColor(modelMeh.deal.theme.backgroundColor))
@@ -507,10 +314,10 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                             }
 
                             try {
-                                //                                fabbuttonNavDrawer.setBackgroundColor(Color.parseColor(modelMeh.deal.theme.backgroundColor))
-                                //                                fabbuttonNavDrawer.back.backgroundTint =  (Color.parseColor(modelMeh.deal.theme.backgroundColor))
+//                                fabbuttonNavDrawer.setBackgroundColor(Color.parseColor(modelMeh.deal.theme.backgroundColor))
+//                                fabbuttonNavDrawer.back.backgroundTint =  (Color.parseColor(modelMeh.deal.theme.backgroundColor))
 
-                                //                                fabbuttonNavDrawer.rippleColor = Color.parseColor(modelMeh.deal.theme.backgroundColor)
+//                                fabbuttonNavDrawer.rippleColor = Color.parseColor(modelMeh.deal.theme.backgroundColor)
                                 fabbuttonNavDrawer.rippleColor = Color.parseColor(modelMeh.deal.theme.accentColor)
                             } catch (e: Exception) {
                                 //
@@ -610,123 +417,6 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                     , Snackbar.LENGTH_SHORT).show()
                         }.show()
 
-
-/***
-
-                //                http://onetouchcode.com/2016/12/24/use-snackbar-android-apps/
-                //                https://stackoverflow.com/questions/36474397/android-design-library-snackbar-getting-textview-returns-null
-                //                https://antonioleiva.com/kotlin-awesome-tricks-for-android/
-
-//                Snackbar.make(this, "Unable to fetch data please check internet connection", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show()
-
-//                val snackbar = Snackbar.make(onCreatePanelView(), "Welcome To Main Activity", Snackbar.LENGTH_LONG)
-//                snackbar.show()
-
-
-
-
-
-
-                // works
-//                Snackbar.make(findViewById(android.R.id.content), "Unable to fetch data please check internet connection", Snackbar.LENGTH_LONG).show();
-
-
-
-
-
-
-
-
-//                val snackbar3 = Snackbar.make(
-//                        findViewById(android.R.id.content)
-//                        , "No internet connection!", Snackbar.LENGTH_LONG)
-//                        .setAction("RETRY") { }
-//
-//                snackbar3.setActionTextColor(Color.GREEN)
-//                val sbView = snackbar3.view
-//                val textView = sbView.findViewById(android.support.design.R.id.snackbar_text) as TextView
-//                textView.setTextColor(Color.RED)
-//
-//                snackbar3.show()
-
-
-
-
-
-
-
-
-//                final Snackbar snackbar = Snackbar.make(getActivity().findViewById(android.R.id.content), "Onetouchcode welcome's you", Snackbar.LENGTH_LONG);
-//        snackbar.setAction("Close", new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                snackbar.dismiss();
-//            }
-//        });
-//        snackbar.setActionTextColor(Color.BLUE);
-//        View snackbarView = snackbar.getView();
-//        snackbarView.setBackgroundColor(getResources().getColor(android.R.color.holo_orange_dark));
-//        TextView textView = (TextView) snackbarView.findViewById(android.support.design.R.id.snackbar_text);
-//        textView.setTextColor(Color.WHITE);
-//        snackbar.show();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//                val snackbar = Snackbar.make(findViewById(android.R.id.content), "Onetouchcode welcome's you", Snackbar.LENGTH_LONG)
-//                val snackbarView = snackbar.view
-//                snackbarView.setBackgroundColor(resources.getColor(android.R.color.holo_orange_dark))
-//
-//
-//                val textView = snackbarView.findViewById(android.support.design.R.id.snackbar_text) as TextView
-//                textView.setTextColor(Color.WHITE)
-//
-////                val textView = findViewById(android.support.design.R.id.snackbar_text)
-////                textView.setTextColor(Color.WHITE)
-//                snackbar.show()
-
-
-
-
-
-
-
-
-
-////                val containerView = inflater.inflate(android.R.id.content, container, false)
-////                val snackbar = Snackbar.make(containerView, "snackbar text", Snackbar.LENGTH_SHORT)
-//                val snackbarView2 = snackbar.view
-//                val textView = snackbarView2.findViewById<View>(android.support.design.R.id.snackbar_text) as TextView
-////                text.setText("It works")
-//                snackbar.show()
-
-
-
-
-
-
-
-//                view.snack("This is my snack")
-//                view.snack("This snack is short", Snackbar.LENGTH_SHORT)
-
-//                view.snack("Snack message") {
-//                    action("Action") { toast("Action clicked") }
-//                }
-
-*/
-
-
             }
 
         } catch (e: JSONException) {
@@ -736,287 +426,9 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
 
-
-
     fun processMOCKReturn(response: String){
         displayResults(response)
         println("review meh2 utils class amd move all to here")
-//    review meh2 utils class amd move all to here
     }
 
-
-
-
-
-
-/***
-    private fun createNotification( pContext: Context, tickerText: String = "", notificationTitle: String = "", notificationText: String, showactionRightButtonIcon: Int, showactionLeftButtonIcon: Int, largebitmapImageURL : String, smallIcon : Int) {
-        var handlerThread = HandlerThread("aaa")
-        handlerThread.start()
-
-        var handler = Handler(handlerThread.getLooper())
-        handler.post(Runnable {
-            var notificationLargeBitmap: Bitmap? = null
-            try {
-                notificationLargeBitmap  = Picasso
-                        .with(pContext)
-                        .load(largebitmapImageURL)
-                        .resize(512,512)
-                        .placeholder(R.mipmap.ic_failed_to_load_image)
-                        .error(R.mipmap.ic_failed_to_load_image)
-                        .get()
-
-                showNotification(
-                        pContext
-                        ,tickerText
-                        ,notificationTitle
-                        ,notificationText
-                        ,showactionRightButtonIcon
-                        ,showactionLeftButtonIcon
-                        ,notificationLargeBitmap
-                        ,smallIcon
-                )
-            } catch (e: IOException) {
-                e.printStackTrace()
-            } finally {
-                if (notificationLargeBitmap != null) {
-                    //do whatever you wanna do with the picture.
-                    //for me it was using my own cache
-//                    imageCaching.cacheImage(imageId, bitmap)
-                }
-            }
-        })
-    }
-*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/***
-    fun broadcastReceiver2() {
-        // make broadcastreceiver work on api 26
-        broadcastReceiverContext = this
-        sendBroadcast(Intent( broadcastReceiverContext , BroadcastReceiver_Notifications_Service_Startup::class.java) )
-//        sendBroadcast(Intent("ManifestMyReceiver") )
-    }
-*/
-
-
-
-
-
-//    // https://www.youtube.com/watch?v=nDzwiacP4aQ
-//    fun broadcastReceiver() {
-//        var filter = IntentFilter()
-//        filter.addAction(Intent.ACTION_BOOT_COMPLETED)
-////        filter.addAction(Intent.Actph)
-////        filter.addAction(Intent.ACTION_POWER_CONNECTED)
-////        filter.addAction(Intent.ACTION_POWER_DISCONNECTED)
-//
-//        receiver = object : BroadcastReceiver() {
-//            override fun onReceive(p0: Context?, p1: Intent?) {
-//                Toast.makeText(p0, "fun broadcastReceiver " + p1?.action, Toast.LENGTH_SHORT).show()
-//            }
-//        }
-//
-//        registerReceiver(receiver,filter)
-//    }
-//
-//    override fun onDestroy() {
-//        unregisterReceiver(receiver)
-//        super.onDestroy()
-//    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//    /////////// prior fetchJSON meh2
-//
-//    // make sure the internet is turned on on the device
-//    private fun getJSON_Data_String(): String {
-//        var vReturn_String = ""
-//
-//        try {
-//            val httpClient = DefaultHttpClient()
-//            // used for html form POST requests
-//            //            HttpPost httpPost = new HttpPost( SERVER_URL ) ;
-//            // used for html form GET  requests
-//            val httpGet = HttpGet(mURL)
-//
-//            // used for html form POST requests
-//            //            HttpResponse response = httpClient.execute ( httpPost ) ;
-//            val response = httpClient.execute(httpGet)
-//            val statusLine = response.getStatusLine()
-//
-//            if (statusLine.getStatusCode() === 200) {
-//                val entity = response.getEntity()
-//                val content = entity.getContent()
-//                //mReturn_Reader = new InputStreamReader( content ) ;
-//
-//                val vBuffer_Reader = BufferedReader(InputStreamReader(content))
-//                var vString = ""
-//
-//                while ((vString = vBuffer_Reader.readLine()) != null) {
-//                    vReturn_String = vString
-//                }  // while
-//
-//            } else {
-//                printToLog_10(TAG, "error: Server responded with status code: " + statusLine.getStatusCode())
-//            } // if
-//
-////        } catch (e: ClientProtocolException) {
-////            e.printStackTrace()
-//        } catch (e: IllegalStateException) {
-//            e.printStackTrace()
-//        } catch (e: IOException) {
-//            e.printStackTrace()
-//        }
-//        // try
-//
-//        return vReturn_String
-//    } //
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /**
-     * [AsyncTask] to perform the network request on a background thread, and then
-     * update the UI with the first mehrequest in the response.
-     */
-//    inner class fetchJSONAsyncTask2 : AsyncTask<URL, Void, ModelMeh>() {
-    private inner class fetchJSONAsyncTask2 : AsyncTask<URL, Void, String>() {
-
-        //        override fun doInBackground(vararg urls: URL): ModelMeh {
-        override fun doInBackground(vararg urls: URL): String{
-            val uString = fetchJSON_AsyncTask()
-            println("555aaa  uString  = " + uString)
-            return uString
-        }
-
-        /**
-         * Update the screen with the given mehrequest (which was the result of the
-         * [fetchJSONAsyncTask2 ]).
-         */
-//        override fun onPostExecute(mehrequest: ModelMeh?) {
-        override fun onPostExecute(mehrequest: String?) {
-            if (mehrequest == null) {
-                return
-            }
-//            updateUi(mehrequest)
-        }
-
-        //    /////////// prior fetchJSON udacitymeh2
-        @Throws(IOException::class)
-        fun fetchJSON_AsyncTask(): String {
-            // jsonURL
-            var jsonResponse = ""
-            var urlConnection: HttpURLConnection? = null
-            var inputStream: InputStream? = null
-
-            try {
-                var siteURL = createUrl2(jsonURL)
-
-                urlConnection = siteURL?.openConnection() as HttpURLConnection
-                urlConnection.requestMethod = "GET"
-                urlConnection.readTimeout = 10000
-                urlConnection.connectTimeout = 15000
-                urlConnection.connect()
-
-                inputStream = urlConnection.inputStream
-                jsonResponse = readFromStream(inputStream)
-                println("666ccc    jsonResponse = " + jsonResponse )
-            } catch (e: IOException) {
-                //
-            } finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect()
-                }
-
-                if (inputStream != null) {
-                    inputStream.close()
-                }
-            }
-            return jsonResponse
-        }
-
-
-        fun createUrl2(stringUrl: String): URL? {
-            var url: URL? = null
-            try {
-                url = URL(stringUrl)
-            } catch (exception: MalformedURLException) {
-                Log.e("createUrl", "Error with creating URL", exception)
-                return null
-            }
-
-            return url
-        }
-
-        /**
-         * Convert the [InputStream] into a String which contains the
-         * whole JSON response from the server.
-         */
-        @Throws(IOException::class)
-        fun readFromStream(inputStream: InputStream?): String {
-            val output = StringBuilder()
-            if (inputStream != null) {
-                val inputStreamReader = InputStreamReader(inputStream, Charset.forName("UTF-8"))
-                val reader = BufferedReader(inputStreamReader)
-                var line = reader.readLine()
-                while (line != null) {
-                    output.append(line)
-                    line = reader.readLine()
-                }
-            }
-            return output.toString()
-        }
-
-
-
-
-
-
-
-
-    } // async task
-
-
-} // class
+}

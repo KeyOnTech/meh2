@@ -1,4 +1,4 @@
-package com.example.jonesq.meh3.utils
+package com.keyontech.meh3.utils
 
 import android.app.Activity
 import android.app.Notification
@@ -14,8 +14,8 @@ import android.net.Uri
 import android.support.v4.app.NotificationCompat
 import android.util.Log
 import android.widget.Toast
-import com.example.jonesq.meh3.Models.ModelMehDeal
-import com.example.jonesq.meh3.Models.ModelMehPoll
+import com.keyontech.meh3.Models.ModelMehDeal
+import com.keyontech.meh3.Models.ModelMehPoll
 import com.keyontech.meh3.Activities.ActivityGoToSite
 import com.keyontech.meh3.ActivityMain
 import com.keyontech.meh3.R
@@ -24,12 +24,6 @@ import android.app.job.JobInfo
 import android.app.job.JobScheduler
 import android.content.ComponentName
 import com.keyontech.meh3.services.MJobScheduler
-
-
-//error catch when you swipe to fast it crashes
-//
-//then build and publish app
-
 
 /**
  * Created by kot on 1/21/18.
@@ -86,34 +80,21 @@ fun isConnected_To_Network(vContext: Context): Boolean {
     val connectivityManager = vContext.getSystemService(Activity.CONNECTIVITY_SERVICE) as ConnectivityManager
     val networkInfo = connectivityManager.activeNetworkInfo
 
-    return if (networkInfo != null && networkInfo.isConnected) {
-        true
-    } else {
-        false
-    } // if
-} // isConnected_To_Network
-
+    return networkInfo != null && networkInfo.isConnected
+}
 
 // Check whether this job is currently scheduled.
 fun isNotificationJobScheduled(context: Context): Boolean {
     val js = context.getSystemService(JobScheduler::class.java)
     val jobs = js!!.allPendingJobs ?: return false
-//    for (i in jobs.indices) {
-////        if (jobs[i].id == JobIds.PHOTOS_CONTENT_JOB) {
-//        if (jobs[i].id == JSCHEDULER_JOB_ID) {
-//            return true
-//        }
-//    }
-//    return false
 
     return jobs.indices.any {
-        //        if (jobs[i].id == JobIds.PHOTOS_CONTENT_JOB) {
         jobs[it].id == JSCHEDULER_JOB_ID
     }
 }
 
-
 fun scheduleNotificationJob(pContext: Context) {
+    println("util - scheduleNotificationJob - started")
     val componentName = ComponentName(pContext, MJobScheduler::class.java)
     /*** Job schedule paramters and conditions */
     val jobInfoBuilder = JobInfo.Builder(JSCHEDULER_JOB_ID, componentName)
@@ -147,11 +128,17 @@ fun scheduleNotificationJob(pContext: Context) {
     mJobScheduler!!.schedule(mJobInfo!!)
 }
 
+fun cancelNotificationJobScheduled(pContext: Context) {
+    /*** cancel all job services by ID  */
+    var vJobScheduler = pContext.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
+    vJobScheduler!!.cancel(JSCHEDULER_JOB_ID)
+}
+
 fun rateApp(vContext: Context): Intent {
     val pIntent = Intent(Intent.ACTION_VIEW)
     pIntent.data = Uri.parse(vContext.getString(R.string.app_store_url))
     return pIntent
-} // androidRate
+}
 
 fun shareApp(vContext: Context): Intent? {
     try {
@@ -177,8 +164,7 @@ fun shareApp(vContext: Context): Intent? {
         return null
     }
     // try
-} // androidShareYourStatus
-
+}
 
 fun loadJsonFromFile(filename: String, context: Context): String {
     var json = ""
