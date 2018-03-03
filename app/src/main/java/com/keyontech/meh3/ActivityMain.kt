@@ -266,7 +266,7 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 var gson = GsonBuilder().serializeNulls().create()
                 var modelMeh = gson.fromJson(response, ModelMeh::class.java)
 
-                // setup video activity
+                /*** setup video activity */
                 mehVideoLink = if (modelMeh.video != null) {
                     if (modelMeh.video.topic != null) {
                         if (modelMeh.video.topic.url != null && modelMeh.video.topic.url.isNotEmpty()) {
@@ -281,7 +281,7 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     ""
                 }
 
-                // set site URL
+                /*** set site URL */
                 if (modelMeh.deal != null) {
                     /*** set main activity body text */
     //                setTitle(priceLowtoHigh(modelMeh.deal.title))
@@ -295,8 +295,7 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         textView_content_activity_main_card_view_4.text = priceLowtoHigh(modelMeh.deal)
                     }
 
-
-                    // set the color scheme  --- START
+                    /*** set the color scheme  --- START */
                     if (modelMeh.deal.theme != null) {
                         if ((modelMeh.deal.theme.accentColor != "" || modelMeh.deal.theme.accentColor != null) || (modelMeh.deal.theme.backgroundColor != "" || modelMeh.deal.theme.backgroundColor != null)) {
                             window.statusBarColor = Color.parseColor(modelMeh.deal.theme.accentColor)
@@ -331,7 +330,7 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         }
                     }
 
-                    // set fab action button link
+                    /*** set fab action button link */
                     if (modelMeh.deal.url != null && modelMeh.deal.url.isNotEmpty()) {
                         mehDealUrl = modelMeh.deal.url
                     } else {
@@ -339,13 +338,13 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         println("set Deal Url here")
                     }
 
-                    // save string to preferences
+                    /*** save string to preferences */
                     PreferenceManager.getDefaultSharedPreferences(this)
                             .edit()
                             .putString(PREF_KEY_MEH_RESPONSE_STRING, response)
                             .apply()
 
-                    // set notification large image
+                    /*** set notification large image */
                     if (modelMeh.deal.photos != null) {
 //                        if (modelMeh.deal.photos[0].isNotEmpty()) {
 //                            mehNotificationLargePhoto = modelMeh.deal.photos[0]
@@ -354,12 +353,12 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 //                            println("set default large photo image here")
 //                        }
 
-                        // set photos viewPager
+                        /*** set photos viewPager */
                         adapterActivityMain = AdapterViewPagerActivityMain(supportFragmentManager, modelMeh.deal.photos)
                         viewPager_NavDrawer.offscreenPageLimit = 3
                         viewPager_NavDrawer.adapter = adapterActivityMain
 
-                        // set custom swipe animations
+                        /*** set custom swipe animations */
                         val randomNumberCreator = Random()
                         val randomNumber = randomNumberCreator.nextInt(3)
 
@@ -369,30 +368,16 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                             else -> viewPager_NavDrawer.setPageTransformer(false, ParallaxViewPagerPageTransform())
                         }
 
-                        // setup viewPager indicator buttons
+                        /*** setup viewPager indicator buttons */
                         tab_layout_viewpager_indicator_dots_NavDrawer.setupWithViewPager(viewPager_NavDrawer, true)
                     } else {
                         println("set view pager to null repsonse image")
                     }
-
-                    /***
-                    // display notification
-                    createNotification(
-                    this
-                    ,"Meh"
-                    ,modelMeh.deal.title
-                    ,priceLowtoHigh(modelMeh.deal)
-                    ,R.drawable.logo_32_x_32_2
-                    ,R.drawable.logo_32_x_32_2
-                    ,mehNotificationLargePhoto
-                    ,R.drawable.logo_32_x_32_2
-                    )
-                     */
                 } else {
                     val failedToLoadPhoto : ArrayList<String> = ArrayList()
                     failedToLoadPhoto .add("")
 
-                    // set photos viewPager
+                    /*** set photos viewPager */
                     adapterActivityMain = AdapterViewPagerActivityMain(supportFragmentManager, failedToLoadPhoto )
                     viewPager_NavDrawer.offscreenPageLimit = 1
                     viewPager_NavDrawer.adapter = adapterActivityMain

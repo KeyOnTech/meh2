@@ -136,8 +136,10 @@ fun scheduleNotificationJob(pContext: Context) {
 }
 
 fun cancelNotification(pContext: Context, pIntent: Intent) {
-    val manager = pContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-    manager.cancel( pIntent.getIntExtra(NOTIFICATION_ID.toString(), NOTIFICATION_ID))
+    val notificationManager = pContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    notificationManager.cancel(NOTIFICATION_ID)
+//    notificationManager.cancel(pIntent.getIntExtra(NOTIFICATION_ID.toString(), NOTIFICATION_ID))
+//    notificationManager.cancel(pIntent.extras.getInt(NOTIFICATION_ID.toString()))
 }
 
 fun cancelNotificationJobScheduled(pContext: Context) {
@@ -195,6 +197,14 @@ fun loadJsonFromFile(filename: String, context: Context): String {
     return json
 }
 
+fun mehSoldOut(modelMehDeal: ModelMehDeal): Boolean {
+    return if (modelMehDeal.launches != null) {
+        modelMehDeal.launches[0].soldOutAt != null || !modelMehDeal.launches[0].soldOutAt.isNotEmpty()
+    } else {
+        false
+    }
+}
+
 fun priceLowtoHigh(modelMehDeal: ModelMehDeal): String {
     var vMin = modelMehDeal.items[0].price.toInt()
     var vMax = modelMehDeal.items[0].price.toInt()
@@ -204,10 +214,16 @@ fun priceLowtoHigh(modelMehDeal: ModelMehDeal): String {
         if (vMax < i.price) vMax = i.price.toInt()
     }
 
-    if (vMin != vMax) {
-        return "$$vMin - $$vMax"
+    var vReturn = if (vMin != vMax) {
+        "$$vMin - $$vMax"
     }else{
-        return "$$vMax"
+        "$$vMax"
+    }
+
+    if (mehSoldOut(modelMehDeal)) {
+        return "SOLD OUT !!! - " + vReturn
+    }else {
+        return vReturn
     }
 }
 
@@ -235,30 +251,31 @@ fun showNotification(pContext: Context, vNotification_TickerText: String, vNotif
             vIntentShowActivity2 .putExtra(ACT_EXTRA_GO_TO_SITE_URL, vBuyURL)
 
         // Android Wear
-        var pIntent_AndroidWear = Intent(pContext, ActivityMain::class.java)
+        var vIntent_AndroidWear = Intent(pContext, ActivityMain::class.java)
+//        /*** used to cancel notifications on notification action button press */
+//        vIntent_AndroidWear.putExtra(NOTIFICATION_ID.toString(), NOTIFICATION_ID)
 
         // Because clicking the notification opens a new ("special") activity, there's
         // no need to create an artificial back stack.
         // details button
         var vPendingIntent = PendingIntent.getActivity(
-                pContext,
-                0,
-                vIntentShowActivity,
-                PendingIntent.FLAG_UPDATE_CURRENT
+            pContext,
+            0,
+            vIntentShowActivity,
+            PendingIntent.FLAG_UPDATE_CURRENT
         )
 
         // buy button
         var vPendingIntent2 = PendingIntent.getActivity(
-                pContext,
-                0,
-                vIntentShowActivity2,
-                PendingIntent.FLAG_UPDATE_CURRENT
-
+            pContext,
+            0,
+            vIntentShowActivity2,
+            PendingIntent.FLAG_UPDATE_CURRENT
         )
 
         // android wear button
         var pPendingIntent_AndroidWear = PendingIntent.getActivity(
-                pContext, 0, pIntent_AndroidWear, PendingIntent.FLAG_UPDATE_CURRENT
+                pContext, 0, vIntent_AndroidWear, PendingIntent.FLAG_UPDATE_CURRENT
         )
 
         // android wear button
