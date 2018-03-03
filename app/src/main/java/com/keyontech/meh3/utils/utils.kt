@@ -23,6 +23,8 @@ import java.io.IOException
 import android.app.job.JobInfo
 import android.app.job.JobScheduler
 import android.content.ComponentName
+import android.support.design.widget.Snackbar
+import android.view.View
 import com.keyontech.meh3.services.MJobScheduler
 
 /**
@@ -38,27 +40,32 @@ val FRAG_ARG_PHOTO_URI = "FRAG_ARG_PHOTO_URI"
 val PREF_KEY_MEH_RESPONSE_STRING = "KEY_MEH_RESPONSE_STRING"
 val PREF_KEY_SHOW_NAV_DRAWER_ONSTART = "PREF_KEY_SHOW_NAV_DRAWER_ONSTART"
 
-val BROADDCAST_EXTRA_ACTION_SHOW_NOTIFICATION = "com.keyontech.meh3.SHOW_NOTIFICATION"
 
 /*** this is used for the notification large image */
 //    var mehNotificationLargePhoto = ""
 val NOTIFICATION_ID = 333
 
-/*** intent service */
-val PREF_EXTRA_NOTIFICATION_IS_ALARM_ON = "PREF_EXTRA_NOTIFICATION_IS_ALARM_ON"
-val TEST_NOTIFICATION_POLL_INTERVAL = 1000 * 15 // 15 seconds // used for test alarm
+
+//val BROADDCAST_EXTRA_ACTION_SHOW_NOTIFICATION = "com.keyontech.meh3.SHOW_NOTIFICATION"
+
+///*** intent service */
+//val PREF_EXTRA_NOTIFICATION_IS_ALARM_ON = "PREF_EXTRA_NOTIFICATION_IS_ALARM_ON"
+//val TEST_NOTIFICATION_POLL_INTERVAL = 1000 * 15 // 15 seconds // used for test alarm
 
 /*** job scheduler */
 val JSCHEDULER_JOB_ID = 44448
-val JS_PERSISTABLE_BUNDLE_DEAL_URL = "JS_PERSISTABLE_BUNDLE_DEAL_URL"
+//val JS_PERSISTABLE_BUNDLE_DEAL_URL = "JS_PERSISTABLE_BUNDLE_DEAL_URL"
 val JS_SCHEDULE_5_SECONDS: Long = 5000 // setMinimum time to run will not work 15 min is the minimum
-val JS_SCHEDULE_8_HOURS: Long = 28800000 // setPeriodic 8 hours time to run will not work 15 min is the minimum
+//val JS_SCHEDULE_8_HOURS: Long = 28800000 // setPeriodic 8 hours time to run will not work 15 min is the minimum
 val JS_SCHEDULE_12_HOURS: Long = 43200000 // setPeriodic 8 hours time to run will not work 15 min is the minimum
 
 
 
-fun printToToast(vContext: Context, vTag: String, vStr: String) {
-    Toast.makeText(vContext, vTag + " - " + vStr, Toast.LENGTH_SHORT).show()
+fun printToSnackbar(pView: View, pMessage: String, pShowLength: Int) {
+    Snackbar.make(pView, pMessage, pShowLength).show()
+}
+fun printToToast(pContext: Context, vTag: String, vStr: String) {
+    Toast.makeText(pContext, vTag + " - " + vStr, Toast.LENGTH_SHORT).show()
 }
 fun printToLog(vTag: String, vStr: String) {
     Log.d(vTag, vStr)
@@ -76,8 +83,8 @@ fun printToErrorLog_10(vTag: String, vStr: String) {
 
 
 // make sure the internet is turned on on the device
-fun isConnected_To_Network(vContext: Context): Boolean {
-    val connectivityManager = vContext.getSystemService(Activity.CONNECTIVITY_SERVICE) as ConnectivityManager
+fun isConnected_To_Network(pContext: Context): Boolean {
+    val connectivityManager = pContext.getSystemService(Activity.CONNECTIVITY_SERVICE) as ConnectivityManager
     val networkInfo = connectivityManager.activeNetworkInfo
 
     return networkInfo != null && networkInfo.isConnected
@@ -128,25 +135,30 @@ fun scheduleNotificationJob(pContext: Context) {
     mJobScheduler!!.schedule(mJobInfo!!)
 }
 
+fun cancelNotification(pContext: Context, pIntent: Intent) {
+    val manager = pContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    manager.cancel( pIntent.getIntExtra(NOTIFICATION_ID.toString(), NOTIFICATION_ID))
+}
+
 fun cancelNotificationJobScheduled(pContext: Context) {
     /*** cancel all job services by ID  */
     var vJobScheduler = pContext.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
     vJobScheduler!!.cancel(JSCHEDULER_JOB_ID)
 }
 
-fun rateApp(vContext: Context): Intent {
+fun rateApp(pContext: Context): Intent {
     val pIntent = Intent(Intent.ACTION_VIEW)
-    pIntent.data = Uri.parse(vContext.getString(R.string.app_store_url))
+    pIntent.data = Uri.parse(pContext.getString(R.string.app_store_url))
     return pIntent
 }
 
-fun shareApp(vContext: Context): Intent? {
+fun shareApp(pContext: Context): Intent? {
     try {
         println("share app 1")
         var pSubject = ""
         var pMessage = ""
         pSubject = "Check out the Meh.com app"
-        pMessage = vContext.getString(R.string.app_store_url)
+        pMessage = pContext.getString(R.string.app_store_url)
 
         var vIntent = Intent(Intent.ACTION_SEND)
         vIntent.type = "text/plain"
@@ -159,7 +171,7 @@ fun shareApp(vContext: Context): Intent? {
 
         return vIntent
     } catch (e: Exception) {
-        printToLog_10(TAG, "ERROR " + e.message)
+//        printToLog_10(TAG, "ERROR " + e.message)
         e.printStackTrace()
         return null
     }
@@ -241,6 +253,7 @@ fun showNotification(pContext: Context, vNotification_TickerText: String, vNotif
                 0,
                 vIntentShowActivity2,
                 PendingIntent.FLAG_UPDATE_CURRENT
+
         )
 
         // android wear button

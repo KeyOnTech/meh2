@@ -27,7 +27,7 @@ import java.nio.charset.Charset
 
 open class MJobExecuter : AsyncTask<modelJobExecuterAsyncTaskParams, Void, String>() {
     /*** this is used for the notification large image */
-    var mehNotificationLargePhoto = ""
+    private var mehNotificationLargePhoto = ""
 
     override fun doInBackground(vararg params: modelJobExecuterAsyncTaskParams?): String? {
         var vContext = params[0]!!.cContext
@@ -37,13 +37,12 @@ open class MJobExecuter : AsyncTask<modelJobExecuterAsyncTaskParams, Void, Strin
         return uString + "MJobExecuter - Background long running task finishes..."
     }
 
-
         @Throws(IOException::class)
         fun fetchJSON_AsyncTask(pContext: Context, pDealUrl: String = ""): String {
             var gson = GsonBuilder().serializeNulls().create() // include null opjects when null
             var urlFile = loadJsonFromFile("url.json", pContext)
             var jsonOutput = gson.fromJson( urlFile , JSONUrL::class.java )
-            var jsonURL = jsonOutput.url
+            var jsonURL = jsonOutput.mehurl
 
             // jsonURL
             var jsonResponse = ""
@@ -110,76 +109,65 @@ open class MJobExecuter : AsyncTask<modelJobExecuterAsyncTaskParams, Void, Strin
         }
 
 
-        fun processReturn2(vContext: Context, response: String){
-            var gson = GsonBuilder().serializeNulls().create()
-            var modelMeh = gson.fromJson( response , ModelMeh::class.java )
-            var dealUrl = ""
+    fun processReturn2(vContext: Context, response: String){
+        var gson = GsonBuilder().serializeNulls().create()
+        var modelMeh = gson.fromJson( response , ModelMeh::class.java )
+        var dealUrl = ""
+        var notificationText = ""
 
-            // save string to preferences
-            PreferenceManager.getDefaultSharedPreferences(vContext)
-                    .edit()
-                    .putString(PREF_KEY_MEH_RESPONSE_STRING, response)
-                    .apply()
+        // save string to preferences
+        PreferenceManager.getDefaultSharedPreferences(vContext)
+                .edit()
+                .putString(PREF_KEY_MEH_RESPONSE_STRING, response)
+                .apply()
 
+        // set site URL
+        if (modelMeh.deal != null)
+        {
             // set site URL
-            if (modelMeh.deal != null)
-            {
-                // set site URL
-                // set fab action button link
-                if(modelMeh.deal.url != null && modelMeh.deal.url.isNotEmpty()) {
-                    dealUrl = modelMeh.deal.url
-                }else{
-                    dealUrl = ""
-                    println("set Deal Url here")
-                }
-
-                // set notification large image
-                if (modelMeh.deal.photos != null) {
-                    if(modelMeh.deal.photos[0].isNotEmpty()) {
-                        mehNotificationLargePhoto = modelMeh.deal.photos[0]
-                    }else {
-                        mehNotificationLargePhoto= ""
-                        println("set default large photo image here")
-                    }
-
-                    if ((modelMeh.deal.items != null) && (modelMeh.deal.items[0].condition != "" && modelMeh.deal.items[0].condition != null)) {
-                        // display notification
-                        createNotification2(
-                                vContext
-                                , "Meh 2 async task"
-                                , modelMeh.deal.title + "-2-Async_Task"
-                                , modelMeh.deal.items[0].condition + " - " + priceLowtoHigh(modelMeh.deal)
-                                , R.mipmap.ic_launcher
-                                , R.mipmap.ic_launcher
-                                , mehNotificationLargePhoto
-                                , R.mipmap.ic_launcher
-                                , dealUrl
-                        )
-                    }else{
-                        // display notification
-                        createNotification(
-                                vContext
-                                ,"Meh 1 fetchJSON"
-                                ,modelMeh.deal.title + "-1-OkHttpClient"
-                                , priceLowtoHigh(modelMeh.deal)
-                                , R.mipmap.ic_launcher
-                                , R.mipmap.ic_launcher
-                                , mehNotificationLargePhoto
-                                , R.mipmap.ic_launcher
-                                , dealUrl
-                        )
-                    }
-                }else{
-                    println("set view pager to null repsonse image")
-                }
-
+            // set fab action button link
+            if(modelMeh.deal.url != null && modelMeh.deal.url.isNotEmpty()) {
+                dealUrl = modelMeh.deal.url
             }else{
-                println("set all content boxes to to null repsonses")
+                dealUrl = ""
+                println("set Deal Url here")
             }
 
+            // set notification large image
+            if (modelMeh.deal.photos != null) {
+                if(modelMeh.deal.photos[0].isNotEmpty()) {
+                    mehNotificationLargePhoto = modelMeh.deal.photos[0]
+                }else {
+                    mehNotificationLargePhoto= ""
+                    println("set default large photo image here")
+                }
+
+                if ((modelMeh.deal.items != null) && (modelMeh.deal.items[0].condition != "" && modelMeh.deal.items[0].condition != null)) {
+                    notificationText = modelMeh.deal.items[0].condition + " - " + priceLowtoHigh(modelMeh.deal)
+                }else{
+                    notificationText = priceLowtoHigh(modelMeh.deal)
+                }
+
+                /*** show notification */
+                createNotification(
+                    vContext
+                    , modelMeh.deal.title
+                    , modelMeh.deal.title
+                    , notificationText
+                    , R.mipmap.ic_launcher
+                    , R.mipmap.ic_launcher
+                    , mehNotificationLargePhoto
+                    , R.mipmap.ic_launcher
+                    , dealUrl
+                )
+            }else{
+                println("set view pager to null repsonse image")
+            }
+
+        }else{
+            println("set all content boxes to to null repsonses")
         }
-
-
+    }
 
     fun createNotification( pContext: Context, tickerText: String = "", notificationTitle: String = "", notificationText: String, showactionRightButtonIcon: Int, showactionLeftButtonIcon: Int, largebitmapImageURL : String, smallIcon : Int, dealUrl: String) {
         var notificationLargeBitmap: Bitmap? = null
@@ -203,39 +191,6 @@ open class MJobExecuter : AsyncTask<modelJobExecuterAsyncTaskParams, Void, Strin
                     ,smallIcon
                     ,dealUrl
                     ,NOTIFICATION_ID
-            )
-        } catch (e: IOException) {
-            e.printStackTrace()
-        } finally {
-            if (notificationLargeBitmap != null) {
-//
-            }
-        }
-    }
-
-
-    fun createNotification2( pContext: Context, tickerText: String = "", notificationTitle: String = "", notificationText: String, showactionRightButtonIcon: Int, showactionLeftButtonIcon: Int, largebitmapImageURL : String, smallIcon : Int, dealUrl: String) {
-        var notificationLargeBitmap: Bitmap? = null
-        try {
-            notificationLargeBitmap  = Picasso
-                    .with(pContext)
-                    .load(largebitmapImageURL)
-                    .resize(512,512)
-                    .placeholder(R.drawable.ic_failed_to_load_image)
-                    .error(R.drawable.ic_failed_to_load_image)
-                    .get()
-
-            showNotification(
-                    pContext
-                    ,tickerText
-                    ,notificationTitle
-                    ,notificationText
-                    ,showactionRightButtonIcon
-                    ,showactionLeftButtonIcon
-                    ,notificationLargeBitmap
-                    ,smallIcon
-                    ,dealUrl
-                    , NOTIFICATION_ID + 1
             )
         } catch (e: IOException) {
             e.printStackTrace()

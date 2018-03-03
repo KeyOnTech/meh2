@@ -30,6 +30,7 @@ import com.keyontech.meh3.utils.*
 import com.keyontech.meh3.viewpager1.*
 import kotlinx.android.synthetic.main.nav_drawer_layout.*
 import java.util.*
+import kotlin.system.exitProcess
 
 class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -91,24 +92,29 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             drawer_layout.openDrawer(Gravity.LEFT)
         }
 
+        /*** used by notification action button to cancel notification */
+        cancelNotification(this, intent)
         /*** start job scheduler */
         if (!isNotificationJobScheduled(this))
             scheduleNotificationJob(this)
+
+
+
 
 // get url from file
 // fetch data
         var gson = GsonBuilder().serializeNulls().create() // include null opjects when null
         var urlFile = loadJsonFromFile("url.json", this)
         var jsonOutput = gson.fromJson( urlFile , JSONUrL::class.java )
-        jsonURL = jsonOutput.url
+        jsonURL = jsonOutput.mehurl
 
+        /*** remove title ba text */
         setTitle("")
 
-
+        /*** call json service */
         fetchJSON()
 
-
-// fab buton Right
+        /*** fab button */
         fabbuttonNavDrawer.setOnClickListener { view ->
 //            setTitle("")
 
@@ -303,7 +309,7 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                 viewPager_NavDrawer.setBackgroundColor(Color.parseColor(modelMeh.deal.theme.backgroundColor))
                                 //                    mViewPager_Tabs.setSelectedIndicatorColors(Color.parseColor(modelMeh.deal.theme.accentColor ) );
                             } catch (e: Exception) {
-                                printToErrorLog_10("ActivityMain", "runOnUiThread")
+//                                printToErrorLog_10("ActivityMain", "runOnUiThread")
                             }
 
                             try {
@@ -411,16 +417,21 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         , Snackbar.LENGTH_INDEFINITE)
                         .setAction("Retry") {
                             fetchJSON()
-                            Snackbar.make(
+                            printToSnackbar(
                                     findViewById(android.R.id.content)
                                     , "Attempting to fetch data!"
-                                    , Snackbar.LENGTH_SHORT).show()
+                                    , Snackbar.LENGTH_SHORT
+                            )
+//                            Snackbar.make(
+//                                    findViewById(android.R.id.content)
+//                                    , "Attempting to fetch data!"
+//                                    , Snackbar.LENGTH_SHORT).show()
                         }.show()
 
             }
 
         } catch (e: JSONException) {
-            printToErrorLog_10("ActivityMain", "runOnUiThread try")
+//            printToErrorLog_10("ActivityMain", "runOnUiThread try")
         }
 
     }

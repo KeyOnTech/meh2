@@ -5,7 +5,8 @@ package com.keyontech.meh3.Models
  */
 
 class JSONUrL (
-    val url: String
+    val mehurl: String
+    , val wooturl: String
 )
 
 class ModelMeh(

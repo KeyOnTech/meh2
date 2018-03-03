@@ -6,6 +6,12 @@ import com.keyontech.meh3.utils.ACT_EXTRA_GO_TO_SITE_URL
 import com.keyontech.meh3.R
 import com.keyontech.meh3.R.id.webView_activity_meh_video
 import kotlinx.android.synthetic.main.activity_go_to_site_url.*
+import android.R.string.cancel
+import android.app.NotificationManager
+import android.content.Context
+import com.keyontech.meh3.utils.NOTIFICATION_ID
+import com.keyontech.meh3.utils.cancelNotification
+
 
 /**
  * Created by kot on 1/29/18.
@@ -14,6 +20,10 @@ import kotlinx.android.synthetic.main.activity_go_to_site_url.*
 class ActivityGoToSite : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        /*** used by notification action button to cancel notification */
+        cancelNotification(this, intent)
+
         setContentView(R.layout.activity_go_to_site_url)
         val urlLink = intent.getStringExtra(ACT_EXTRA_GO_TO_SITE_URL)
 /***        to make the webview allow java from pages add the following - start */

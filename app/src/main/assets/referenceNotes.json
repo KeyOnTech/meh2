@@ -7,7 +7,7 @@
      * check if not allowed app wont work
      * shows mock data
      *
-     * picasso cache the photos
+     *
      *
      * Move constants to Strings Resource file
      *
@@ -26,8 +26,12 @@
      *
      * this way without internet it still works
      *
-     * add a refresh button to the nav drawer
      *
+     *
+     * card view
+     *  https://developer.android.com/training/material/lists-cards.html#CardView
+
+
      *
      * view pager infinite loop
      * https://www.raywenderlich.com/169774/viewpager-tutorial-android-getting-started-kotlin
@@ -41,8 +45,25 @@
      *
      * update string xml file and upload to language screen so it can translate the text for you to spanish
      *
-     *
-     * pass data to jobScheduler
+     * job scheduling
+    * https://developer.android.com/topic/performance/scheduling.html
+    * http://www.vogella.com/tutorials/AndroidTaskScheduling/article.html
+    * https://www.bignerdranch.com/blog/choosing-the-right-background-scheduler-in-android/
+    * job scheduling google samples
+    * https://github.com/googlesamples/android-JobScheduler
+    * https://github.com/googlesamples/android-JobScheduler/tree/master/kotlinApp/app/src/main/java/com/example/android/jobscheduler
+    * https://github.com/googlesamples/android-JobScheduler/blob/master/kotlinApp/app/src/main/AndroidManifest.xml
+    * https://github.com/googlesamples/android-JobScheduler/blob/master/kotlinApp/app/src/main/java/com/example/android/jobscheduler/MyJobService.kt
+    * https://medium.com/google-developers/scheduling-jobs-like-a-pro-with-jobscheduler-286ef8510129
+
+
+    * job schedulingn below api 21
+    * https://github.com/evernote/android-job
+    * https://android.jlelse.eu/easy-job-scheduling-with-android-job-4a2c020b9742
+
+
+
+    * pass data to jobScheduler
      * https://stackoverflow.com/questions/29343480/persistablebundle-pass-values-to-service-and-retrieve
      *
      * asynctask multiple paramters
@@ -52,42 +73,13 @@
     *  //    fun broadcastReceiver() {
 
 
-  * Issues to resolve
+    * android O - notifications
+    * http://www.techotopia.com/index.php/An_Android_8_Notifications_Kotlin_Tutorial
+    * https://github.com/googlesamples/android-NotificationChannels/blob/master/kotlinApp/Application/src/main/java/com/example/android/notificationchannels/NotificationHelper.kt
+    * http://www.yudiz.com/custom-notification/
+    * https://medium.com/@britt.barak/notifications-part-3-going-custom-31c31609f314
     *
-    * notification at 11pm
-    * ask for permission to use the internet
-    * check if not allowed app wont work
-    * shows mock data
-    *
-    * picasso cache the photos
-    *
-    * Move constants to Strings Resource file
-    *
-    *viewPager animations / transforms
-    * http://myhexaville.com/2017/03/17/android-viewpager-transformations/
-    *
-    * viewPager tab icons
-    * https://stackoverflow.com/questions/38459309/how-do-you-create-an-android-view-pager-with-a-dots-indicator
-    *
-    * picasso notifications
-    * https://futurestud.io/tutorials/picasso-callbacks-remoteviews-and-notifications
-    *
-    * store last call to meh.com in app preferences then when the app opens use that as the mockdata
-    *
-    * when the notification call is made store that in app preferencse as responseJSON for the mockdata
-    *
-    * this way without internet it still works
-    *
-    * add a refresh button to the nav drawer
-    *
-    *
-    * view pager infinite loop
-    * https://www.raywenderlich.com/169774/viewpager-tutorial-android-getting-started-kotlin
-    *
-    *
-    *
-    *
-    *
+    * kotlin vs java // https://antonioleiva.com/api-request-kotlin/
     *
     *
     *
@@ -97,15 +89,21 @@
     * pass data to jobScheduler
     * https://stackoverflow.com/questions/29343480/persistablebundle-pass-values-to-service-and-retrieve
     *
+    * asynctask breakdown // https://alvinalexander.com/android/asynctask-examples-parameters-callbacks-executing-canceling
     * asynctask multiple paramters
     * https://freakycoder.com/android-notes-16-how-to-pass-multiple-primitive-parameters-to-asynctask-d51c2aee2afb
-    *
+    * other way but may have leaks // https://stackoverflow.com/questions/3921816/can-i-pass-different-types-of-parameters-to-an-asynctask-in-android
+    * multiple url downloads async task
+    * //  https://stackoverflow.com/questions/12069669/how-can-you-pass-multiple-primitive-parameters-to-asynctask
+
     * // https://stackoverflow.com/questions/38344220/job-scheduler-not-running-on-android-n
     *
     *
     * job scheduler kotlin sample
     * https://github.com/googlesamples/android-JobScheduler
     * https://github.com/googlesamples/android-JobScheduler/blob/master/kotlinApp/app/src/main/java/com/example/android/jobscheduler/MainActivity.kt
+    * https://blog.klinkerapps.com/android-o-background-services/
+    *
     *
     * // close nav drawer - https://www.supinfo.com/articles/single/5610-android-navigation-drawer
     * // did nav drawer just clsoe - https://github.com/kittinunf/RxMovieKotlin/blob/master/app/src/main/kotlin/com/taskworld/android/rxmovie/view/fragment/NavigationDrawerFragment.kt
@@ -116,7 +114,21 @@
     *  https://androidteachers.com/android/android-material-design-snackbar-example/
     *                //                http://onetouchcode.com/2016/12/24/use-snackbar-android-apps/
     *  //                https://stackoverflow.com/questions/36474397/android-design-library-snackbar-getting-textview-returns-null
-    * //                https://antonioleiva.com/kotlin-awesome-tricks-for-android/
+    * kotlin tricks picasso etc // https://antonioleiva.com/kotlin-awesome-tricks-for-android/
+
+
+
+
+
+  * picasso
+  * https://futurestud.io/tutorials/tag/picasso
+  * https://github.com/yodle/android-kotlin-demo/blob/master/app/src/main/kotlin/com/yodle/android/kotlindemo/extension/ImageExtensions.kt
+  * https://futurestud.io/tutorials/picasso-callbacks-remoteviews-and-notifications
+  * kotlin  https://android.jlelse.eu/handsome-codes-with-kotlin-6e183db4c7e5
+  * blur image and effects  https://futurestud.io/tutorials/how-to-blur-images-efficiently-with-androids-renderscript
+  * cacheing  https://futurestud.io/tutorials/picasso-influencing-image-caching
+  * caching  https://futurestud.io/tutorials/picasso-cache-indicators-logging-stats
+
 
     *
     * JOB SCHEDULER
@@ -131,8 +143,54 @@
   * https://stackoverflow.com/questions/45168797/kotlin-activity-cannot-be-extended-this-type-is-final-so-it-cannot-be-inherite
 
 
+  * https://stackoverflow.com/questions/42963494/job-scheduler-vs-background-service
+  * why you cant use broadcastreceiver anymore
+  * https://www.youtube.com/watch?v=Pumf_4yjTMc
 
 
 
-  "
+
+
+  * android templates
+  * http://blog.iamsuleiman.com/
+
+
+  * android welcome slideshow / viewFlipper
+  * https://www.youtube.com/results?search_query=slidenerd+view+flipper
+  * https://www.youtube.com/watch?v=x5G2ejthdKM
+  * https://www.youtube.com/watch?v=k_Y4OGL8DTA
+
+
+  * retrofit service call api
+  * https://futurestud.io/tutorials
+  * http://square.github.io/retrofit/
+  * https://futurestud.io/tutorials/retrofit-2-share-okhttp-client-and-converters-between-retrofit-instances
+
+
+  * okhttp3
+  * testing   https://github.com/gmazzo/okhttp-client-mock
+  * testing  https://github.com/square/okhttp/tree/master/mockwebserver
+  * http://www.vogella.com/tutorials/JavaLibrary-OkHttp/article.html
+  * https://www.journaldev.com/13629/okhttp-android-example-tutorial
+  * https://guides.codepath.com/android/Using-OkHttp
+  * http://www.baeldung.com/guide-to-okhttp
+  * https://github.com/square/okhttp/wiki/Recipes
+  *
+
+
+
+
+  * icon size assets
+  * https://jgilfelt.github.io/AndroidAssetStudio/icons-launcher.html#foreground.type=image&foreground.space.trim=1&foreground.space.pad=0&foreColor=E8EAF6%2C0&crop=0&backgroundShape=bevel&backColor=fff%2C100&effects=none&elevate=1
+  *
+
+
+  * gson
+  * https://guides.codepath.com/android/leveraging-the-gson-library
+
+
+  * circle imageview
+  * https://github.com/hdodenhof/CircleImageView
+
+"
   }
