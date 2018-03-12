@@ -84,7 +84,6 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         /*** hide progress bar */
         loading_indicator.visibility = View.GONE
 
-
         if (data.isNullOrEmpty()) {
             println("MainActivity - onLoadFinished - AsyncTaskLoader = cancelled or Bundle = null")
             /*** no internet response */

@@ -143,18 +143,21 @@ open class MJobExecuter : AsyncTask<modelJobExecuterAsyncTaskParams, Void, Strin
                 }
 
                 if (isNewDeal(pContext, notificationText)) {
-                    /*** show notification */
-                    createNotification(
-                            pContext
-                            , modelMeh.deal.title
-                            , modelMeh.deal.title
-                            , notificationText
-                            , R.mipmap.ic_launcher
-                            , R.mipmap.ic_launcher
-                            , mehNotificationLargePhoto
-                            , R.mipmap.ic_launcher
-                            , dealUrl
-                    )
+                    /*** DONT show notification first time opening app */
+                    if (showJobNotification(pContext)) {
+                        /*** show notification */
+                        createNotification(
+                                pContext
+                                , modelMeh.deal.title
+                                , modelMeh.deal.title
+                                , notificationText
+                                , R.mipmap.ic_launcher
+                                , R.mipmap.ic_launcher
+                                , mehNotificationLargePhoto
+                                , R.mipmap.ic_launcher
+                                , dealUrl
+                        )
+                    }
                 }
             }else{
                 println("set view pager to null repsonse image")

@@ -39,6 +39,7 @@ val ACT_FRAG_ARG_MEH_RESPONSE_STRING = "ACT_FRAG_ARG_MEH_RESPONSE_STRING"
 
 val FRAG_ARG_PHOTO_URI = "FRAG_ARG_PHOTO_URI"
 
+val PREF_KEY_SHOW_JOBSCHEDULER_NOTIFICATION = "PREF_KEY_SHOW_JOBSCHEDULER_NOTIFICATION"
 val PREF_KEY_MEH_DEAL_STRING = "PREF_KEY_MEH_DEAL_STRING"
 //val PREF_KEY_MEH_RESPONSE_STRING = "KEY_MEH_RESPONSE_STRING"
 val PREF_KEY_SHOW_NAV_DRAWER_ONSTART = "PREF_KEY_SHOW_NAV_DRAWER_ONSTART"
@@ -156,11 +157,27 @@ fun cancelNotificationJobScheduled(pContext: Context) {
     vJobScheduler!!.cancel(JSCHEDULER_JOB_ID)
 }
 
+fun showJobNotification(pContext: Context): Boolean {
+    val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(pContext)
+    var showNotification = sharedPreferences.getBoolean(PREF_KEY_SHOW_JOBSCHEDULER_NOTIFICATION, false)
+
+    return if(showNotification) {
+        true
+    }else{
+        /*** save string to preferences */
+        PreferenceManager.getDefaultSharedPreferences(pContext)
+                .edit()
+                .putBoolean(PREF_KEY_SHOW_JOBSCHEDULER_NOTIFICATION, true)
+                .apply()
+        false
+    }
+}
+
 fun isNewDeal(pContext: Context, pNotificationText: String): Boolean {
     val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(pContext)
-    var vSavedNotification = sharedPreferences.getString(PREF_KEY_MEH_DEAL_STRING, "")
+    var savedNotification = sharedPreferences.getString(PREF_KEY_MEH_DEAL_STRING, "")
 
-    if(vSavedNotification.equals(pNotificationText,true))
+    if(savedNotification.equals(pNotificationText,true))
     {
         return false
     }else{
