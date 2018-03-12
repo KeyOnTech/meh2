@@ -23,6 +23,7 @@ import java.io.IOException
 import android.app.job.JobInfo
 import android.app.job.JobScheduler
 import android.content.ComponentName
+import android.preference.PreferenceManager
 import android.support.design.widget.Snackbar
 import android.view.View
 import com.keyontech.meh3.services.MJobScheduler
@@ -34,16 +35,17 @@ import com.keyontech.meh3.services.MJobScheduler
 /*** Activity constants */
 val ACT_EXTRA_MEH_VIDEO_LINK = "ACT_EXTRA_MEH_VIDEO_LINK"
 val ACT_EXTRA_GO_TO_SITE_URL = "ACT_EXTRA_GO_TO_SITE_URL"
+val ACT_FRAG_ARG_MEH_RESPONSE_STRING = "ACT_FRAG_ARG_MEH_RESPONSE_STRING"
 
 val FRAG_ARG_PHOTO_URI = "FRAG_ARG_PHOTO_URI"
 
-val PREF_KEY_MEH_RESPONSE_STRING = "KEY_MEH_RESPONSE_STRING"
+val PREF_KEY_MEH_DEAL_STRING = "PREF_KEY_MEH_DEAL_STRING"
+//val PREF_KEY_MEH_RESPONSE_STRING = "KEY_MEH_RESPONSE_STRING"
 val PREF_KEY_SHOW_NAV_DRAWER_ONSTART = "PREF_KEY_SHOW_NAV_DRAWER_ONSTART"
-
 
 /*** this is used for the notification large image */
 //    var mehNotificationLargePhoto = ""
-val NOTIFICATION_ID = 333
+val NOTIFICATION_ID = 44441
 
 
 //val BROADDCAST_EXTRA_ACTION_SHOW_NOTIFICATION = "com.keyontech.meh3.SHOW_NOTIFICATION"
@@ -53,12 +55,18 @@ val NOTIFICATION_ID = 333
 //val TEST_NOTIFICATION_POLL_INTERVAL = 1000 * 15 // 15 seconds // used for test alarm
 
 /*** job scheduler */
-val JSCHEDULER_JOB_ID = 44448
+val JSCHEDULER_JOB_ID = 44442
 //val JS_PERSISTABLE_BUNDLE_DEAL_URL = "JS_PERSISTABLE_BUNDLE_DEAL_URL"
-val JS_SCHEDULE_5_SECONDS: Long = 5000 // setMinimum time to run will not work 15 min is the minimum
-//val JS_SCHEDULE_8_HOURS: Long = 28800000 // setPeriodic 8 hours time to run will not work 15 min is the minimum
-val JS_SCHEDULE_12_HOURS: Long = 43200000 // setPeriodic 8 hours time to run will not work 15 min is the minimum
+val JS_SCHEDULE_TEST_TIMER: Long = 5000 // 5 seconds setMinimum time to run will not work 15 min is the minimum
+val JS_SCHEDULE_TIMER : Long = 28800000 // 8 hours setPeriodic 8 hours time to run will not work 15 min is the minimum
+//val JS_SCHEDULE_TIMER : Long = 43200000 // 12 hours setPeriodic 8 hours time to run will not work 15 min is the minimum
 
+/*** AsyncTaskLoader */
+val ASYNCTASKLOADER_ID = 44443
+val ASYNCTASKLOADER_BUNDLE_KEY_RELOAD_LOADER = "ASYNCTASKLOADER_BUNDLE_KEY_RELOAD_LOADER"
+val ASYNCTASKLOADER_BUNDLE_KEY_RELOAD_JSON = "ASYNCTASKLOADER_BUNDLE_KEY_RELOAD_JSON"
+val ASYNCTASKLOADER_BUNDLE_KEY_DEAL_URL = "AsTL_BUNDLE_KEY_DEAL_URL"
+val ASYNCTASKLOADER_BUNDLE_KEY_SERIALIZABLE = "AsTL_BUNDLE_KEY_SERIALIZABLE"
 
 
 fun printToSnackbar(pView: View, pMessage: String, pShowLength: Int) {
@@ -117,11 +125,11 @@ fun scheduleNotificationJob(pContext: Context) {
 
 /*** Job scheduler conditions  */
     /*** job should be delayed by the provided amount of time. */
-//      /*** USE FOR TESTING ONLY 5 end */
-//    jobInfoBuilder.setMinimumLatency(5000) // testing 5 sec.s  YOUR_TIME_INTERVAL comment out setPeriodic to use this
+//    /*** USE FOR TESTING ONLY 5 end */
+//    jobInfoBuilder.setMinimumLatency(JS_SCHEDULE_TEST_TIMER) // testing 5 sec.s  YOUR_TIME_INTERVAL comment out setPeriodic to use this
 
-    /*** recur time interval, not more than once per period */
-    jobInfoBuilder.setPeriodic(JS_SCHEDULE_12_HOURS)
+    /*** USE FOR LIVE recurring time interval, not more than once per period */
+    jobInfoBuilder.setPeriodic(JS_SCHEDULE_TIMER)
 
     /*** require internet */
     jobInfoBuilder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
@@ -146,6 +154,23 @@ fun cancelNotificationJobScheduled(pContext: Context) {
     /*** cancel all job services by ID  */
     var vJobScheduler = pContext.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
     vJobScheduler!!.cancel(JSCHEDULER_JOB_ID)
+}
+
+fun isNewDeal(pContext: Context, pNotificationText: String): Boolean {
+    val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(pContext)
+    var vSavedNotification = sharedPreferences.getString(PREF_KEY_MEH_DEAL_STRING, "")
+
+    if(vSavedNotification.equals(pNotificationText,true))
+    {
+        return false
+    }else{
+        /*** save string to preferences */
+        PreferenceManager.getDefaultSharedPreferences(pContext)
+                .edit()
+                .putString(PREF_KEY_MEH_DEAL_STRING, pNotificationText)
+                .apply()
+        return true
+    }
 }
 
 fun rateApp(pContext: Context): Intent {
@@ -199,7 +224,7 @@ fun loadJsonFromFile(filename: String, context: Context): String {
 
 fun mehSoldOut(modelMehDeal: ModelMehDeal): Boolean {
     return if (modelMehDeal.launches != null) {
-        modelMehDeal.launches[0].soldOutAt != null || !modelMehDeal.launches[0].soldOutAt.isNotEmpty()
+        !modelMehDeal.launches[0].soldOutAt.isNullOrEmpty()
     } else {
         false
     }

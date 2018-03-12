@@ -1,20 +1,17 @@
 package com.keyontech.meh3.services
 
-/**
- * Created by kot on 2/26/18.
- */
-
+import android.content.AsyncTaskLoader
 import android.content.Context
 import android.graphics.Bitmap
 import android.os.AsyncTask
-import android.preference.PreferenceManager
+import android.os.Bundle
 import android.util.Log
+import com.google.gson.GsonBuilder
 import com.keyontech.meh3.Models.JSONUrL
 import com.keyontech.meh3.Models.ModelMeh
-import com.keyontech.meh3.utils.*
-import com.google.gson.GsonBuilder
 import com.keyontech.meh3.Models.modelJobExecuterAsyncTaskParams
 import com.keyontech.meh3.R
+import com.keyontech.meh3.utils.*
 import com.squareup.picasso.Picasso
 import java.io.BufferedReader
 import java.io.IOException
@@ -25,20 +22,111 @@ import java.net.MalformedURLException
 import java.net.URL
 import java.nio.charset.Charset
 
-open class MJobExecuter : AsyncTask<modelJobExecuterAsyncTaskParams, Void, String>() {
+
+//class MehAsyncTaskLoader(cContext: Context) : AsyncTaskLoader<String>(cContext) { // works
+class MehAsyncTaskLoader(cContext: Context, val mTaskParamsBundle: Bundle?) : AsyncTaskLoader<String>(cContext) { // works
     /*** this is used for the notification large image */
     private var mehNotificationLargePhoto = ""
+//    var jsonRespnse = ""
 
-    override fun doInBackground(vararg params: modelJobExecuterAsyncTaskParams?): String? {
-        var vContext = params[0]!!.cContext
-        var vURL = params[0]!!.dealUrl
+    override fun onStartLoading() {
+        println("MehAsyncTaskLoader  - onStartLoading")
 
-        val uString = fetchJSON_AsyncTask(vContext, vURL)
-        return uString + "MJobExecuter - Background long running task finishes..."
+//        super.onStartLoading()
+        //onStartLoading() can  be likened to OnPreExecute in AsyncTask
+
+        println("MehAsyncTaskLoader  - onStartLoading - mTaskParamsBundle?.get(ASYNCTASKLOADER_BUNDLE_KEY_RELOAD_JSON) " + mTaskParamsBundle?.get(ASYNCTASKLOADER_BUNDLE_KEY_RELOAD_JSON) )
+
+//        val jsonRespnse = ""
+//        jsonRespnse = mTaskParamsBundle?.getString(ASYNCTASKLOADER_BUNDLE_KEY_RELOAD_JSON)
+
+//        if ( jsonRespnse.isNullOrEmpty() ) {
+////        if (mTaskParamsBundle?.get(ASYNCTASKLOADER_BUNDLE_KEY_RELOAD_LOADER)) {
+            forceLoad()
+//        } else {
+//            deliverResult(jsonRespnse)
+//        }
+
+        //forceLoad()
+        //without calling forceLoad() loadInBackground will not execute
     }
 
+
+    /**
+     * Called when there is new data to deliver to the client.  The
+     * super class will take care of delivering it; the implementation
+     * here just adds a little more logic.
+     */
+    override fun deliverResult(newJSONResponse: String?) {
+        println("MehAsyncTaskLoader  - deliverResult - $newJSONResponse")
+        super.deliverResult(newJSONResponse)
+
+//        ASYNCTASKLOADER_BUNDLE_KEY_RELOAD_JSON
+//        super.deliverResult(newJSONResponse)
+
+/*
+        if (isReset()) {
+            // An async query came in while the loader is stopped.  We
+            // don't need the result.
+            if (apps != null) {
+                onReleaseResources(apps)
+            }
+
+        }
+        val oldApps = mApps
+        mApps = apps
+
+        if (isStarted()) {
+            // If the Loader is currently started, we can immediately
+            // deliver its results.
+            super.deliverResult(apps)
+        }
+
+        // At this point we can release the resources associated with
+        // 'oldApps' if needed; now that the new result is delivered we
+        // know that it is no longer in use.
+        if (oldApps != null) {
+            onReleaseResources(oldApps)
+        }
+*/
+    }
+
+    // background work
+    override fun loadInBackground(): String {
+//    override fun doInBackground(vararg params: Object?): String? {
+        /*
+         The results of loadInBackground() are automatically delivered to the UI thread
+         , by way of the onLoadFinished() LoaderManager callback. forceLoad() must be called before loadInBackground() executes
+         */
+        println("MehAsyncTaskLoader  -   doInBackground  ----   ")
+//        println("MehAsyncTaskLoader  -   doInBackground  ----   mTaskParamsBundle = " + mTaskParamsBundle)
+//        println("MehAsyncTaskLoader  -   doInBackground  ----   mTaskParams[0] = " + mTaskParamsBundle?.get(AsTL_BUNDLE_KEY_DEAL_URL))
+//        println("MehAsyncTaskLoader  -   doInBackground  ----   mQueryString = " + mQueryString)
+
+//        var vURL = params[0]!!.dealUrl
+
+//        val uString = fetchJSON_AsyncTask(vContext, vURL)
+//        val uString = fetchJSON_AsyncTask(context, mTaskParamsBundle?.get(AsTL_BUNDLE_KEY_DEAL_URL))
+        return fetchJSON_AsyncTask(context)
+//        val uString = fetchJSON_AsyncTask(context)
+//        return uString + " - MehAsyncTaskLoader - Background long running task finishes..."
+    }
+
+
+//    override fun doInBackground(vararg params: modelJobExecuterAsyncTaskParams?): String? {
+//        var vContext = params[0]!!.cContext
+//        var vURL = params[0]!!.dealUrl
+//
+//        val uString = fetchJSON_AsyncTask(vContext, vURL)
+//        return uString + "MJobExecuter - Background long running task finishes..."
+//    }
+
+
+
+
         @Throws(IOException::class)
-        fun fetchJSON_AsyncTask(pContext: Context, pDealUrl: String = ""): String {
+//        fun fetchJSON_AsyncTask(pContext: Context, pDealUrl: String = ""): String {
+        fun fetchJSON_AsyncTask(pContext: Context): String {
             var gson = GsonBuilder().serializeNulls().create() // include null opjects when null
             var urlFile = loadJsonFromFile("url.json", pContext)
             var jsonOutput = gson.fromJson( urlFile , JSONUrL::class.java )
@@ -61,7 +149,7 @@ open class MJobExecuter : AsyncTask<modelJobExecuterAsyncTaskParams, Void, Strin
                 inputStream = urlConnection.inputStream
                 jsonResponse = readFromStream(inputStream)
 //                println("666ccc    jsonResponse = " + jsonResponse )
-                processReturn2(pContext, jsonResponse)
+//                processReturn2(pContext, jsonResponse)
             } catch (e: IOException) {
                 //
             } finally {
@@ -165,11 +253,10 @@ open class MJobExecuter : AsyncTask<modelJobExecuterAsyncTaskParams, Void, Strin
         }
     }
 
-    fun createNotification( pContext: Context, tickerText: String = "", notificationTitle: String = "", notificationText: String, showactionRightButtonIcon: Int, showactionLeftButtonIcon: Int, largebitmapImageURL : String, smallIcon : Int, dealUrl: String) {
+    fun createNotification(pContext: Context, tickerText: String = "", notificationTitle: String = "", notificationText: String, showactionRightButtonIcon: Int, showactionLeftButtonIcon: Int, largebitmapImageURL : String, smallIcon : Int, dealUrl: String) {
         var notificationLargeBitmap: Bitmap? = null
         try {
-            notificationLargeBitmap  = Picasso
-                    .with(pContext)
+            notificationLargeBitmap  = Picasso.with(pContext)
                     .load(largebitmapImageURL)
                     .resize(512,512)
                     .placeholder(R.drawable.ic_failed_to_load_image)
@@ -178,15 +265,15 @@ open class MJobExecuter : AsyncTask<modelJobExecuterAsyncTaskParams, Void, Strin
 
             showNotification(
                     pContext
-                    ,tickerText
-                    ,notificationTitle
-                    ,notificationText
-                    ,showactionRightButtonIcon
-                    ,showactionLeftButtonIcon
-                    ,notificationLargeBitmap
-                    ,smallIcon
-                    ,dealUrl
-                    ,NOTIFICATION_ID
+                    , tickerText
+                    , notificationTitle
+                    , notificationText
+                    , showactionRightButtonIcon
+                    , showactionLeftButtonIcon
+                    , notificationLargeBitmap
+                    , smallIcon
+                    , dealUrl
+                    , NOTIFICATION_ID
             )
         } catch (e: IOException) {
             e.printStackTrace()

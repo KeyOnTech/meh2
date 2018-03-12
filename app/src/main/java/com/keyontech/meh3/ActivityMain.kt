@@ -1,6 +1,8 @@
 package com.keyontech.meh3
 
+import android.app.LoaderManager
 import android.content.Intent
+import android.content.Loader
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
@@ -26,13 +28,15 @@ import android.view.View
 import com.keyontech.meh3.Activities.ActivityGoToSite
 import com.keyontech.meh3.Models.JSONUrL
 import com.keyontech.meh3.Models.ModelMeh
+import com.keyontech.meh3.services.MehAsyncTaskLoader
 import com.keyontech.meh3.utils.*
 import com.keyontech.meh3.viewpager1.*
 import kotlinx.android.synthetic.main.nav_drawer_layout.*
 import java.util.*
 import kotlin.system.exitProcess
 
-class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+//class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, LoaderManager.LoaderCallbacks<String> {
 
     /*** api request url */
     var jsonURL = ""
@@ -47,11 +51,66 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 //    var navBackgroundColor = 0
 
 
-
+    var asyncTaskReload = false
+    val asyncTaskLoaderBundle = Bundle()
 
     companion object {
         var mehDealUrl: String = ""
     }
+
+
+
+
+
+    /*** AsyncTaskLoader */
+    // Creating the loader
+    override fun onCreateLoader(id: Int, args: Bundle): Loader<String> {
+        println("MainActivity - onCreateLoader - jsonResponse = $jsonResponse")
+
+        /*** show progressbar */
+        loading_indicator.visibility = View.VISIBLE
+
+//        return MehAsyncTaskLoader(this, args.getString("444queryString")!!)
+//        return MehAsyncTaskLoader(this, "444queryString")
+        return MehAsyncTaskLoader(this, asyncTaskLoaderBundle)
+    }
+
+    // Loader onLoadFinished method
+    override fun onLoadFinished(loader: Loader<String>, data: String) {
+// Hide loading indicator because the data has been loaded
+//        val loadingIndicator = findViewById(R.id.loading_indicator)
+//        loadingIndicator.setVisibility(View.GONE)
+
+        /*** hide progress bar */
+        loading_indicator.visibility = View.GONE
+
+
+        if (data.isNullOrEmpty()) {
+            println("MainActivity - onLoadFinished - AsyncTaskLoader = cancelled or Bundle = null")
+            /*** no internet response */
+            noInternetResponse()
+//            return
+        } else {
+            println("MainActivity - onLoadFinished Final Result ")
+//            println("MainActivity - onLoadFinished Final Result = $data")
+//            finalResultTxtView?.setText("The Sum of Numbers between 1 to 1 million \n = $data")
+//            Log.d(TAG, "Final Result = $data")
+//            jsonResponse = data
+            processReturn(data)
+        }
+    }
+
+    // Loader onLoaderReset method
+    override fun onLoaderReset(loader: Loader<String>) {
+        println("MainActivity - onLoaderReset ")
+    }
+
+
+
+
+
+
+
 
 
 
@@ -121,9 +180,9 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 //            fetchJSON()
 //            fetchMockInterface()
 
-            val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-            var jsonResponse = sharedPreferences.getString(PREF_KEY_MEH_RESPONSE_STRING, "")
-            println("sharedPreferences  :  jsonResponse = " + jsonResponse)
+//            val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+//            var jsonResponse = sharedPreferences.getString(PREF_KEY_MEH_RESPONSE_STRING, "")
+//            println("sharedPreferences  :  jsonResponse = " + jsonResponse)
 
             goToURL(mehDealUrl)
         }
@@ -149,7 +208,7 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         when (item.itemId) {
             R.id.nav_bar_poll -> {
                 var intent = Intent(baseContext, ActivityMehPoll::class.java)
-                intent.putExtra(PREF_KEY_MEH_RESPONSE_STRING, jsonResponse)
+                intent.putExtra(ACT_FRAG_ARG_MEH_RESPONSE_STRING, jsonResponse)
                 startActivity(intent)
             }
             R.id.nav_bar_video-> {
@@ -179,8 +238,68 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
 
+    fun startAsyncTaskLoader() {
+//        /*** show progressbar */
+//        loading_indicator.visibility = View.VISIBLE
+
+        /***  */
+/*
+Starting a Loader
+Use the LoaderManager class to manage one or more Loader instances within an activity or fragment. Use initLoader() to initialize a loader and make it active. Typically, you do this within the activity’s onCreate() method or onViewCreated() in  a fragment.
+ */
+/*
+starting a loader for a fragment
+To start AsyncTaskLoader, in an Activity, call getSupportLoaderManager().initLoader(LOADER_ID, BUNDLE, LoaderManager.LoaderCallbacks<T>) or in a Fragment call getLoaderManager().initLoader(LOADER_ID, BUNDLE, LoaderManager.LoaderCallbacks<T>).
+For Fragments make sure you import android.support.v4.app.Fragment, android.support.v4.app.LoaderManager.
+ */
+
+
+
+
+        // Initialize the loader. Pass in the int ID constant defined above and pass in null for
+        // the bundle. Pass in this activity for the LoaderCallbacks parameter (which is valid
+        // because this activity implements the LoaderCallbacks interface)
+        // BUNDLE is Bundle paramenter that you must pass, it gives us an option to send data to our AsyncTaskLoaderSubClass
+
+//        var mTParams = modelJobExecuterAsyncTaskParams()
+//        mTParams.cContext = this
+//        mTParams.dealUrl = "www.google.com"
+
+
+//        var mTParams2 = modelJobExecuterAsyncTaskParamsSerializable()
+//        mTParams2.cContext = this
+//        mTParams2.dealUrl = "aaaawwwaaaa.aaaaaaagoogleaaaaa.aaaacomaaaa"
+
+
+//        val asyncTaskLoaderBundle = Bundle()
+////        asyncTaskLoaderBundle.putSerializable(BUNDLE_KEY_SERIALIZABLE, mTParams2 as Serializable)
+        asyncTaskLoaderBundle.putString(ASYNCTASKLOADER_BUNDLE_KEY_RELOAD_JSON, null)
+////        supportLoaderManager.initLoader(ASYNCTASK_LOADER_ID, bundleTEST, this)
+
+
+// Get a reference to the LoaderManager, in order to interact with loaders.
+        val loaderManager = loaderManager
+////        loaderManager.initLoader(ASYNCTASK_LOADER_ID, null, this)
+//        loaderManager.initLoader(ASYNCTASKLOADER_ID, null, this)
+        loaderManager.initLoader(ASYNCTASKLOADER_ID, asyncTaskLoaderBundle, this)
+
+        /****  end */
+    }
+
+    fun cancelAsyncTaskLoader() {
+        val loaderManager = loaderManager
+        loaderManager.destroyLoader(ASYNCTASKLOADER_ID)
+    }
 
     fun fetchJSON() {
+        cancelAsyncTaskLoader()
+        startAsyncTaskLoader()
+        return
+        println("4444   fetch json   this should not be called    there is aproblem if you seee this  ")
+
+
+
+
         var request = Request.Builder().url( jsonURL ).build()
         var client = OkHttpClient()
 
@@ -209,6 +328,7 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 //                        jsonResponse = mockData
 //                    }
 
+                    asyncTaskReload = true
                     processReturn(jsonResponse)
                 } catch (e: JSONException) {
                     println("onFailure Catch")
@@ -216,9 +336,6 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         })
     } //
-
-
-
 
 
 
@@ -338,11 +455,11 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         println("set Deal Url here")
                     }
 
-                    /*** save string to preferences */
-                    PreferenceManager.getDefaultSharedPreferences(this)
-                            .edit()
-                            .putString(PREF_KEY_MEH_RESPONSE_STRING, response)
-                            .apply()
+//                    /*** save string to preferences */
+//                    PreferenceManager.getDefaultSharedPreferences(this)
+//                            .edit()
+//                            .putString(PREF_KEY_MEH_RESPONSE_STRING, response)
+//                            .apply()
 
                     /*** set notification large image */
                     if (modelMeh.deal.photos != null) {
@@ -364,7 +481,7 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
                         when (randomNumber) {
                             0 -> viewPager_NavDrawer.setPageTransformer(false, DepthViewPagerPageTransform())
-                            1 -> viewPager_NavDrawer.setPageTransformer(false, TopRightToBottomLeftViewPagerPageTransform())
+//                            1 -> viewPager_NavDrawer.setPageTransformer(false, TopRightToBottomLeftViewPagerPageTransform())  // doesnt work good
                             else -> viewPager_NavDrawer.setPageTransformer(false, ParallaxViewPagerPageTransform())
                         }
 
@@ -384,42 +501,48 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
                     println("set all content boxes to to null repsonses")
                 }
-            }else{
+            }else {
                 /*** no internet response */
-                fabbuttonNavDrawer.visibility = View.GONE
-
-                val failedToLoadPhoto : ArrayList<String> = ArrayList()
-                failedToLoadPhoto .add("")
-
-                // set photos viewPager
-                adapterActivityMain = AdapterViewPagerActivityMain(supportFragmentManager, failedToLoadPhoto )
-                viewPager_NavDrawer.offscreenPageLimit = 1
-                viewPager_NavDrawer.adapter = adapterActivityMain
-
-                Snackbar.make(
-                        findViewById(android.R.id.content)
-                        , "Unable to fetch data please check internet connection"
-                        , Snackbar.LENGTH_INDEFINITE)
-                        .setAction("Retry") {
-                            fetchJSON()
-                            printToSnackbar(
-                                    findViewById(android.R.id.content)
-                                    , "Attempting to fetch data!"
-                                    , Snackbar.LENGTH_SHORT
-                            )
-//                            Snackbar.make(
-//                                    findViewById(android.R.id.content)
-//                                    , "Attempting to fetch data!"
-//                                    , Snackbar.LENGTH_SHORT).show()
-                        }.show()
-
+                noInternetResponse()
             }
-
         } catch (e: JSONException) {
 //            printToErrorLog_10("ActivityMain", "runOnUiThread try")
         }
 
     }
+
+
+    fun noInternetResponse() {
+        fabbuttonNavDrawer.visibility = View.GONE
+
+        val failedToLoadPhoto : ArrayList<String> = ArrayList()
+        failedToLoadPhoto .add("")
+
+        // set photos viewPager
+        adapterActivityMain = AdapterViewPagerActivityMain(supportFragmentManager, failedToLoadPhoto )
+        viewPager_NavDrawer.offscreenPageLimit = 1
+        viewPager_NavDrawer.adapter = adapterActivityMain
+
+        Snackbar.make(
+                findViewById(android.R.id.content)
+                , "Unable to fetch data please check internet connection"
+                , Snackbar.LENGTH_INDEFINITE)
+                .setAction("Retry") {
+                    fetchJSON()
+                    printToSnackbar(
+                            findViewById(android.R.id.content)
+                            , "Attempting to fetch data!"
+                            , Snackbar.LENGTH_SHORT
+                    )
+//                            Snackbar.make(
+//                                    findViewById(android.R.id.content)
+//                                    , "Attempting to fetch data!"
+//                                    , Snackbar.LENGTH_SHORT).show()
+                }.show()
+    }
+
+
+
 
 
     fun processMOCKReturn(response: String){
@@ -428,3 +551,46 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
 }
+
+
+
+/*
+    fun fetchJSON() {
+        var request = Request.Builder().url( jsonURL ).build()
+        var client = OkHttpClient()
+
+        /*** had to enqueue because you cannot execute in the main method needs a thread to do so */
+        client.newCall(request).enqueue(object: Callback {
+            override fun onResponse(call: Call?, response: Response?) {
+                var responseBody = response?.body()?.string()
+                jsonResponse = responseBody.toString()
+                processReturn(jsonResponse)
+            }
+
+            override fun onFailure(call: Call?, e: IOException?) {
+                println("fetchJSON - failed to execute request - error: " + e.toString() )
+
+                try {
+//                    println("LOAD :  shared prefs data")
+//                    // get JSON response from prefs
+//                    val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+//                    var jsonResponse = sharedPreferences.getString(PREF_KEY_MEH_RESPONSE_STRING, "")
+//                    println("sharedPreferences  :  jsonResponse " + jsonResponse)
+
+//                    if (jsonResponse.isEmpty() ) {
+//                        println("LOAD :  MOCK data")
+//                        // get JSON response from assets file
+//                        var mockData = loadJsonFromFile("sample1.json", applicationContext)
+//                        jsonResponse = mockData
+//                    }
+
+                    asyncTaskReload = true
+                    processReturn(jsonResponse)
+                } catch (e: JSONException) {
+                    println("onFailure Catch")
+                } // try
+            }
+        })
+    } //
+ */
+

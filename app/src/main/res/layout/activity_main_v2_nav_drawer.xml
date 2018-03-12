@@ -22,4 +22,13 @@
         app:headerLayout="@layout/nav_drawer_layout"
         app:menu="@menu/activity_nav_drawer_drawer" />
 
+    <!-- Loading indicator is only shown before the first load -->
+    <ProgressBar
+        android:id="@+id/loading_indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        />
+    <!--style="@style/Widget.AppCompat.ProgressBar"-->
+
 </android.support.v4.widget.DrawerLayout>

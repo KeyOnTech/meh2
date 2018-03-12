@@ -66,6 +66,21 @@
     * pass data to jobScheduler
      * https://stackoverflow.com/questions/29343480/persistablebundle-pass-values-to-service-and-retrieve
      *
+
+
+    * asynctaskLoader better than asynctask only when you are using it in a fragment or activity for on screen long task work
+    * https://edgedevstudio.com/background-processing-android-async-task-loader/
+    * https://developer.android.com/reference/android/content/AsyncTaskLoader.html
+    * https://edgedevstudio.com/background-processing-android-async-task-loader/
+    * https://stackoverflow.com/questions/9077212/update-progressbar-from-asynctaskloader
+    * https://medium.com/@biratkirat/7-working-in-the-background-in-kotlin-2d8dff1b0789
+    * https://github.com/dictav/AndroidSample-kotlin/blob/master/AndroidSample/src/main/kotlin/com/dictav/androidsample/MainActivity3.kt
+    * https://github.com/dpolishuk/weather-android-kotlin/blob/master/app/src/main/java/io/dp/weather/app/db/OrmliteListLoader.kt
+    * https://www.youtube.com/watch?v=Jc5S-dbL_uM
+    * https://gist.githubusercontent.com/udacityandroid/ee8fe10c04ec2d912c509ee3fb287149/raw/b6d5a926fdaad769f574a2da5b499105ea122c92/EarthquakeActivity.java
+
+
+
      * asynctask multiple paramters
      * https://freakycoder.com/android-notes-16-how-to-pass-multiple-primitive-parameters-to-asynctask-d51c2aee2afb
      *
@@ -197,6 +212,28 @@
 
 
 
+        * activity transitions
+        * https://android.jlelse.eu/android-material-design-activity-transition-55de706ab967
+* https://android.jlelse.eu/android-material-design-activity-transition-55de706ab967
+         * https://material.io/guidelines/motion/material-motion.html#material-motion-how-does-material-move
+        * https://medium.com/@andkulikov/animate-all-the-things-transitions-in-android-914af5477d50
+        * look here demos all transitions https://github.com/lgvalle/Material-Animations
+        * https://android-developers.googleblog.com/2014/10/implementing-material-design-in-your.html
+        * https://android-developers.googleblog.com/2014/10/appcompat-v21-material-design-for-pre.html
+        * https://guides.codepath.com/android/shared-element-activity-transition#5-customizing-shared-elements-transition
+        * shared element transitions http://mikescamell.com/shared-element-transitions-part-1/
+        * activity and fragment https://www.androiddesignpatterns.com/2014/12/activity-fragment-transitions-in-android-lollipop-part1.html
+        * https://github.com/mikescamell/shared-element-transitions/tree/master/app/src/main/java/com/mikescamell/sharedelementtransitions
+        * animation xml files  https://developer.android.com/training/material/animations.html
+        * https://developer.android.com/training/transitions/start-activity.html
+        *
+
+
+        * fragment transitions
+        * https://stackoverflow.com/questions/4817900/android-fragments-and-animation
+        * https://medium.com/bynder-tech/how-to-use-material-transitions-in-fragment-transactions-5a62b9d0b26b
+        * https://stackoverflow.com/questions/6993863/fragmenttransation-setcustomanimations-not-working
+        * https://www.programcreek.com/java-api-examples/index.php?class=android.app.FragmentTransaction&method=setCustomAnimations
 
 "
   }
