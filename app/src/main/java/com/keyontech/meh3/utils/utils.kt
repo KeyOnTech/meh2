@@ -5,7 +5,6 @@ import android.app.Notification
 import android.app.NotificationManager
 import android.media.RingtoneManager
 import android.app.PendingIntent
-import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -39,10 +38,10 @@ val ACT_FRAG_ARG_MEH_RESPONSE_STRING = "ACT_FRAG_ARG_MEH_RESPONSE_STRING"
 
 val FRAG_ARG_PHOTO_URI = "FRAG_ARG_PHOTO_URI"
 
-val PREF_KEY_SHOW_JOBSCHEDULER_NOTIFICATION = "PREF_KEY_SHOW_JOBSCHEDULER_NOTIFICATION"
-val PREF_KEY_MEH_DEAL_STRING = "PREF_KEY_MEH_DEAL_STRING"
+val PREF_KEY_MEH_TODAY_SHOW_JOBSCHEDULER_NOTIFICATION = "PREF_KEY_MEH_TODAY_SHOW_JOBSCHEDULER_NOTIFICATION"
+val PREF_KEY_MEH_TODAY_MEH_DEAL_STRING = "PREF_KEY_MEH_TODAY_MEH_DEAL_STRING"
 //val PREF_KEY_MEH_RESPONSE_STRING = "KEY_MEH_RESPONSE_STRING"
-val PREF_KEY_SHOW_NAV_DRAWER_ONSTART = "PREF_KEY_SHOW_NAV_DRAWER_ONSTART"
+val PREF_KEY_MEH_TODAY_SHOW_NAV_DRAWER_ONSTART = "PREF_KEY_MEH_TODAY_SHOW_NAV_DRAWER_ONSTART"
 
 /*** this is used for the notification large image */
 //    var mehNotificationLargePhoto = ""
@@ -128,6 +127,7 @@ fun scheduleNotificationJob(pContext: Context) {
     /*** job should be delayed by the provided amount of time. */
 //    /*** USE FOR TESTING ONLY 5 end */
 //    jobInfoBuilder.setMinimumLatency(JS_SCHEDULE_TEST_TIMER) // testing 5 sec.s  YOUR_TIME_INTERVAL comment out setPeriodic to use this
+//    println("444000 - TesT - Time Reached = $JS_SCHEDULE_TEST_TIMER miliseconds")
 
     /*** USE FOR LIVE recurring time interval, not more than once per period */
     jobInfoBuilder.setPeriodic(JS_SCHEDULE_TIMER)
@@ -159,7 +159,7 @@ fun cancelNotificationJobScheduled(pContext: Context) {
 
 fun showJobNotification(pContext: Context): Boolean {
     val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(pContext)
-    var showNotification = sharedPreferences.getBoolean(PREF_KEY_SHOW_JOBSCHEDULER_NOTIFICATION, false)
+    var showNotification = sharedPreferences.getBoolean(PREF_KEY_MEH_TODAY_SHOW_JOBSCHEDULER_NOTIFICATION, false)
 
     return if(showNotification) {
         true
@@ -167,7 +167,7 @@ fun showJobNotification(pContext: Context): Boolean {
         /*** save string to preferences */
         PreferenceManager.getDefaultSharedPreferences(pContext)
                 .edit()
-                .putBoolean(PREF_KEY_SHOW_JOBSCHEDULER_NOTIFICATION, true)
+                .putBoolean(PREF_KEY_MEH_TODAY_SHOW_JOBSCHEDULER_NOTIFICATION, true)
                 .apply()
         false
     }
@@ -175,7 +175,7 @@ fun showJobNotification(pContext: Context): Boolean {
 
 fun isNewDeal(pContext: Context, pNotificationText: String): Boolean {
     val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(pContext)
-    var savedNotification = sharedPreferences.getString(PREF_KEY_MEH_DEAL_STRING, "")
+    var savedNotification = sharedPreferences.getString(PREF_KEY_MEH_TODAY_MEH_DEAL_STRING, "")
 
     if(savedNotification.equals(pNotificationText,true))
     {
@@ -184,16 +184,23 @@ fun isNewDeal(pContext: Context, pNotificationText: String): Boolean {
         /*** save string to preferences */
         PreferenceManager.getDefaultSharedPreferences(pContext)
                 .edit()
-                .putString(PREF_KEY_MEH_DEAL_STRING, pNotificationText)
+                .putString(PREF_KEY_MEH_TODAY_MEH_DEAL_STRING, pNotificationText)
                 .apply()
         return true
     }
 }
 
+
+fun goToURL(pContext: Context, pURL: String) {
+    var vIntent = Intent(pContext, ActivityGoToSite::class.java)
+    vIntent.putExtra(ACT_EXTRA_GO_TO_SITE_URL, pURL)
+    pContext.startActivity(vIntent)
+}
+
 fun rateApp(pContext: Context): Intent {
-    val pIntent = Intent(Intent.ACTION_VIEW)
-    pIntent.data = Uri.parse(pContext.getString(R.string.app_store_url))
-    return pIntent
+    val vIntent = Intent(Intent.ACTION_VIEW)
+    vIntent.data = Uri.parse(pContext.getString(R.string.app_store_url))
+    return vIntent
 }
 
 fun shareApp(pContext: Context): Intent? {
@@ -240,7 +247,7 @@ fun loadJsonFromFile(filename: String, context: Context): String {
 }
 
 fun mehSoldOut(modelMehDeal: ModelMehDeal): Boolean {
-    return if (modelMehDeal.launches != null) {
+    return if (modelMehDeal.launches.count() > 0) {
         !modelMehDeal.launches[0].soldOutAt.isNullOrEmpty()
     } else {
         false
@@ -248,24 +255,28 @@ fun mehSoldOut(modelMehDeal: ModelMehDeal): Boolean {
 }
 
 fun priceLowtoHigh(modelMehDeal: ModelMehDeal): String {
-    var vMin = modelMehDeal.items[0].price.toInt()
-    var vMax = modelMehDeal.items[0].price.toInt()
+    try{
+        var vMin = modelMehDeal.items[0].price.toInt()
+        var vMax = modelMehDeal.items[0].price.toInt()
 
-    for (i in modelMehDeal.items) {
-        if (vMin > i.price) vMin = i.price.toInt()
-        if (vMax < i.price) vMax = i.price.toInt()
-    }
+        for (i in modelMehDeal.items) {
+            if (vMin > i.price) vMin = i.price.toInt()
+            if (vMax < i.price) vMax = i.price.toInt()
+        }
 
-    var vReturn = if (vMin != vMax) {
-        "$$vMin - $$vMax"
-    }else{
-        "$$vMax"
-    }
+        var vReturn = if (vMin != vMax) {
+            "$$vMin - $$vMax"
+        }else{
+            "$$vMax"
+        }
 
-    if (mehSoldOut(modelMehDeal)) {
-        return "SOLD OUT !!! - " + vReturn
-    }else {
-        return vReturn
+        if (mehSoldOut(modelMehDeal)) {
+            return "SOLD OUT !!! - " + vReturn
+        }else {
+            return vReturn
+        }
+    }catch (e: Exception){
+        return ""
     }
 }
 
@@ -369,7 +380,6 @@ fun showNotification(pContext: Context, vNotification_TickerText: String, vNotif
 
                 .setAutoCancel(true)
 
-                .setStyle(pNotification_Big_Picture_Style)
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
 

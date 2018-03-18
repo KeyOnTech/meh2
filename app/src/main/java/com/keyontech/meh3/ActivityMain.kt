@@ -25,7 +25,7 @@ import com.keyontech.meh3.Activities.ActivityMehVideo
 import android.preference.PreferenceManager
 import android.view.Gravity
 import android.view.View
-import com.keyontech.meh3.Activities.ActivityGoToSite
+import android.view.animation.AnimationUtils
 import com.keyontech.meh3.Models.JSONUrL
 import com.keyontech.meh3.Models.ModelMeh
 import com.keyontech.meh3.services.MehAsyncTaskLoader
@@ -33,7 +33,6 @@ import com.keyontech.meh3.utils.*
 import com.keyontech.meh3.viewpager1.*
 import kotlinx.android.synthetic.main.nav_drawer_layout.*
 import java.util.*
-import kotlin.system.exitProcess
 
 //class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, LoaderManager.LoaderCallbacks<String> {
@@ -56,6 +55,7 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     companion object {
         var mehDealUrl: String = ""
+        var mehDiscussionURL: String = ""
     }
 
 
@@ -127,12 +127,12 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 /*** dont show nav bar on start */
                 PreferenceManager.getDefaultSharedPreferences(applicationContext)
                         .edit()
-                        .putBoolean(PREF_KEY_SHOW_NAV_DRAWER_ONSTART, false)
+                        .putBoolean(PREF_KEY_MEH_TODAY_SHOW_NAV_DRAWER_ONSTART, false)
                         .apply()
             }
         }
 
-        fabbuttonNavDrawer.visibility = View.VISIBLE
+        fabbutton_ActivityDetails_Deal_URL.visibility = View.VISIBLE
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
 //        // alternavitve method Defer code dependent on restoration of previous instance state.
@@ -144,7 +144,7 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 // auto open nav drawer
         // show nav drawer first time
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-        var showNavDrawerOnStart = sharedPreferences.getBoolean(PREF_KEY_SHOW_NAV_DRAWER_ONSTART, true)
+        var showNavDrawerOnStart = sharedPreferences.getBoolean(PREF_KEY_MEH_TODAY_SHOW_NAV_DRAWER_ONSTART, true)
 
         if (showNavDrawerOnStart) {
             drawer_layout.openDrawer(Gravity.LEFT)
@@ -172,8 +172,8 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         /*** call json service */
         fetchJSON()
 
-        /*** fab button */
-        fabbuttonNavDrawer.setOnClickListener { view ->
+        /*** fab buttons */
+        fabbutton_ActivityDetails_Deal_URL.setOnClickListener { view ->
 //            setTitle("")
 
 //            fetchJSON()
@@ -183,15 +183,13 @@ class ActivityMain : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 //            var jsonResponse = sharedPreferences.getString(PREF_KEY_MEH_RESPONSE_STRING, "")
 //            println("sharedPreferences  :  jsonResponse = " + jsonResponse)
 
-            goToURL(mehDealUrl)
+            goToURL(this, mehDealUrl)
         }
-    }
 
-    fun goToURL(pURL: String) {
-        println("pUrl = " + pURL)
-        var intent = Intent(baseContext, ActivityGoToSite::class.java)
-        intent.putExtra(ACT_EXTRA_GO_TO_SITE_URL, pURL)
-        startActivity(intent)
+        fabbutton_ActivityDetails_Discussion_URL.setOnClickListener { view ->
+            goToURL(this, mehDiscussionURL)
+        }
+
     }
 
     override fun onBackPressed() {
@@ -405,7 +403,7 @@ For Fragments make sure you import android.support.v4.app.Fragment, android.supp
                     textView_content_activity_main_card_view_2.text = modelMeh.deal.features
                     textView_content_activity_main_card_view_3.text = modelMeh.deal.specifications
 
-                    if ((modelMeh.deal.items != null) && (modelMeh.deal.items[0].condition != "" && modelMeh.deal.items[0].condition != null)) {
+                    if ((modelMeh.deal.items.count() > 0) && (modelMeh.deal.items[0].condition != "" && modelMeh.deal.items[0].condition != null)) {
                         textView_content_activity_main_card_view_4.text = modelMeh.deal.items[0].condition + " - " + priceLowtoHigh(modelMeh.deal)
                     } else {
                         textView_content_activity_main_card_view_4.text = priceLowtoHigh(modelMeh.deal)
@@ -439,7 +437,8 @@ For Fragments make sure you import android.support.v4.app.Fragment, android.supp
 //                                fabbuttonNavDrawer.back.backgroundTint =  (Color.parseColor(modelMeh.deal.theme.backgroundColor))
 
 //                                fabbuttonNavDrawer.rippleColor = Color.parseColor(modelMeh.deal.theme.backgroundColor)
-                                fabbuttonNavDrawer.rippleColor = Color.parseColor(modelMeh.deal.theme.accentColor)
+                                fabbutton_ActivityDetails_Deal_URL.rippleColor = Color.parseColor(modelMeh.deal.theme.accentColor)
+                                fabbutton_ActivityDetails_Discussion_URL.rippleColor = Color.parseColor(modelMeh.deal.theme.accentColor)
                             } catch (e: Exception) {
                                 //
                             }
@@ -454,6 +453,15 @@ For Fragments make sure you import android.support.v4.app.Fragment, android.supp
                         println("set Deal Url here")
                     }
 
+                    if (modelMeh.deal.topic != null) {
+                        if (modelMeh.deal.topic.url != null && modelMeh.deal.topic.url.isNotEmpty()) {
+                            mehDiscussionURL = modelMeh.deal.topic.url
+                        } else {
+                            mehDiscussionURL = ""
+                        }
+                    }
+
+//                    mehDiscussionURL
 //                    /*** save string to preferences */
 //                    PreferenceManager.getDefaultSharedPreferences(this)
 //                            .edit()
@@ -461,7 +469,7 @@ For Fragments make sure you import android.support.v4.app.Fragment, android.supp
 //                            .apply()
 
                     /*** set notification large image */
-                    if (modelMeh.deal.photos != null) {
+                    if (modelMeh.deal.photos.count() > 0) {
 //                        if (modelMeh.deal.photos[0].isNotEmpty()) {
 //                            mehNotificationLargePhoto = modelMeh.deal.photos[0]
 //                        } else {
@@ -489,16 +497,24 @@ For Fragments make sure you import android.support.v4.app.Fragment, android.supp
                     } else {
                         println("set view pager to null repsonse image")
                     }
+
+
+                    /*** Animate on start*/
+                    textView_content_activity_main_card_view_1.startAnimation(AnimationUtils.loadAnimation(this, android.R.anim.slide_in_left))
+                    textView_content_activity_main_card_view_2.startAnimation(AnimationUtils.loadAnimation(this, android.R.anim.slide_in_left))
+                    textView_content_activity_main_card_view_3.startAnimation(AnimationUtils.loadAnimation(this, android.R.anim.slide_in_left))
+                    viewPager_NavDrawer.startAnimation(AnimationUtils.loadAnimation(this, android.R.anim.slide_in_left))
                 } else {
-                    val failedToLoadPhoto : ArrayList<String> = ArrayList()
-                    failedToLoadPhoto .add("")
-
-                    /*** set photos viewPager */
-                    adapterActivityMain = AdapterViewPagerActivityMain(supportFragmentManager, failedToLoadPhoto )
-                    viewPager_NavDrawer.offscreenPageLimit = 1
-                    viewPager_NavDrawer.adapter = adapterActivityMain
-
-                    println("set all content boxes to to null repsonses")
+                    noInternetResponse()
+//                    val failedToLoadPhoto : ArrayList<String> = ArrayList()
+//                    failedToLoadPhoto .add("")
+//
+//                    /*** set photos viewPager */
+//                    adapterActivityMain = AdapterViewPagerActivityMain(supportFragmentManager, failedToLoadPhoto )
+//                    viewPager_NavDrawer.offscreenPageLimit = 1
+//                    viewPager_NavDrawer.adapter = adapterActivityMain
+//
+//                    println("set all content boxes to to null repsonses")
                 }
             }else {
                 /*** no internet response */
@@ -512,10 +528,14 @@ For Fragments make sure you import android.support.v4.app.Fragment, android.supp
 
 
     fun noInternetResponse() {
-        fabbuttonNavDrawer.visibility = View.GONE
+        fabbutton_ActivityDetails_Deal_URL.visibility = View.GONE
+        fabbutton_ActivityDetails_Discussion_URL.visibility = View.GONE
+        cardView_Activity_Main_1.visibility = View.GONE
+        cardView_Activity_Main_2.visibility = View.GONE
+        cardView_Activity_Main_3.visibility = View.GONE
 
         val failedToLoadPhoto : ArrayList<String> = ArrayList()
-        failedToLoadPhoto .add("")
+        failedToLoadPhoto.add("")
 
         // set photos viewPager
         adapterActivityMain = AdapterViewPagerActivityMain(supportFragmentManager, failedToLoadPhoto )

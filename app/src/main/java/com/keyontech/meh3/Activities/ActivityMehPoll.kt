@@ -24,14 +24,6 @@ class ActivityMehPoll: AppCompatActivity() {
         val gson = GsonBuilder().create()
         val modelMeh = gson.fromJson( jsonResponse , ModelMeh::class.java )
 
-//        println( "555aaa  modelMeh.poll = " + modelMeh.poll)
-//        println( "555bbb  modelMeh.poll title = " + modelMeh.poll.title )
-//        println( "555ccc  modelMeh.poll id = " + modelMeh.poll.id )
-//        println( "555ddd  modelMeh.poll startDate = " + modelMeh.poll.startDate )
-//        println( "555eee  modelMeh.poll answers[0].text = " + modelMeh.poll.answers[0].text )
-//        println( "555fff  modelMeh.poll answers[0].voteCount = " + modelMeh.poll.answers[0].voteCount )
-//        println( "555ggg  modelMeh.poll topic.url = " + modelMeh.poll.topic.url)
-
         val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
         val date = dateFormat.parse(modelMeh.poll.startDate)
         val formatter = SimpleDateFormat("MM/dd/yyyy")
@@ -48,5 +40,4 @@ class ActivityMehPoll: AppCompatActivity() {
         recycler_view_meh_poll.layoutManager = LinearLayoutManager(this)
         recycler_view_meh_poll.adapter = AdapterRecyclerViewActivityPoll(modelMeh.poll , getMaxVotes(modelMeh.poll) )
     }
-
 }

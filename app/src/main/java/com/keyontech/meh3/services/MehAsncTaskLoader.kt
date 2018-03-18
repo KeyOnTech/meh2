@@ -216,7 +216,7 @@ class MehAsyncTaskLoader(cContext: Context, val mTaskParamsBundle: Bundle?) : As
             }
 
             // set notification large image
-            if (modelMeh.deal.photos != null) {
+            if (modelMeh.deal.photos.count() > 0) {
                 if(modelMeh.deal.photos[0].isNotEmpty()) {
                     mehNotificationLargePhoto = modelMeh.deal.photos[0]
                 }else {
@@ -224,7 +224,7 @@ class MehAsyncTaskLoader(cContext: Context, val mTaskParamsBundle: Bundle?) : As
 //                    println("set default large photo image here")
                 }
 
-                if ((modelMeh.deal.items != null) && (modelMeh.deal.items[0].condition != "" && modelMeh.deal.items[0].condition != null)) {
+                if ((modelMeh.deal.items.count() > 0) && (modelMeh.deal.items[0].condition != "" && modelMeh.deal.items[0].condition != null)) {
                     notificationText = modelMeh.deal.items[0].condition + " - " + priceLowtoHigh(modelMeh.deal)
                 }else{
                     notificationText = priceLowtoHigh(modelMeh.deal)

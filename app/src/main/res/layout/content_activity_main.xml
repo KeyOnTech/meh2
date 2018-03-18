@@ -22,6 +22,7 @@
         >
 
         <android.support.v7.widget.CardView
+            android:id="@+id/cardView_Activity_Main_1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/card_margin"
@@ -44,7 +45,7 @@
                     android:id="@+id/textView_content_activity_main_card_view_1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Deal Title"
+                    android:text=""
                     android:textAppearance="@style/TextAppearance.AppCompat.Title"
 
                     android:textIsSelectable="true"
@@ -55,7 +56,7 @@
                     android:id="@+id/textView_content_activity_main_card_view_4"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Deal Amount"
+                    android:text=""
 
                     android:textIsSelectable="true"
                     />
@@ -67,6 +68,7 @@
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
+            android:id="@+id/cardView_Activity_Main_2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/card_margin"
@@ -88,7 +90,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/card_view_2_header"
+                    android:text=""
                     android:textAppearance="@style/TextAppearance.AppCompat.Title"
 
                     android:textIsSelectable="true"
@@ -98,7 +100,7 @@
                     android:id="@+id/textView_content_activity_main_card_view_2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Details"
+                    android:text=""
 
                     android:textIsSelectable="true"
                     />
@@ -110,6 +112,7 @@
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
+            android:id="@+id/cardView_Activity_Main_3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/card_margin"
@@ -131,7 +134,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/card_view_3_header"
+                    android:text=""
                     android:textAppearance="@style/TextAppearance.AppCompat.Title"
 
                     android:textIsSelectable="true"
@@ -141,7 +144,7 @@
                     android:id="@+id/textView_content_activity_main_card_view_3"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Details"
+                    android:text=""
 
                     android:textIsSelectable="true"
                     />

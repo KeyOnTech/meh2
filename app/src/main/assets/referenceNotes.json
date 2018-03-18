@@ -16,7 +16,8 @@
      *
      * viewPager tab icons
      * https://stackoverflow.com/questions/38459309/how-do-you-create-an-android-view-pager-with-a-dots-indicator
-     *
+     * https://github.com/romandanylyk/PageIndicatorView
+
      * picasso notifications
      * https://futurestud.io/tutorials/picasso-callbacks-remoteviews-and-notifications
      *
@@ -38,6 +39,13 @@
      *
      *
      *
+
+
+             * webview vs textView
+        * https://alvinalexander.com/android/how-show-html-string-in-android-textview-webview
+        * https://stackoverflow.com/questions/37904739/html-fromhtml-deprecated-in-android-n
+        *
+
      *
      *
      *
@@ -78,8 +86,10 @@
     * https://github.com/dpolishuk/weather-android-kotlin/blob/master/app/src/main/java/io/dp/weather/app/db/OrmliteListLoader.kt
     * https://www.youtube.com/watch?v=Jc5S-dbL_uM
     * https://gist.githubusercontent.com/udacityandroid/ee8fe10c04ec2d912c509ee3fb287149/raw/b6d5a926fdaad769f574a2da5b499105ea122c92/EarthquakeActivity.java
-
-
+    * https://medium.com/google-developers/making-loading-data-on-android-lifecycle-aware-897e12760832
+    * https://stackoverflow.com/questions/25234581/what-does-asynctaskloader-deliverresult-actually-do
+    * https://github.com/udacity/ud851-Exercises/blob/student/Lesson05b-Smarter-GitHub-Repo-Search/T05b.03-Solution-PolishAsyncTask/app/src/main/java/com/example/android/asynctaskloader/MainActivity.java#L164
+    * https://www.androiddesignpatterns.com/2012/07/understanding-loadermanager.html
 
      * asynctask multiple paramters
      * https://freakycoder.com/android-notes-16-how-to-pass-multiple-primitive-parameters-to-asynctask-d51c2aee2afb
@@ -118,7 +128,11 @@
     * https://github.com/googlesamples/android-JobScheduler
     * https://github.com/googlesamples/android-JobScheduler/blob/master/kotlinApp/app/src/main/java/com/example/android/jobscheduler/MainActivity.kt
     * https://blog.klinkerapps.com/android-o-background-services/
+    * https://www.youtube.com/watch?v=x0F6iw8PvVw
     *
+
+
+
     *
     * // close nav drawer - https://www.supinfo.com/articles/single/5610-android-navigation-drawer
     * // did nav drawer just clsoe - https://github.com/kittinunf/RxMovieKotlin/blob/master/app/src/main/kotlin/com/taskworld/android/rxmovie/view/fragment/NavigationDrawerFragment.kt
@@ -202,7 +216,7 @@
 
   * gson
   * https://guides.codepath.com/android/leveraging-the-gson-library
-
+  *  http://kotlination.com/kotlin/kotlin-convert-object-to-from-json-gson#11_from_JSON // com.google.gson.JsonSyntaxException: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was BEGIN_ARRAY at line 1 column 2 path $
 
   * circle imageview
   * https://github.com/hdodenhof/CircleImageView
