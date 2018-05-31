@@ -29,6 +29,7 @@ class AdapterRecyclerViewActivityPoll(val pollReturn: ModelMehPoll, val pollProg
         /*** return cannot use cellForRow requires return below */
         return CustomerViewHolderClass(cellForRow)
     }
+
     override fun onBindViewHolder(holder: CustomerViewHolderClass?, position: Int) {
         holder?.customViewHolder_View?.progressBar_Poll_Answer?.max = pollProgressMax
         holder?.customViewHolder_View?.progressBar_Poll_Answer?.setProgress(pollReturn.answers[position].voteCount, true)

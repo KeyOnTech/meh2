@@ -14,9 +14,13 @@
 
 
     <LinearLayout
+        android:id="@+id/linearLayout_Activity_Main_1"
+
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+
+        android:visibility="gone"
 
         android:paddingTop="24dp"
         >

@@ -23,6 +23,7 @@ import com.keyontech.meh3.Activities.ActivityAbout
 import com.keyontech.meh3.Activities.ActivityMehPoll
 import com.keyontech.meh3.Activities.ActivityMehVideo
 import android.preference.PreferenceManager
+import android.text.Html
 import android.view.Gravity
 import android.view.View
 import android.view.animation.AnimationUtils
@@ -31,6 +32,7 @@ import com.keyontech.meh3.Models.ModelMeh
 import com.keyontech.meh3.services.MehAsyncTaskLoader
 import com.keyontech.meh3.utils.*
 import com.keyontech.meh3.viewpager1.*
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.nav_drawer_layout.*
 import java.util.*
 
@@ -376,6 +378,14 @@ For Fragments make sure you import android.support.v4.app.Fragment, android.supp
 
     fun displayResults(response: String) {
         try {
+            fabbutton_ActivityDetails_Deal_URL.visibility = View.VISIBLE
+            fabbutton_ActivityDetails_Discussion_URL.visibility = View.VISIBLE
+
+            linearLayout_Activity_Main_1.visibility = View.VISIBLE
+//            cardView_Activity_Main_1.visibility = View.VISIBLE
+//            cardView_Activity_Main_2.visibility = View.VISIBLE
+//            cardView_Activity_Main_3.visibility = View.VISIBLE
+
             if (response != null && response.isNotEmpty()) {
                 var gson = GsonBuilder().serializeNulls().create()
                 var modelMeh = gson.fromJson(response, ModelMeh::class.java)
@@ -400,8 +410,14 @@ For Fragments make sure you import android.support.v4.app.Fragment, android.supp
                     /*** set main activity body text */
     //                setTitle(priceLowtoHigh(modelMeh.deal.title))
                     textView_content_activity_main_card_view_1.text = modelMeh.deal.title
-                    textView_content_activity_main_card_view_2.text = modelMeh.deal.features
-                    textView_content_activity_main_card_view_3.text = modelMeh.deal.specifications
+
+                    val htmlDealFeatures = Html.fromHtml(modelMeh.deal.features) // used by TextView
+                    textView_content_activity_main_card_view_2.text = htmlDealFeatures
+
+                    // get our html content
+                    val htmlDealSpecifications = Html.fromHtml(modelMeh.deal.specifications) // used by TextView
+                    textView_content_activity_main_card_view_3.text = htmlDealSpecifications
+
 
                     if ((modelMeh.deal.items.count() > 0) && (modelMeh.deal.items[0].condition != "" && modelMeh.deal.items[0].condition != null)) {
                         textView_content_activity_main_card_view_4.text = modelMeh.deal.items[0].condition + " - " + priceLowtoHigh(modelMeh.deal)
@@ -478,9 +494,39 @@ For Fragments make sure you import android.support.v4.app.Fragment, android.supp
 //                        }
 
                         /*** set photos viewPager */
+//                        adapterActivityMain = AdapterViewPagerActivityMain(supportFragmentManager, modelMeh.deal.photos, modelMeh.deal.theme.backgroundImage)
                         adapterActivityMain = AdapterViewPagerActivityMain(supportFragmentManager, modelMeh.deal.photos)
                         viewPager_NavDrawer.offscreenPageLimit = 3
                         viewPager_NavDrawer.adapter = adapterActivityMain
+
+
+
+
+
+
+                        /*** download viewpager background */
+                        val picassoImageBackground = Picasso.with(this)
+                        picassoImageBackground
+                            .load(modelMeh.deal.theme.backgroundImage)
+                            .placeholder(R.drawable.ic_failed_to_load_image)
+                            .error(R.drawable.ic_failed_to_load_image)
+                            .into( imageView_Deal_Photos_Background  )
+
+
+//
+//                        /***
+//                         * set viewpager background image from uri theme background
+//                         *
+//                         * https://stackoverflow.com/questions/33818873/setting-images-from-url-in-viewpager-android?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
+//                         *
+//                         * */
+////                        viewPager_NavDrawer.setBackgroundResource(imageView_Deal_Photos_Background)
+//                        viewPager_NavDrawer.setBackgroundResource(R.mipmap.ic_kot_1_round)
+//
+
+
+
+
 
                         /*** set custom swipe animations */
                         val randomNumberCreator = Random()
@@ -530,15 +576,24 @@ For Fragments make sure you import android.support.v4.app.Fragment, android.supp
     fun noInternetResponse() {
         fabbutton_ActivityDetails_Deal_URL.visibility = View.GONE
         fabbutton_ActivityDetails_Discussion_URL.visibility = View.GONE
-        cardView_Activity_Main_1.visibility = View.GONE
-        cardView_Activity_Main_2.visibility = View.GONE
-        cardView_Activity_Main_3.visibility = View.GONE
+
+//        linearLayout_Activity_Main_1.visibility = View.INVISIBLE
+        linearLayout_Activity_Main_1.visibility = View.GONE
+
+//        cardView_Activity_Main_1.visibility = View.INVISIBLE
+//        cardView_Activity_Main_2.visibility = View.INVISIBLE
+//        cardView_Activity_Main_3.visibility = View.INVISIBLE
+
+//        cardView_Activity_Main_1.visibility = View.GONE
+//        cardView_Activity_Main_2.visibility = View.GONE
+//        cardView_Activity_Main_3.visibility = View.GONE
 
         val failedToLoadPhoto : ArrayList<String> = ArrayList()
         failedToLoadPhoto.add("")
 
         // set photos viewPager
-        adapterActivityMain = AdapterViewPagerActivityMain(supportFragmentManager, failedToLoadPhoto )
+//        adapterActivityMain = AdapterViewPagerActivityMain(supportFragmentManager, failedToLoadPhoto, "")
+        adapterActivityMain = AdapterViewPagerActivityMain(supportFragmentManager, failedToLoadPhoto)
         viewPager_NavDrawer.offscreenPageLimit = 1
         viewPager_NavDrawer.adapter = adapterActivityMain
 

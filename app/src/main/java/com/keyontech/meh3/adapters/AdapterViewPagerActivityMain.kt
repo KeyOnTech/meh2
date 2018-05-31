@@ -8,10 +8,12 @@ import com.keyontech.meh3.viewpager1.FragmentViewPager1
 /**
  * Created by kot on 1/14/18.
  */
+//class AdapterViewPagerActivityMain (fragmentManager: FragmentManager, private val modelMehDealPhotos: ArrayList<String>, private val modelMehDealPhotosBackground: String) :
 class AdapterViewPagerActivityMain (fragmentManager: FragmentManager, private val modelMehDealPhotos: ArrayList<String>) :
         FragmentStatePagerAdapter(fragmentManager) {
 
     override fun getItem(position: Int): Fragment {
+//        return FragmentViewPager1.newInstance(modelMehDealPhotos[position], modelMehDealPhotosBackground)
         return FragmentViewPager1.newInstance(modelMehDealPhotos[position])
     }
 

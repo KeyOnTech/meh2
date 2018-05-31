@@ -7,16 +7,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import com.keyontech.meh3.R
+//import com.keyontech.meh3.utils.FRAG_ARG_PHOTO_BACKGROUND_URI
 import com.keyontech.meh3.utils.FRAG_ARG_PHOTO_URI
 import com.squareup.picasso.Picasso
 
 class FragmentViewPager1 : Fragment() {
     companion object {
         // Method for creating new instances of the fragment
+//        fun newInstance(photoURL: String, photoBackgroundURL: String): FragmentViewPager1 {
         fun newInstance(photoURL: String): FragmentViewPager1 {
             /*** Store the mockModel data in a Bundle object */
             val args = Bundle()
             args.putString(FRAG_ARG_PHOTO_URI, photoURL)
+//            args.putString(FRAG_ARG_PHOTO_BACKGROUND_URI, photoBackgroundURL)
 
             /***
              * Create a new mockFragment and set the Bundle as the arguments
@@ -34,6 +37,7 @@ class FragmentViewPager1 : Fragment() {
             // Creates the view controlled by the fragment
             val view = inflater.inflate(R.layout.viewpager_header_content_activitymain, container, false)
             val imageviewDealPhoto = view.findViewById<ImageView>(R.id.imageView_Deal_Photos)
+//            val imageviewDealPhotoBackground = view.findViewById<ImageView>(R.id.imageView_Deal_Photos_Background)
 
             // Retrieve and display the movie data from the Bundle
             val args = arguments
@@ -42,8 +46,23 @@ class FragmentViewPager1 : Fragment() {
 
             // Download the image and display it using Picasso
             val picassoImage = Picasso.with(activity)
+//            val picassoImageBackground = Picasso.with(activity)
             /*** color codes: Red: Network / Blue: Disk / Yellow: Memory - dev preferred not on live apk */
             picassoImage.setIndicatorsEnabled(true)
+
+//            if (args.getString(FRAG_ARG_PHOTO_BACKGROUND_URI) != null && args.getString(FRAG_ARG_PHOTO_BACKGROUND_URI).isNotEmpty()) {
+//                println("4444-505 = " + args.getString(FRAG_ARG_PHOTO_BACKGROUND_URI) )
+//
+//                picassoImageBackground
+//                        .load(args.getString(FRAG_ARG_PHOTO_BACKGROUND_URI))
+//                        .placeholder(R.drawable.ic_failed_to_load_image)
+//                        .error(R.drawable.ic_failed_to_load_image)
+//                        .into(imageviewDealPhotoBackground)
+//
+//                println("4444-707 - error = " + args.getString(FRAG_ARG_PHOTO_BACKGROUND_URI) )
+//            } else {
+//                println("4444-707 - error = " + args.getString(FRAG_ARG_PHOTO_BACKGROUND_URI) )
+//            }
 
             if (args.getString(FRAG_ARG_PHOTO_URI) != null && args.getString(FRAG_ARG_PHOTO_URI).isNotEmpty()) {
                 picassoImage
